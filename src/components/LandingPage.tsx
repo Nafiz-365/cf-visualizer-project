@@ -276,7 +276,7 @@ export function LandingPage() {
                 </div>
             </main>
 
-            <footer className="relative z-10 py-12 px-6 border-t border-white/5 bg-black/20">
+            <footer className="relative z-10 pt-12 pb-28 md:py-12 px-6 border-t border-white/5 bg-black/20">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-linear-to-br from-brand-primary to-brand-secondary flex items-center justify-center font-black text-white text-xs">
