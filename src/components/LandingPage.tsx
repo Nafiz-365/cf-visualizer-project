@@ -291,7 +291,7 @@ export function LandingPage() {
                     </p>
                     <div className="flex items-center gap-6">
                         <a
-                            href="#"
+                            href="https://github.com/Nafiz-365/cf-visualizer-project"
                             className="text-muted-app hover:text-text-app transition-colors text-[10px] font-bold uppercase tracking-widest"
                         >
                             Github
