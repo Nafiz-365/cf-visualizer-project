@@ -329,8 +329,7 @@ function FeatureCard({ icon: Icon, title, desc }: any) {
             </div>
 
             <h3
-                className="text-xl md:text-2xl font-display font-bold mb-3 tracking-tight
-                           group-hover:gradient-text transition-all duration-400"
+                className="text-xl md:text-2xl font-display font-bold mb-3 tracking-tight group-hover:gradient-text transition-all duration-400"
                 style={{ color: 'var(--text-main)' }}
             >
                 {title}
