@@ -4,7 +4,16 @@ import { Button } from './ui/Button';
 import { CodeforcesService } from '../services/codeforces';
 import { RatingChange, User } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { TrendingUp, Users, Search, AlertCircle, Sparkles, HelpCircle, ArrowRight, Check } from 'lucide-react';
+import {
+    TrendingUp,
+    Users,
+    Search,
+    AlertCircle,
+    Sparkles,
+    HelpCircle,
+    ArrowRight,
+    Check,
+} from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface RatingPredictorProps {
@@ -12,16 +21,20 @@ interface RatingPredictorProps {
     ratingHistory: RatingChange[];
 }
 
-export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorProps) {
+export function RatingPredictor({
+    currentUser,
+    ratingHistory,
+}: RatingPredictorProps) {
     const [contestId, setContestId] = useState<string>('');
     const [rank, setRank] = useState<string>('');
-    const [selectedHistoryContest, setSelectedHistoryContest] = useState<string>('');
-    
+    const [selectedHistoryContest, setSelectedHistoryContest] =
+        useState<string>('');
+
     // Friend compare
     const [friendHandle, setFriendHandle] = useState<string>('');
     const [friendUser, setFriendUser] = useState<User | null>(null);
     const [friendRank, setFriendRank] = useState<string>('');
-    
+
     // States
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -49,7 +62,9 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
     // Populate contest when selected from history
     useEffect(() => {
         if (selectedHistoryContest) {
-            const hist = ratingHistory.find(h => h.contestId.toString() === selectedHistoryContest);
+            const hist = ratingHistory.find(
+                (h) => h.contestId.toString() === selectedHistoryContest,
+            );
             if (hist) {
                 setContestId(hist.contestId.toString());
                 setRank(hist.rank.toString());
@@ -70,7 +85,7 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
         try {
             const parsedContestId = parseInt(contestId);
             const parsedRank = parseInt(rank);
-            
+
             if (isNaN(parsedContestId) || isNaN(parsedRank)) {
                 throw new Error('Contest ID and Rank must be valid numbers.');
             }
@@ -80,55 +95,89 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
             let totalParticipants = 8500;
 
             try {
-                const standings = await CodeforcesService.getContestStandings(parsedContestId, 1, 1);
+                const standings = await CodeforcesService.getContestStandings(
+                    parsedContestId,
+                    1,
+                    1,
+                );
                 contestName = standings.contest.name;
                 // Approximate participants based on contest history or standard round size
                 totalParticipants = standings.contest.id > 1500 ? 12000 : 8000;
             } catch (err) {
-                console.warn('Could not fetch exact standings, using estimation', err);
+                console.warn(
+                    'Could not fetch exact standings, using estimation',
+                    err,
+                );
             }
 
             // High-fidelity predictive formula for rating delta:
             // delta depends on: preRating, actualRank, expectedRank
-            const calculateDelta = (preRating: number, actualRank: number, total: number) => {
+            const calculateDelta = (
+                preRating: number,
+                actualRank: number,
+                total: number,
+            ) => {
                 // Expected rank approximation based on rating
-                const expectedRank = total / (1 + Math.pow(10, (preRating - 1200) / 400));
+                const expectedRank =
+                    total / (1 + Math.pow(10, (preRating - 1200) / 400));
                 // High ratings have lower elasticity, newbies have higher elasticity
                 const K = preRating > 2200 ? 15 : preRating > 1800 ? 25 : 35;
-                
+
                 let rawDelta = Math.log10(expectedRank / actualRank) * K * 4.5;
-                
+
                 // Add some realistic volatility bounds
                 if (rawDelta > 300) rawDelta = 300;
                 if (rawDelta < -300) rawDelta = -300;
-                
+
                 return Math.round(rawDelta);
             };
 
             const userPreRating = currentUser.rating || 1200;
-            const userDelta = calculateDelta(userPreRating, parsedRank, totalParticipants);
-            
+            const userDelta = calculateDelta(
+                userPreRating,
+                parsedRank,
+                totalParticipants,
+            );
+
             let friendResult = undefined;
 
             if (friendHandle.trim()) {
                 try {
-                    const friend = await CodeforcesService.getUserInfo(friendHandle.trim());
+                    const friend = await CodeforcesService.getUserInfo(
+                        friendHandle.trim(),
+                    );
                     setFriendUser(friend);
-                    
-                    const fRank = friendRank ? parseInt(friendRank) : Math.round(parsedRank * (1 + (Math.random() * 0.4 - 0.2)));
+
+                    const fRank = friendRank
+                        ? parseInt(friendRank)
+                        : Math.round(
+                              parsedRank * (1 + (Math.random() * 0.4 - 0.2)),
+                          );
                     const friendPreRating = friend.rating || 1200;
-                    const fDelta = calculateDelta(friendPreRating, fRank, totalParticipants);
-                    
+                    const fDelta = calculateDelta(
+                        friendPreRating,
+                        fRank,
+                        totalParticipants,
+                    );
+
                     friendResult = {
                         handle: friend.handle,
                         oldRating: friendPreRating,
                         newRating: Math.max(0, friendPreRating + fDelta),
                         delta: fDelta,
                         rank: fRank,
-                        status: fDelta > 0 ? 'positive' as const : fDelta < 0 ? 'negative' as const : 'neutral' as const
+                        status:
+                            fDelta > 0
+                                ? ('positive' as const)
+                                : fDelta < 0
+                                  ? ('negative' as const)
+                                  : ('neutral' as const),
                     };
                 } catch (friendErr) {
-                    console.warn('Could not fetch friend user, ignoring friend details', friendErr);
+                    console.warn(
+                        'Could not fetch friend user, ignoring friend details',
+                        friendErr,
+                    );
                 }
             }
 
@@ -141,11 +190,15 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                     newRating: Math.max(0, userPreRating + userDelta),
                     delta: userDelta,
                     rank: parsedRank,
-                    status: userDelta > 0 ? 'positive' : userDelta < 0 ? 'negative' : 'neutral'
+                    status:
+                        userDelta > 0
+                            ? 'positive'
+                            : userDelta < 0
+                              ? 'negative'
+                              : 'neutral',
                 },
-                friend: friendResult
+                friend: friendResult,
             });
-
         } catch (err: any) {
             setError(err.message || 'Failed to calculate rating prediction.');
         } finally {
@@ -164,7 +217,10 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                     Predict Your Rating Change In Seconds
                 </h2>
                 <p className="text-xs md:text-sm text-muted-app font-medium max-w-xl">
-                    CFLens computes your delta within minutes of a contest ending — long before official ratings publish. Enter a contest ID and standing, or compare with a competitive buddy who coded the same round.
+                    CFLens computes your delta within minutes of a contest
+                    ending — long before official ratings publish. Enter a
+                    contest ID and standing, or compare with a competitive buddy
+                    who coded the same round.
                 </p>
             </div>
 
@@ -173,7 +229,10 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                 <div className="lg:col-span-5">
                     <Card className="p-6 bg-linear-to-br from-card-app to-white/1 space-y-6">
                         <div className="flex items-center gap-2 pb-4 border-b border-white/5">
-                            <Sparkles size={16} className="text-brand-primary animate-pulse" />
+                            <Sparkles
+                                size={16}
+                                className="text-brand-primary animate-pulse"
+                            />
                             <h3 className="text-xs uppercase font-black tracking-widest text-text-app">
                                 Contest Calibration
                             </h3>
@@ -186,15 +245,32 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                 </label>
                                 <select
                                     value={selectedHistoryContest}
-                                    onChange={(e) => setSelectedHistoryContest(e.target.value)}
+                                    onChange={(e) =>
+                                        setSelectedHistoryContest(
+                                            e.target.value,
+                                        )
+                                    }
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 outline-none focus:border-brand-primary/50 text-xs text-text-app"
                                 >
-                                    <option value="" className="bg-bg-app">-- Select a past round --</option>
-                                    {ratingHistory.slice(-5).reverse().map((hist) => (
-                                        <option key={hist.contestId} value={hist.contestId} className="bg-bg-app">
-                                            {hist.contestName.substring(0, 32)}... (Rank #{hist.rank})
-                                        </option>
-                                    ))}
+                                    <option value="" className="bg-bg-app">
+                                        -- Select a past round --
+                                    </option>
+                                    {ratingHistory
+                                        .slice(-5)
+                                        .reverse()
+                                        .map((hist) => (
+                                            <option
+                                                key={hist.contestId}
+                                                value={hist.contestId}
+                                                className="bg-bg-app"
+                                            >
+                                                {hist.contestName.substring(
+                                                    0,
+                                                    32,
+                                                )}
+                                                ... (Rank #{hist.rank})
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
                         )}
@@ -208,7 +284,9 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                     <input
                                         type="text"
                                         value={contestId}
-                                        onChange={(e) => setContestId(e.target.value)}
+                                        onChange={(e) =>
+                                            setContestId(e.target.value)
+                                        }
                                         placeholder="e.g. 1950"
                                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 outline-none focus:border-brand-primary/50 text-xs text-text-app font-bold"
                                         required
@@ -221,7 +299,9 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                     <input
                                         type="text"
                                         value={rank}
-                                        onChange={(e) => setRank(e.target.value)}
+                                        onChange={(e) =>
+                                            setRank(e.target.value)
+                                        }
                                         placeholder="e.g. 420"
                                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 outline-none focus:border-brand-primary/50 text-xs text-text-app font-bold"
                                         required
@@ -231,7 +311,10 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
 
                             <div className="pt-4 border-t border-white/5 space-y-4">
                                 <div className="flex items-center gap-2">
-                                    <Users size={14} className="text-brand-secondary" />
+                                    <Users
+                                        size={14}
+                                        className="text-brand-secondary"
+                                    />
                                     <h4 className="text-[10px] uppercase tracking-widest font-black text-brand-secondary">
                                         Compare With Competitive Buddy
                                     </h4>
@@ -245,7 +328,9 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                         <input
                                             type="text"
                                             value={friendHandle}
-                                            onChange={(e) => setFriendHandle(e.target.value)}
+                                            onChange={(e) =>
+                                                setFriendHandle(e.target.value)
+                                            }
                                             placeholder="e.g. Tourist"
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 outline-none focus:border-brand-secondary/50 text-xs text-text-app font-bold"
                                         />
@@ -257,7 +342,9 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                         <input
                                             type="text"
                                             value={friendRank}
-                                            onChange={(e) => setFriendRank(e.target.value)}
+                                            onChange={(e) =>
+                                                setFriendRank(e.target.value)
+                                            }
                                             placeholder="Leave empty to estimate"
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 outline-none focus:border-brand-secondary/50 text-xs text-text-app font-bold"
                                         />
@@ -297,7 +384,7 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                     <div className="absolute top-0 right-0 p-6 opacity-5">
                                         <TrendingUp size={100} />
                                     </div>
-                                    
+
                                     <div className="space-y-1 mb-6">
                                         <p className="text-[9px] uppercase tracking-widest font-black text-brand-primary">
                                             Round Analysis Success
@@ -306,7 +393,9 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                             {predictionResult.contestName}
                                         </h3>
                                         <p className="text-[10px] text-muted-app font-mono uppercase">
-                                            Estimated Pool: {predictionResult.totalParticipants} contestants
+                                            Estimated Pool:{' '}
+                                            {predictionResult.totalParticipants}{' '}
+                                            contestants
                                         </p>
                                     </div>
 
@@ -317,15 +406,30 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                             <div>
                                                 <div className="flex items-center justify-between mb-4">
                                                     <span className="text-[10px] font-black uppercase tracking-wider text-brand-primary">
-                                                        {predictionResult.user.handle} (You)
+                                                        {
+                                                            predictionResult
+                                                                .user.handle
+                                                        }{' '}
+                                                        (You)
                                                     </span>
                                                     <span className="text-[9px] bg-brand-primary/10 text-brand-primary font-mono px-2 py-0.5 rounded-md font-bold">
-                                                        Rank #{predictionResult.user.rank}
+                                                        Rank #
+                                                        {
+                                                            predictionResult
+                                                                .user.rank
+                                                        }
                                                     </span>
                                                 </div>
                                                 <div className="flex items-baseline gap-2 mb-2">
                                                     <span className="text-3xl font-display font-black text-text-app">
-                                                        {predictionResult.user.delta > 0 ? '+' : ''}{predictionResult.user.delta}
+                                                        {predictionResult.user
+                                                            .delta > 0
+                                                            ? '+'
+                                                            : ''}
+                                                        {
+                                                            predictionResult
+                                                                .user.delta
+                                                        }
                                                     </span>
                                                     <span className="text-xs font-bold text-muted-app">
                                                         Delta
@@ -334,16 +438,37 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                             </div>
                                             <div className="pt-4 border-t border-white/5 flex justify-between items-center mt-4">
                                                 <div className="text-left">
-                                                    <p className="text-[8px] uppercase text-muted-app font-bold">Rating Path</p>
+                                                    <p className="text-[8px] uppercase text-muted-app font-bold">
+                                                        Rating Path
+                                                    </p>
                                                     <p className="text-xs font-mono font-bold text-text-app">
-                                                        {predictionResult.user.oldRating} <ArrowRight size={10} className="inline mx-1 text-muted-app" /> {predictionResult.user.newRating}
+                                                        {
+                                                            predictionResult
+                                                                .user.oldRating
+                                                        }{' '}
+                                                        <ArrowRight
+                                                            size={10}
+                                                            className="inline mx-1 text-muted-app"
+                                                        />{' '}
+                                                        {
+                                                            predictionResult
+                                                                .user.newRating
+                                                        }
                                                     </p>
                                                 </div>
-                                                <span className={cn(
-                                                    "text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider",
-                                                    predictionResult.user.delta > 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
-                                                )}>
-                                                    {predictionResult.user.delta > 0 ? 'Rising' : 'Falling'}
+                                                <span
+                                                    className={cn(
+                                                        'text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider',
+                                                        predictionResult.user
+                                                            .delta > 0
+                                                            ? 'bg-emerald-500/10 text-emerald-400'
+                                                            : 'bg-red-500/10 text-red-400',
+                                                    )}
+                                                >
+                                                    {predictionResult.user
+                                                        .delta > 0
+                                                        ? 'Rising'
+                                                        : 'Falling'}
                                                 </span>
                                             </div>
                                         </div>
@@ -354,15 +479,32 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                                 <div>
                                                     <div className="flex items-center justify-between mb-4">
                                                         <span className="text-[10px] font-black uppercase tracking-wider text-brand-secondary">
-                                                            {predictionResult.friend.handle}
+                                                            {
+                                                                predictionResult
+                                                                    .friend
+                                                                    .handle
+                                                            }
                                                         </span>
                                                         <span className="text-[9px] bg-brand-secondary/10 text-brand-secondary font-mono px-2 py-0.5 rounded-md font-bold">
-                                                            Rank #{predictionResult.friend.rank}
+                                                            Rank #
+                                                            {
+                                                                predictionResult
+                                                                    .friend.rank
+                                                            }
                                                         </span>
                                                     </div>
                                                     <div className="flex items-baseline gap-2 mb-2">
                                                         <span className="text-3xl font-display font-black text-text-app">
-                                                            {predictionResult.friend.delta > 0 ? '+' : ''}{predictionResult.friend.delta}
+                                                            {predictionResult
+                                                                .friend.delta >
+                                                            0
+                                                                ? '+'
+                                                                : ''}
+                                                            {
+                                                                predictionResult
+                                                                    .friend
+                                                                    .delta
+                                                            }
                                                         </span>
                                                         <span className="text-xs font-bold text-muted-app">
                                                             Delta
@@ -371,27 +513,57 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                                 </div>
                                                 <div className="pt-4 border-t border-white/5 flex justify-between items-center mt-4">
                                                     <div className="text-left">
-                                                        <p className="text-[8px] uppercase text-muted-app font-bold">Rating Path</p>
+                                                        <p className="text-[8px] uppercase text-muted-app font-bold">
+                                                            Rating Path
+                                                        </p>
                                                         <p className="text-xs font-mono font-bold text-text-app">
-                                                            {predictionResult.friend.oldRating} <ArrowRight size={10} className="inline mx-1 text-muted-app" /> {predictionResult.friend.newRating}
+                                                            {
+                                                                predictionResult
+                                                                    .friend
+                                                                    .oldRating
+                                                            }{' '}
+                                                            <ArrowRight
+                                                                size={10}
+                                                                className="inline mx-1 text-muted-app"
+                                                            />{' '}
+                                                            {
+                                                                predictionResult
+                                                                    .friend
+                                                                    .newRating
+                                                            }
                                                         </p>
                                                     </div>
-                                                    <span className={cn(
-                                                        "text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider",
-                                                        predictionResult.friend.delta > 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
-                                                    )}>
-                                                        {predictionResult.friend.delta > 0 ? 'Rising' : 'Falling'}
+                                                    <span
+                                                        className={cn(
+                                                            'text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider',
+                                                            predictionResult
+                                                                .friend.delta >
+                                                                0
+                                                                ? 'bg-emerald-500/10 text-emerald-400'
+                                                                : 'bg-red-500/10 text-red-400',
+                                                        )}
+                                                    >
+                                                        {predictionResult.friend
+                                                            .delta > 0
+                                                            ? 'Rising'
+                                                            : 'Falling'}
                                                     </span>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="rounded-2xl border-2 border-dashed border-white/5 p-6 flex flex-col items-center justify-center text-center opacity-40">
-                                                <Users size={24} className="text-muted-app mb-2" />
+                                                <Users
+                                                    size={24}
+                                                    className="text-muted-app mb-2"
+                                                />
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-muted-app">
                                                     No Friend Compared
                                                 </p>
                                                 <p className="text-[8px] text-muted-app max-w-40 mt-1 leading-normal">
-                                                    Add a friend's handle in the form to track round competitiveness side-by-side!
+                                                    Add a friend's handle in the
+                                                    form to track round
+                                                    competitiveness
+                                                    side-by-side!
                                                 </p>
                                             </div>
                                         )}
@@ -400,19 +572,75 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                                     {/* Peer compare analysis comment */}
                                     {predictionResult.friend && (
                                         <div className="mt-6 p-4 rounded-xl bg-white/3 border border-white/5 flex items-start gap-3">
-                                            <Sparkles size={14} className="text-brand-primary mt-0.5 shrink-0" />
+                                            <Sparkles
+                                                size={14}
+                                                className="text-brand-primary mt-0.5 shrink-0"
+                                            />
                                             <div>
                                                 <p className="text-[10px] font-black uppercase text-muted-app tracking-wide mb-1">
                                                     Head-to-Head Insight
                                                 </p>
                                                 <p className="text-[11px] text-muted-app leading-relaxed">
-                                                    {predictionResult.user.rank < predictionResult.friend.rank ? (
+                                                    {predictionResult.user
+                                                        .rank <
+                                                    predictionResult.friend
+                                                        .rank ? (
                                                         <span>
-                                                            Excellent performance! You outperformed <strong>{predictionResult.friend.handle}</strong> by {predictionResult.friend.rank - predictionResult.user.rank} positions. This results in a {predictionResult.user.delta - predictionResult.friend.delta > 0 ? `+${predictionResult.user.delta - predictionResult.friend.delta}` : predictionResult.user.delta - predictionResult.friend.delta} higher rating change.
+                                                            Excellent
+                                                            performance! You
+                                                            outperformed{' '}
+                                                            <strong>
+                                                                {
+                                                                    predictionResult
+                                                                        .friend
+                                                                        .handle
+                                                                }
+                                                            </strong>{' '}
+                                                            by{' '}
+                                                            {predictionResult
+                                                                .friend.rank -
+                                                                predictionResult
+                                                                    .user
+                                                                    .rank}{' '}
+                                                            positions. This
+                                                            results in a{' '}
+                                                            {predictionResult
+                                                                .user.delta -
+                                                                predictionResult
+                                                                    .friend
+                                                                    .delta >
+                                                            0
+                                                                ? `+${predictionResult.user.delta - predictionResult.friend.delta}`
+                                                                : predictionResult
+                                                                      .user
+                                                                      .delta -
+                                                                  predictionResult
+                                                                      .friend
+                                                                      .delta}{' '}
+                                                            higher rating
+                                                            change.
                                                         </span>
                                                     ) : (
                                                         <span>
-                                                            <strong>{predictionResult.friend.handle}</strong> outperformed you by {predictionResult.user.rank - predictionResult.friend.rank} positions in this contest. Grab the editorial and upsolve to narrow the gap for the next round!
+                                                            <strong>
+                                                                {
+                                                                    predictionResult
+                                                                        .friend
+                                                                        .handle
+                                                                }
+                                                            </strong>{' '}
+                                                            outperformed you by{' '}
+                                                            {predictionResult
+                                                                .user.rank -
+                                                                predictionResult
+                                                                    .friend
+                                                                    .rank}{' '}
+                                                            positions in this
+                                                            contest. Grab the
+                                                            editorial and
+                                                            upsolve to narrow
+                                                            the gap for the next
+                                                            round!
                                                         </span>
                                                     )}
                                                 </p>
@@ -423,12 +651,18 @@ export function RatingPredictor({ currentUser, ratingHistory }: RatingPredictorP
                             </motion.div>
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed border-white/5 rounded-4xl bg-white/2">
-                                <TrendingUp size={48} className="text-muted-app opacity-20 mb-4" />
+                                <TrendingUp
+                                    size={48}
+                                    className="text-muted-app opacity-20 mb-4"
+                                />
                                 <h3 className="text-xs uppercase font-black tracking-widest text-muted-app mb-1">
                                     Awaiting Prediction Calibration
                                 </h3>
                                 <p className="text-[11px] text-muted-app max-w-sm leading-relaxed">
-                                    Provide a contest ID and standing position on the left, then click "Calculate Delta" to compute instantaneous post-contest rating results.
+                                    Provide a contest ID and standing position
+                                    on the left, then click "Calculate Delta" to
+                                    compute instantaneous post-contest rating
+                                    results.
                                 </p>
                             </div>
                         )}
