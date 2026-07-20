@@ -99,9 +99,15 @@ async function startServer() {
             }
 
             if (error.response?.status && error.response.status < 500) {
-                console.log(`Codeforces API client status info (${method}, Status ${error.response.status}):`, error.message);
+                console.log(
+                    `Codeforces API client status info (${method}, Status ${error.response.status}):`,
+                    error.message,
+                );
             } else {
-                console.log(`Codeforces API status info (${method}):`, error.message);
+                console.log(
+                    `Codeforces API status info (${method}):`,
+                    error.message,
+                );
             }
 
             // Handle Gateway Timeout specifically with a more helpful message
@@ -129,11 +135,9 @@ async function startServer() {
 
     app.post('/api/ai/generate', async (req, res) => {
         if (!openRouterKey) {
-            return res
-                .status(500)
-                .json({
-                    error: 'OPENROUTER_API_KEY is not configured on the server.',
-                });
+            return res.status(500).json({
+                error: 'OPENROUTER_API_KEY is not configured on the server.',
+            });
         }
 
         const { prompt, model = 'gemini-2.0-flash', raw = false } = req.body;
@@ -205,10 +209,7 @@ async function startServer() {
                 }
             }
         } catch (error: any) {
-            if (
-                error.response?.status === 429 ||
-                error.status === 429
-            ) {
+            if (error.response?.status === 429 || error.status === 429) {
                 return res.status(429).json({
                     error: 'AI Quota Exceeded',
                     message:
@@ -217,7 +218,10 @@ async function startServer() {
                 });
             }
 
-            console.error('OpenRouter API unusual error:', error.response?.data || error.message);
+            console.error(
+                'OpenRouter API unusual error:',
+                error.response?.data || error.message,
+            );
             res.status(500).json({
                 error:
                     error.message ||
@@ -225,7 +229,6 @@ async function startServer() {
             });
         }
     });
-
 
     // Vite middleware for development
     if (process.env.NODE_ENV !== 'production') {
