@@ -3,7 +3,18 @@ import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { User, RatingChange, Submission } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Share2, Image, Award, Flame, Calendar, Sparkles, Download, ArrowRight, Check, CheckCircle } from 'lucide-react';
+import {
+    Share2,
+    Image,
+    Award,
+    Flame,
+    Calendar,
+    Sparkles,
+    Download,
+    ArrowRight,
+    Check,
+    CheckCircle,
+} from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface SocialCardsProps {
@@ -12,23 +23,36 @@ interface SocialCardsProps {
     submissions: Submission[];
 }
 
-type CardType = 'snapshot' | 'streak' | 'review' | 'achievements' | 'headtohead';
+type CardType =
+    | 'snapshot'
+    | 'streak'
+    | 'review'
+    | 'achievements'
+    | 'headtohead';
 
-export function SocialCards({ user, ratingHistory, submissions }: SocialCardsProps) {
+export function SocialCards({
+    user,
+    ratingHistory,
+    submissions,
+}: SocialCardsProps) {
     const [activeCard, setActiveCard] = useState<CardType>('snapshot');
     const [exporting, setExporting] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     // Some custom stats for cards
-    const maxRating = ratingHistory.length ? Math.max(...ratingHistory.map(h => h.newRating)) : (user.rating || 1200);
-    const solvedCount = submissions.filter(s => s.verdict === 'OK').length;
-    
+    const maxRating = ratingHistory.length
+        ? Math.max(...ratingHistory.map((h) => h.newRating))
+        : user.rating || 1200;
+    const solvedCount = submissions.filter((s) => s.verdict === 'OK').length;
+
     // Streaks calculation
     const streakDays = useMemo(() => {
         const solvedDates = new Set(
             submissions
-                .filter(s => s.verdict === 'OK')
-                .map(s => new Date(s.creationTimeSeconds * 1000).toDateString())
+                .filter((s) => s.verdict === 'OK')
+                .map((s) =>
+                    new Date(s.creationTimeSeconds * 1000).toDateString(),
+                ),
         );
         return Math.min(solvedDates.size, 15); // mock/actual streak capped nicely for badges
     }, [submissions]);
@@ -116,7 +140,12 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
             ctx.fillText((user.rank || 'Unranked').toUpperCase(), 80, 220);
 
             // Performance Boxes
-            const drawMetric = (x: number, y: number, value: string, label: string) => {
+            const drawMetric = (
+                x: number,
+                y: number,
+                value: string,
+                label: string,
+            ) => {
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
                 ctx.fillRect(x, y, 220, 140);
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
@@ -152,7 +181,6 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
             ctx.font = '14px "Inter", sans-serif';
             ctx.fillText('RATING', 950, 340);
             ctx.textAlign = 'left'; // restore alignment
-
         } else if (activeCard === 'streak') {
             // Flame Graphic representation
             ctx.fillStyle = '#f97316';
@@ -177,8 +205,11 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
             ctx.fillText('COACH QUOTE', 110, 470);
             ctx.fillStyle = '#ffffff';
             ctx.font = 'italic 14px "Inter", sans-serif';
-            ctx.fillText(`"Excellent cadence. Maintaining this trajectory pushes cognitive boundaries."`, 110, 495);
-
+            ctx.fillText(
+                `"Excellent cadence. Maintaining this trajectory pushes cognitive boundaries."`,
+                110,
+                495,
+            );
         } else if (activeCard === 'review') {
             ctx.fillStyle = '#10b981';
             ctx.font = 'bold 52px "Inter", sans-serif';
@@ -186,10 +217,19 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
 
             ctx.fillStyle = '#ffffff';
             ctx.font = '18px "Inter", sans-serif';
-            ctx.fillText(`Synthesized summary of Codeforces profile activity for ${user.handle}`, 80, 225);
+            ctx.fillText(
+                `Synthesized summary of Codeforces profile activity for ${user.handle}`,
+                80,
+                225,
+            );
 
             // Large stats blocks
-            const drawReviewBox = (x: number, y: number, val: string, label: string) => {
+            const drawReviewBox = (
+                x: number,
+                y: number,
+                val: string,
+                label: string,
+            ) => {
                 ctx.fillStyle = 'rgba(16, 185, 129, 0.04)';
                 ctx.fillRect(x, y, 320, 180);
                 ctx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
@@ -205,9 +245,18 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
             };
 
             drawReviewBox(80, 300, `${solvedCount}`, 'TOTAL SOLVED PROBLEMS');
-            drawReviewBox(440, 300, `+${Math.max(0, (user.rating || 800) - 1000)}`, 'RATING GAINED');
-            drawReviewBox(800, 300, `${ratingHistory.length}`, 'ROUNDS COMPLETED');
-
+            drawReviewBox(
+                440,
+                300,
+                `+${Math.max(0, (user.rating || 800) - 1000)}`,
+                'RATING GAINED',
+            );
+            drawReviewBox(
+                800,
+                300,
+                `${ratingHistory.length}`,
+                'ROUNDS COMPLETED',
+            );
         } else if (activeCard === 'achievements') {
             ctx.fillStyle = '#8b5cf6';
             ctx.font = 'bold 52px "Inter", sans-serif';
@@ -217,10 +266,20 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
             ctx.font = '18px "Inter", sans-serif';
             ctx.fillText(`Achievements unlocked by ${user.handle}`, 80, 225);
 
-            const drawBadge = (x: number, y: number, name: string, desc: string, unlocked: boolean) => {
-                ctx.fillStyle = unlocked ? 'rgba(139, 92, 246, 0.08)' : 'rgba(255, 255, 255, 0.01)';
+            const drawBadge = (
+                x: number,
+                y: number,
+                name: string,
+                desc: string,
+                unlocked: boolean,
+            ) => {
+                ctx.fillStyle = unlocked
+                    ? 'rgba(139, 92, 246, 0.08)'
+                    : 'rgba(255, 255, 255, 0.01)';
                 ctx.fillRect(x, y, 480, 120);
-                ctx.strokeStyle = unlocked ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255, 255, 255, 0.04)';
+                ctx.strokeStyle = unlocked
+                    ? 'rgba(139, 92, 246, 0.2)'
+                    : 'rgba(255, 255, 255, 0.04)';
                 ctx.strokeRect(x, y, 480, 120);
 
                 ctx.fillStyle = unlocked ? '#a78bfa' : '#64748b';
@@ -237,10 +296,34 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                 ctx.fillText(unlocked ? 'CLAIMED' : 'LOCKED', x + 400, y + 45);
             };
 
-            drawBadge(80, 300, 'Expert Breakthrough', 'Reached rated performance above 1600 RP', user.rating && user.rating >= 1600 ? true : false);
-            drawBadge(600, 300, 'DP Architect', 'Solved more than 10 dynamic programming challenges', solvedCount > 10);
-            drawBadge(80, 440, 'Contest Specialist', 'Finished 5 rated rounds on Codeforces', ratingHistory.length >= 5);
-            drawBadge(600, 440, 'Streak Fire', 'Logged 7 consecutive days of active solving', streakDays >= 7);
+            drawBadge(
+                80,
+                300,
+                'Expert Breakthrough',
+                'Reached rated performance above 1600 RP',
+                user.rating && user.rating >= 1600 ? true : false,
+            );
+            drawBadge(
+                600,
+                300,
+                'DP Architect',
+                'Solved more than 10 dynamic programming challenges',
+                solvedCount > 10,
+            );
+            drawBadge(
+                80,
+                440,
+                'Contest Specialist',
+                'Finished 5 rated rounds on Codeforces',
+                ratingHistory.length >= 5,
+            );
+            drawBadge(
+                600,
+                440,
+                'Streak Fire',
+                'Logged 7 consecutive days of active solving',
+                streakDays >= 7,
+            );
         }
 
         // Initiate file download
@@ -266,7 +349,9 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                     Generate PNG Cards For Any Handle
                 </h2>
                 <p className="text-xs md:text-sm text-muted-app font-medium max-w-2xl">
-                    Create beautiful, custom 1200×630 metadata images to share your progress, achievements, milestones, and streak badges on Twitter, LinkedIn, Discord, or anywhere else.
+                    Create beautiful, custom 1200×630 metadata images to share
+                    your progress, achievements, milestones, and streak badges
+                    on Twitter, LinkedIn, Discord, or anywhere else.
                 </p>
             </div>
 
@@ -285,15 +370,17 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                                     key={template.id}
                                     onClick={() => setActiveCard(template.id)}
                                     className={cn(
-                                        "w-full flex items-center justify-between p-4 rounded-2xl border transition-all text-left",
+                                        'w-full flex items-center justify-between p-4 rounded-2xl border transition-all text-left',
                                         isActive
-                                            ? "bg-brand-primary/10 border-brand-primary/30 text-brand-primary shadow-sm"
-                                            : "bg-white/3 border-white/5 text-muted-app hover:bg-white/5 hover:text-text-app"
+                                            ? 'bg-brand-primary/10 border-brand-primary/30 text-brand-primary shadow-sm'
+                                            : 'bg-white/3 border-white/5 text-muted-app hover:bg-white/5 hover:text-text-app',
                                     )}
                                 >
                                     <div className="flex items-center gap-3">
                                         <Icon size={18} className="shrink-0" />
-                                        <span className="text-xs font-bold uppercase tracking-wider">{template.label}</span>
+                                        <span className="text-xs font-bold uppercase tracking-wider">
+                                            {template.label}
+                                        </span>
                                     </div>
                                     {isActive && <Check size={14} />}
                                 </button>
@@ -327,11 +414,15 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 className={cn(
-                                    "absolute inset-0 p-8 sm:p-12 flex flex-col justify-between select-none relative bg-grid",
-                                    activeCard === 'snapshot' && "bg-linear-to-br from-slate-900 via-indigo-950 to-slate-950",
-                                    activeCard === 'streak' && "bg-linear-to-br from-stone-900 via-orange-950 to-stone-950",
-                                    activeCard === 'review' && "bg-linear-to-br from-teal-950 via-emerald-950 to-stone-950",
-                                    activeCard === 'achievements' && "bg-linear-to-br from-purple-950 via-violet-950 to-slate-950"
+                                    'absolute inset-0 p-8 sm:p-12 flex flex-col justify-between select-none bg-grid',
+                                    activeCard === 'snapshot' &&
+                                        'bg-linear-to-br from-slate-900 via-indigo-950 to-slate-950',
+                                    activeCard === 'streak' &&
+                                        'bg-linear-to-br from-stone-900 via-orange-950 to-stone-950',
+                                    activeCard === 'review' &&
+                                        'bg-linear-to-br from-teal-950 via-emerald-950 to-stone-950',
+                                    activeCard === 'achievements' &&
+                                        'bg-linear-to-br from-purple-950 via-violet-950 to-slate-950',
                                 )}
                             >
                                 {/* Top brand overlay */}
@@ -339,7 +430,10 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                                     <span className="text-[8px] sm:text-[10px] font-black tracking-[0.25em] text-brand-primary">
                                         CFLENS // SOCIAL PROFILE
                                     </span>
-                                    <Sparkles size={14} className="text-brand-primary opacity-60 animate-pulse" />
+                                    <Sparkles
+                                        size={14}
+                                        className="text-brand-primary opacity-60 animate-pulse"
+                                    />
                                 </div>
 
                                 {/* Main Card Contents */}
@@ -356,16 +450,28 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
 
                                         <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4 border-t border-white/5">
                                             <div className="p-3 bg-white/3 border border-white/5 rounded-xl sm:rounded-2xl">
-                                                <p className="text-[8px] uppercase text-muted-app/60 font-bold mb-1">Rating</p>
-                                                <p className="text-sm sm:text-xl font-mono font-black text-text-app">{user.rating || 0}</p>
+                                                <p className="text-[8px] uppercase text-muted-app/60 font-bold mb-1">
+                                                    Rating
+                                                </p>
+                                                <p className="text-sm sm:text-xl font-mono font-black text-text-app">
+                                                    {user.rating || 0}
+                                                </p>
                                             </div>
                                             <div className="p-3 bg-white/3 border border-white/5 rounded-xl sm:rounded-2xl">
-                                                <p className="text-[8px] uppercase text-muted-app/60 font-bold mb-1">Peak Rating</p>
-                                                <p className="text-sm sm:text-xl font-mono font-black text-text-app">{maxRating}</p>
+                                                <p className="text-[8px] uppercase text-muted-app/60 font-bold mb-1">
+                                                    Peak Rating
+                                                </p>
+                                                <p className="text-sm sm:text-xl font-mono font-black text-text-app">
+                                                    {maxRating}
+                                                </p>
                                             </div>
                                             <div className="p-3 bg-white/3 border border-white/5 rounded-xl sm:rounded-2xl">
-                                                <p className="text-[8px] uppercase text-muted-app/60 font-bold mb-1">Solved</p>
-                                                <p className="text-sm sm:text-xl font-mono font-black text-text-app">{solvedCount}</p>
+                                                <p className="text-[8px] uppercase text-muted-app/60 font-bold mb-1">
+                                                    Solved
+                                                </p>
+                                                <p className="text-sm sm:text-xl font-mono font-black text-text-app">
+                                                    {solvedCount}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -375,7 +481,10 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                                     <div className="flex-1 flex flex-col justify-center space-y-6">
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2">
-                                                <Flame size={20} className="text-brand-secondary" />
+                                                <Flame
+                                                    size={20}
+                                                    className="text-brand-secondary"
+                                                />
                                                 <h3 className="text-xl sm:text-3xl font-display font-black text-brand-secondary">
                                                     STREAK ENGAGED
                                                 </h3>
@@ -392,9 +501,13 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                                         </div>
 
                                         <div className="p-3 bg-brand-secondary/5 border border-brand-secondary/10 rounded-xl sm:rounded-2xl">
-                                            <p className="text-[8px] text-brand-secondary uppercase font-bold mb-1">Weekly Coach comment</p>
+                                            <p className="text-[8px] text-brand-secondary uppercase font-bold mb-1">
+                                                Weekly Coach comment
+                                            </p>
                                             <p className="text-[10px] sm:text-xs text-muted-app italic">
-                                                "Excellent cadence. Maintaining this trajectory pushes cognitive boundaries."
+                                                "Excellent cadence. Maintaining
+                                                this trajectory pushes cognitive
+                                                boundaries."
                                             </p>
                                         </div>
                                     </div>
@@ -407,22 +520,40 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                                                 YEAR IN REVIEW
                                             </h3>
                                             <p className="text-[9px] sm:text-[11px] font-bold text-muted-app">
-                                                Synthesized activity metrics for {user.handle}
+                                                Synthesized activity metrics for{' '}
+                                                {user.handle}
                                             </p>
                                         </div>
 
                                         <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/5">
                                             <div>
-                                                <p className="text-[20px] sm:text-3xl font-black text-emerald-400 font-mono">{solvedCount}</p>
-                                                <p className="text-[8px] uppercase text-muted-app font-bold">Total Solved</p>
+                                                <p className="text-[20px] sm:text-3xl font-black text-emerald-400 font-mono">
+                                                    {solvedCount}
+                                                </p>
+                                                <p className="text-[8px] uppercase text-muted-app font-bold">
+                                                    Total Solved
+                                                </p>
                                             </div>
                                             <div>
-                                                <p className="text-[20px] sm:text-3xl font-black text-emerald-400 font-mono">+{Math.max(0, (user.rating || 800) - 1000)}</p>
-                                                <p className="text-[8px] uppercase text-muted-app font-bold">Rating Gained</p>
+                                                <p className="text-[20px] sm:text-3xl font-black text-emerald-400 font-mono">
+                                                    +
+                                                    {Math.max(
+                                                        0,
+                                                        (user.rating || 800) -
+                                                            1000,
+                                                    )}
+                                                </p>
+                                                <p className="text-[8px] uppercase text-muted-app font-bold">
+                                                    Rating Gained
+                                                </p>
                                             </div>
                                             <div>
-                                                <p className="text-[20px] sm:text-3xl font-black text-emerald-400 font-mono">{ratingHistory.length}</p>
-                                                <p className="text-[8px] uppercase text-muted-app font-bold">Rounds completed</p>
+                                                <p className="text-[20px] sm:text-3xl font-black text-emerald-400 font-mono">
+                                                    {ratingHistory.length}
+                                                </p>
+                                                <p className="text-[8px] uppercase text-muted-app font-bold">
+                                                    Rounds completed
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -439,17 +570,40 @@ export function SocialCards({ user, ratingHistory, submissions }: SocialCardsPro
                                         <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
                                             <div className="p-2 sm:p-3 rounded-xl bg-purple-500/5 border border-purple-500/10 flex items-center justify-between">
                                                 <div>
-                                                    <p className="text-[10px] sm:text-xs font-bold text-text-app">Expert Breakthrough</p>
-                                                    <p className="text-[8px] text-muted-app">Peak above 1600 RP</p>
+                                                    <p className="text-[10px] sm:text-xs font-bold text-text-app">
+                                                        Expert Breakthrough
+                                                    </p>
+                                                    <p className="text-[8px] text-muted-app">
+                                                        Peak above 1600 RP
+                                                    </p>
                                                 </div>
-                                                <CheckCircle size={12} className={user.rating && user.rating >= 1600 ? "text-purple-400" : "text-muted-app/30"} />
+                                                <CheckCircle
+                                                    size={12}
+                                                    className={
+                                                        user.rating &&
+                                                        user.rating >= 1600
+                                                            ? 'text-purple-400'
+                                                            : 'text-muted-app/30'
+                                                    }
+                                                />
                                             </div>
                                             <div className="p-2 sm:p-3 rounded-xl bg-purple-500/5 border border-purple-500/10 flex items-center justify-between">
                                                 <div>
-                                                    <p className="text-[10px] sm:text-xs font-bold text-text-app">DP Architect</p>
-                                                    <p className="text-[8px] text-muted-app">Solved &gt; 10 DP tasks</p>
+                                                    <p className="text-[10px] sm:text-xs font-bold text-text-app">
+                                                        DP Architect
+                                                    </p>
+                                                    <p className="text-[8px] text-muted-app">
+                                                        Solved &gt; 10 DP tasks
+                                                    </p>
                                                 </div>
-                                                <CheckCircle size={12} className={solvedCount > 10 ? "text-purple-400" : "text-muted-app/30"} />
+                                                <CheckCircle
+                                                    size={12}
+                                                    className={
+                                                        solvedCount > 10
+                                                            ? 'text-purple-400'
+                                                            : 'text-muted-app/30'
+                                                    }
+                                                />
                                             </div>
                                         </div>
                                     </div>
