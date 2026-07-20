@@ -64,7 +64,14 @@ import { ErrorState } from './ErrorState';
 import { Timeline } from './Timeline';
 import { RadarStrength } from './RadarStrength';
 import { ProblemDistribution } from './ProblemDistribution';
-import { Milestone, Ghost, Globe, History as HistoryIcon, Brain, MessageSquare } from 'lucide-react';
+import {
+    Milestone,
+    Ghost,
+    Globe,
+    History as HistoryIcon,
+    Brain,
+    MessageSquare,
+} from 'lucide-react';
 
 const getRankColor = (rank: string) => {
     const r = rank?.toLowerCase() || '';
@@ -105,15 +112,56 @@ const generateFallbackUser = (handle: string): User => ({
     registrationTimeSeconds: Math.floor(Date.now() / 1000) - 31536000 * 2,
     friendOfCount: 153,
     avatar: 'https://userpic.codeforces.org/no-avatar.jpg',
-    titlePhoto: 'https://userpic.codeforces.org/no-avatar.jpg'
+    titlePhoto: 'https://userpic.codeforces.org/no-avatar.jpg',
 });
 
 const generateFallbackRatingHistory = (handle: string): RatingChange[] => [
-    { contestId: 1800, contestName: 'Codeforces Round 850 (Div. 2)', handle, rank: 450, ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 100 * 24 * 3600, oldRating: 1400, newRating: 1480 },
-    { contestId: 1810, contestName: 'Codeforces Round 860 (Div. 2)', handle, rank: 250, ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 80 * 24 * 3600, oldRating: 1480, newRating: 1550 },
-    { contestId: 1820, contestName: 'Codeforces Round 870 (Div. 2)', handle, rank: 180, ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 60 * 24 * 3600, oldRating: 1550, newRating: 1680 },
-    { contestId: 1830, contestName: 'Codeforces Round 880 (Div. 2)', handle, rank: 710, ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 40 * 24 * 3600, oldRating: 1680, newRating: 1630 },
-    { contestId: 1840, contestName: 'Codeforces Round 890 (Div. 2)', handle, rank: 310, ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 20 * 24 * 3600, oldRating: 1630, newRating: 1650 },
+    {
+        contestId: 1800,
+        contestName: 'Codeforces Round 850 (Div. 2)',
+        handle,
+        rank: 450,
+        ratingUpdateTimeSeconds:
+            Math.floor(Date.now() / 1000) - 100 * 24 * 3600,
+        oldRating: 1400,
+        newRating: 1480,
+    },
+    {
+        contestId: 1810,
+        contestName: 'Codeforces Round 860 (Div. 2)',
+        handle,
+        rank: 250,
+        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 80 * 24 * 3600,
+        oldRating: 1480,
+        newRating: 1550,
+    },
+    {
+        contestId: 1820,
+        contestName: 'Codeforces Round 870 (Div. 2)',
+        handle,
+        rank: 180,
+        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 60 * 24 * 3600,
+        oldRating: 1550,
+        newRating: 1680,
+    },
+    {
+        contestId: 1830,
+        contestName: 'Codeforces Round 880 (Div. 2)',
+        handle,
+        rank: 710,
+        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 40 * 24 * 3600,
+        oldRating: 1680,
+        newRating: 1630,
+    },
+    {
+        contestId: 1840,
+        contestName: 'Codeforces Round 890 (Div. 2)',
+        handle,
+        rank: 310,
+        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 20 * 24 * 3600,
+        oldRating: 1630,
+        newRating: 1650,
+    },
 ];
 
 const generateFallbackSubmissions = (handle: string): Submission[] => [
@@ -122,57 +170,105 @@ const generateFallbackSubmissions = (handle: string): Submission[] => [
         contestId: 1840,
         creationTimeSeconds: Math.floor(Date.now() / 1000) - 2 * 3600,
         relativeTimeSeconds: 5000,
-        problem: { contestId: 1840, index: 'A', name: 'Sasha and Array Coloring', type: 'PROGRAMMING', rating: 800, tags: ['greedy', 'sortings'] },
-        author: { contestId: 1840, members: [{ handle }], participantType: 'PRACTICE', ghost: false },
+        problem: {
+            contestId: 1840,
+            index: 'A',
+            name: 'Sasha and Array Coloring',
+            type: 'PROGRAMMING',
+            rating: 800,
+            tags: ['greedy', 'sortings'],
+        },
+        author: {
+            contestId: 1840,
+            members: [{ handle }],
+            participantType: 'PRACTICE',
+            ghost: false,
+        },
         programmingLanguage: 'GNU C++20',
         verdict: 'OK',
         testset: 'TESTS',
         passedTestCount: 35,
         timeConsumedMillis: 45,
-        memoryConsumedBytes: 1024 * 1024
+        memoryConsumedBytes: 1024 * 1024,
     },
     {
         id: 200002,
         contestId: 1840,
         creationTimeSeconds: Math.floor(Date.now() / 1000) - 3 * 3600,
         relativeTimeSeconds: 6500,
-        problem: { contestId: 1840, index: 'B', name: 'Binary Cafe', type: 'PROGRAMMING', rating: 1100, tags: ['bitmasks', 'math'] },
-        author: { contestId: 1840, members: [{ handle }], participantType: 'PRACTICE', ghost: false },
+        problem: {
+            contestId: 1840,
+            index: 'B',
+            name: 'Binary Cafe',
+            type: 'PROGRAMMING',
+            rating: 1100,
+            tags: ['bitmasks', 'math'],
+        },
+        author: {
+            contestId: 1840,
+            members: [{ handle }],
+            participantType: 'PRACTICE',
+            ghost: false,
+        },
         programmingLanguage: 'GNU C++20',
         verdict: 'OK',
         testset: 'TESTS',
         passedTestCount: 42,
         timeConsumedMillis: 60,
-        memoryConsumedBytes: 1512 * 1024
+        memoryConsumedBytes: 1512 * 1024,
     },
     {
         id: 200003,
         contestId: 1840,
         creationTimeSeconds: Math.floor(Date.now() / 1000) - 4 * 3600,
         relativeTimeSeconds: 8000,
-        problem: { contestId: 1840, index: 'C', name: 'Ski Resort', type: 'PROGRAMMING', rating: 1200, tags: ['combinatorics', 'greedy', 'math', 'two pointers'] },
-        author: { contestId: 1840, members: [{ handle }], participantType: 'PRACTICE', ghost: false },
+        problem: {
+            contestId: 1840,
+            index: 'C',
+            name: 'Ski Resort',
+            type: 'PROGRAMMING',
+            rating: 1200,
+            tags: ['combinatorics', 'greedy', 'math', 'two pointers'],
+        },
+        author: {
+            contestId: 1840,
+            members: [{ handle }],
+            participantType: 'PRACTICE',
+            ghost: false,
+        },
         programmingLanguage: 'GNU C++20',
         verdict: 'OK',
         testset: 'TESTS',
         passedTestCount: 51,
         timeConsumedMillis: 110,
-        memoryConsumedBytes: 2048 * 1024
+        memoryConsumedBytes: 2048 * 1024,
     },
     {
         id: 200004,
         contestId: 1840,
         creationTimeSeconds: Math.floor(Date.now() / 1000) - 24 * 3600,
         relativeTimeSeconds: 12000,
-        problem: { contestId: 1840, index: 'D', name: 'Wooden Toy Festival', type: 'PROGRAMMING', rating: 1400, tags: ['binary search', 'greedy', 'sortings'] },
-        author: { contestId: 1840, members: [{ handle }], participantType: 'PRACTICE', ghost: false },
+        problem: {
+            contestId: 1840,
+            index: 'D',
+            name: 'Wooden Toy Festival',
+            type: 'PROGRAMMING',
+            rating: 1400,
+            tags: ['binary search', 'greedy', 'sortings'],
+        },
+        author: {
+            contestId: 1840,
+            members: [{ handle }],
+            participantType: 'PRACTICE',
+            ghost: false,
+        },
         programmingLanguage: 'GNU C++20',
         verdict: 'WRONG_ANSWER',
         testset: 'TESTS',
         passedTestCount: 12,
         timeConsumedMillis: 30,
-        memoryConsumedBytes: 512 * 1024
-    }
+        memoryConsumedBytes: 512 * 1024,
+    },
 ];
 
 export function Dashboard() {
@@ -294,26 +390,33 @@ export function Dashboard() {
             let s: Submission[];
 
             try {
-                const [fetchedUser, fetchedRating, fetchedStatus] = await Promise.all([
-                    CodeforcesService.getUserInfo(h),
-                    CodeforcesService.getUserRating(h),
-                    CodeforcesService.getUserStatus(h),
-                ]);
+                const [fetchedUser, fetchedRating, fetchedStatus] =
+                    await Promise.all([
+                        CodeforcesService.getUserInfo(h),
+                        CodeforcesService.getUserRating(h),
+                        CodeforcesService.getUserStatus(h),
+                    ]);
                 u = fetchedUser;
                 r = fetchedRating;
                 s = fetchedStatus;
             } catch (err: any) {
                 // If it is a 404 User Not Found, propagate it
-                const is404 = err.response?.status === 404 || 
-                              err.message?.toLowerCase().includes('not found') || 
-                              err.response?.data?.comment?.toLowerCase().includes('not found');
-                
+                const is404 =
+                    err.response?.status === 404 ||
+                    err.message?.toLowerCase().includes('not found') ||
+                    err.response?.data?.comment
+                        ?.toLowerCase()
+                        .includes('not found');
+
                 if (is404) {
                     throw err;
                 }
 
                 // Otherwise fall back to simulated profile
-                console.warn('Critical fetch failed, falling back to simulated trace data:', err);
+                console.warn(
+                    'Critical fetch failed, falling back to simulated trace data:',
+                    err,
+                );
                 setIsOfflineMode(true);
                 u = generateFallbackUser(h);
                 r = generateFallbackRatingHistory(h);
@@ -577,8 +680,12 @@ export function Dashboard() {
         | 'predictor'
         | 'contest-analyzer'
     >('overview');
-    const [socialSubTab, setSocialSubTab] = useState<'cards' | 'stream'>('cards');
-    const [activeAiTool, setActiveAiTool] = useState<'roadmap' | 'chat' | 'weakness'>('chat');
+    const [socialSubTab, setSocialSubTab] = useState<'cards' | 'stream'>(
+        'cards',
+    );
+    const [activeAiTool, setActiveAiTool] = useState<
+        'roadmap' | 'chat' | 'weakness'
+    >('chat');
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [heatmapRange, setHeatmapRange] = useState<
@@ -895,9 +1002,19 @@ export function Dashboard() {
                     {isOfflineMode && (
                         <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex flex-col sm:flex-row items-center sm:items-start justify-between gap-3 backdrop-blur-md">
                             <div className="flex items-center gap-2.5">
-                                <AlertTriangle size={16} className="text-amber-400 shrink-0" />
+                                <AlertTriangle
+                                    size={16}
+                                    className="text-amber-400 shrink-0"
+                                />
                                 <p className="leading-relaxed text-left">
-                                    <strong>Codeforces API is currently experiencing issues (Status 503/429).</strong> Showing simulated trace metrics and fallback profile statistics for <strong>{handle}</strong> to keep your dashboard interactive.
+                                    <strong>
+                                        Codeforces API is currently experiencing
+                                        issues (Status 503/429).
+                                    </strong>{' '}
+                                    Showing simulated trace metrics and fallback
+                                    profile statistics for{' '}
+                                    <strong>{handle}</strong> to keep your
+                                    dashboard interactive.
                                 </p>
                             </div>
                             <Button
@@ -1714,7 +1831,7 @@ export function Dashboard() {
                             {activeTab === 'ai' && (
                                 <div className="space-y-6 md:space-y-8">
                                     {/* AI Command Center Header */}
-                                    <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-brand-primary/10 via-brand-secondary/5 to-transparent p-6 relative overflow-hidden">
+                                    <div className="rounded-3xl border border-white/10 bg-linear-to-r from-brand-primary/10 via-brand-secondary/5 to-transparent p-6 relative overflow-hidden">
                                         <div className="absolute top-0 right-0 w-80 h-80 bg-brand-primary/5 rounded-full blur-3xl pointer-events-none" />
                                         <div className="relative z-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
                                             <div>
@@ -1728,29 +1845,53 @@ export function Dashboard() {
                                                     AI Command Center
                                                 </h2>
                                                 <p className="text-xs text-muted-app mt-1 leading-relaxed max-w-xl">
-                                                    Unlock personalized growth strategies, conversational problem-solving coaching, and real-time behavioral diagnostics.
+                                                    Unlock personalized growth
+                                                    strategies, conversational
+                                                    problem-solving coaching,
+                                                    and real-time behavioral
+                                                    diagnostics.
                                                 </p>
                                             </div>
                                             <div className="flex flex-wrap gap-2.5">
                                                 {[
-                                                    { id: 'chat', label: 'Chat Coach', icon: MessageSquare },
-                                                    { id: 'roadmap', label: 'Growth Roadmap', icon: Milestone },
-                                                    { id: 'weakness', label: 'Weakness Diagnostic', icon: Brain },
+                                                    {
+                                                        id: 'chat',
+                                                        label: 'Chat Coach',
+                                                        icon: MessageSquare,
+                                                    },
+                                                    {
+                                                        id: 'roadmap',
+                                                        label: 'Growth Roadmap',
+                                                        icon: Milestone,
+                                                    },
+                                                    {
+                                                        id: 'weakness',
+                                                        label: 'Weakness Diagnostic',
+                                                        icon: Brain,
+                                                    },
                                                 ].map((tool) => {
                                                     const ToolIcon = tool.icon;
-                                                    const isSelected = activeAiTool === tool.id;
+                                                    const isSelected =
+                                                        activeAiTool ===
+                                                        tool.id;
                                                     return (
                                                         <button
                                                             key={tool.id}
-                                                            onClick={() => setActiveAiTool(tool.id as any)}
+                                                            onClick={() =>
+                                                                setActiveAiTool(
+                                                                    tool.id as any,
+                                                                )
+                                                            }
                                                             className={cn(
-                                                                "flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 border cursor-pointer",
+                                                                'flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 border cursor-pointer',
                                                                 isSelected
-                                                                    ? "bg-brand-primary text-black border-brand-primary shadow-lg shadow-brand-primary/20"
-                                                                    : "bg-white/5 text-muted-app border-white/5 hover:border-white/10 hover:bg-white/10 hover:text-text-app"
+                                                                    ? 'bg-brand-primary text-black border-brand-primary shadow-lg shadow-brand-primary/20'
+                                                                    : 'bg-white/5 text-muted-app border-white/5 hover:border-white/10 hover:bg-white/10 hover:text-text-app',
                                                             )}
                                                         >
-                                                            <ToolIcon size={14} />
+                                                            <ToolIcon
+                                                                size={14}
+                                                            />
                                                             {tool.label}
                                                         </button>
                                                     );
@@ -1772,12 +1913,18 @@ export function Dashboard() {
                                                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
                                                     {/* AI Chat Coach - Main Window */}
                                                     <div className="lg:col-span-8">
-                                                        <Card className="p-5 md:p-6 flex flex-col h-[600px]">
+                                                        <Card className="p-5 md:p-6 flex flex-col h-150">
                                                             <AIChatCoach
                                                                 user={user}
-                                                                submissions={submissions}
-                                                                analytics={analytics}
-                                                                ratingHistory={ratingHistory}
+                                                                submissions={
+                                                                    submissions
+                                                                }
+                                                                analytics={
+                                                                    analytics
+                                                                }
+                                                                ratingHistory={
+                                                                    ratingHistory
+                                                                }
                                                             />
                                                         </Card>
                                                     </div>
@@ -1787,30 +1934,66 @@ export function Dashboard() {
                                                         {/* Dynamic Focus Recommendation */}
                                                         <Card className="p-5 md:p-6 bg-brand-primary/5 border-brand-primary/10">
                                                             <h4 className="text-[10px] font-black text-brand-primary uppercase tracking-widest mb-3">
-                                                                Focus Recommendation
+                                                                Focus
+                                                                Recommendation
                                                             </h4>
                                                             {analytics ? (
                                                                 <>
                                                                     <p className="text-xs font-bold text-text-app mb-1 leading-relaxed">
-                                                                        Based on your stats, prioritize{' '}
+                                                                        Based on
+                                                                        your
+                                                                        stats,
+                                                                        prioritize{' '}
                                                                         <span className="text-brand-primary">
-                                                                            {analytics.bestTag}
+                                                                            {
+                                                                                analytics.bestTag
+                                                                            }
                                                                         </span>{' '}
-                                                                        and target problems rated{' '}
+                                                                        and
+                                                                        target
+                                                                        problems
+                                                                        rated{' '}
                                                                         <span className="text-brand-primary">
-                                                                            {(user?.rating ?? 800) + 100}–{Math.min((user?.rating ?? 800) + 300, 3500)}
-                                                                        </span>.
+                                                                            {(user?.rating ??
+                                                                                800) +
+                                                                                100}
+                                                                            –
+                                                                            {Math.min(
+                                                                                (user?.rating ??
+                                                                                    800) +
+                                                                                    300,
+                                                                                3500,
+                                                                            )}
+                                                                        </span>
+                                                                        .
                                                                     </p>
                                                                     <p className="text-[10px] text-muted-app/60 leading-relaxed">
-                                                                        Your {analytics.deltaSuccessRate}% contest win rate and {analytics.accuracy}% accuracy suggest{' '}
-                                                                        {Number(analytics.deltaSuccessRate) >= 50
+                                                                        Your{' '}
+                                                                        {
+                                                                            analytics.deltaSuccessRate
+                                                                        }
+                                                                        %
+                                                                        contest
+                                                                        win rate
+                                                                        and{' '}
+                                                                        {
+                                                                            analytics.accuracy
+                                                                        }
+                                                                        %
+                                                                        accuracy
+                                                                        suggest{' '}
+                                                                        {Number(
+                                                                            analytics.deltaSuccessRate,
+                                                                        ) >= 50
                                                                             ? 'you\u2019re ready to push harder \u2014 attempt Div 2 C/D problems.'
                                                                             : 'consistency training will drive your next rating breakthrough.'}
                                                                     </p>
                                                                 </>
                                                             ) : (
                                                                 <p className="text-[10px] text-muted-app/50">
-                                                                    Loading your profile data...
+                                                                    Loading your
+                                                                    profile
+                                                                    data...
                                                                 </p>
                                                             )}
                                                         </Card>
@@ -1818,35 +2001,83 @@ export function Dashboard() {
                                                         {/* Live Session Stats */}
                                                         <Card className="p-5 md:p-6">
                                                             <h4 className="text-[10px] font-black text-muted-app uppercase tracking-widest mb-4">
-                                                                Live Session Stats
+                                                                Live Session
+                                                                Stats
                                                             </h4>
                                                             <div className="space-y-3.5">
                                                                 {[
                                                                     {
                                                                         label: 'Intensity',
                                                                         value: liveSessionStats.intensity,
-                                                                        color: liveSessionStats.intensity === 'High' ? 'text-emerald-400' : liveSessionStats.intensity === 'Medium' ? 'text-yellow-400' : 'text-orange-400',
+                                                                        color:
+                                                                            liveSessionStats.intensity ===
+                                                                            'High'
+                                                                                ? 'text-emerald-400'
+                                                                                : liveSessionStats.intensity ===
+                                                                                    'Medium'
+                                                                                  ? 'text-yellow-400'
+                                                                                  : 'text-orange-400',
                                                                     },
                                                                     {
                                                                         label: 'Streak',
-                                                                        value: liveSessionStats.streak > 0 ? `${liveSessionStats.streak} day${liveSessionStats.streak !== 1 ? 's' : ''}` : 'No streak',
-                                                                        color: liveSessionStats.streak > 7 ? 'text-emerald-400' : liveSessionStats.streak > 2 ? 'text-brand-primary' : 'text-muted-app/50',
+                                                                        value:
+                                                                            liveSessionStats.streak >
+                                                                            0
+                                                                                ? `${liveSessionStats.streak} day${liveSessionStats.streak !== 1 ? 's' : ''}`
+                                                                                : 'No streak',
+                                                                        color:
+                                                                            liveSessionStats.streak >
+                                                                            7
+                                                                                ? 'text-emerald-400'
+                                                                                : liveSessionStats.streak >
+                                                                                    2
+                                                                                  ? 'text-brand-primary'
+                                                                                  : 'text-muted-app/50',
                                                                     },
                                                                     {
                                                                         label: 'Efficiency',
                                                                         value: liveSessionStats.efficiency,
-                                                                        color: Number(analytics?.accuracy ?? 0) >= 70 ? 'text-emerald-400' : Number(analytics?.accuracy ?? 0) >= 50 ? 'text-yellow-400' : 'text-orange-400',
-                                                                    }
-                                                                ].map((item) => (
-                                                                    <div key={item.label} className="flex items-center justify-between">
-                                                                        <span className="text-[10px] font-bold text-muted-app/50 uppercase tracking-wide">
-                                                                            {item.label}
-                                                                        </span>
-                                                                        <span className={cn('text-xs font-black uppercase', item.color)}>
-                                                                            {item.value}
-                                                                        </span>
-                                                                    </div>
-                                                                ))}
+                                                                        color:
+                                                                            Number(
+                                                                                analytics?.accuracy ??
+                                                                                    0,
+                                                                            ) >=
+                                                                            70
+                                                                                ? 'text-emerald-400'
+                                                                                : Number(
+                                                                                        analytics?.accuracy ??
+                                                                                            0,
+                                                                                    ) >=
+                                                                                    50
+                                                                                  ? 'text-yellow-400'
+                                                                                  : 'text-orange-400',
+                                                                    },
+                                                                ].map(
+                                                                    (item) => (
+                                                                        <div
+                                                                            key={
+                                                                                item.label
+                                                                            }
+                                                                            className="flex items-center justify-between"
+                                                                        >
+                                                                            <span className="text-[10px] font-bold text-muted-app/50 uppercase tracking-wide">
+                                                                                {
+                                                                                    item.label
+                                                                                }
+                                                                            </span>
+                                                                            <span
+                                                                                className={cn(
+                                                                                    'text-xs font-black uppercase',
+                                                                                    item.color,
+                                                                                )}
+                                                                            >
+                                                                                {
+                                                                                    item.value
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    ),
+                                                                )}
                                                             </div>
                                                         </Card>
 
@@ -1859,29 +2090,51 @@ export function Dashboard() {
                                                                 {[
                                                                     {
                                                                         label: 'Contests',
-                                                                        value: analytics?.contestCount ?? 0,
+                                                                        value:
+                                                                            analytics?.contestCount ??
+                                                                            0,
                                                                         color: 'text-brand-secondary',
                                                                     },
                                                                     {
                                                                         label: 'Avg Rank',
-                                                                        value: analytics?.avgRank ? `#${analytics.avgRank}` : '—',
+                                                                        value: analytics?.avgRank
+                                                                            ? `#${analytics.avgRank}`
+                                                                            : '—',
                                                                         color: 'text-text-app',
                                                                     },
                                                                     {
                                                                         label: 'Best Delta',
-                                                                        value: analytics?.maxDelta ? `+${analytics.maxDelta}` : '—',
+                                                                        value: analytics?.maxDelta
+                                                                            ? `+${analytics.maxDelta}`
+                                                                            : '—',
                                                                         color: 'text-emerald-400',
-                                                                    }
-                                                                ].map((item) => (
-                                                                    <div key={item.label} className="flex items-center justify-between">
-                                                                        <span className="text-[10px] font-bold text-muted-app/50 uppercase tracking-wide">
-                                                                            {item.label}
-                                                                        </span>
-                                                                        <span className={cn('text-xs font-black', item.color)}>
-                                                                            {item.value}
-                                                                        </span>
-                                                                    </div>
-                                                                ))}
+                                                                    },
+                                                                ].map(
+                                                                    (item) => (
+                                                                        <div
+                                                                            key={
+                                                                                item.label
+                                                                            }
+                                                                            className="flex items-center justify-between"
+                                                                        >
+                                                                            <span className="text-[10px] font-bold text-muted-app/50 uppercase tracking-wide">
+                                                                                {
+                                                                                    item.label
+                                                                                }
+                                                                            </span>
+                                                                            <span
+                                                                                className={cn(
+                                                                                    'text-xs font-black',
+                                                                                    item.color,
+                                                                                )}
+                                                                            >
+                                                                                {
+                                                                                    item.value
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    ),
+                                                                )}
                                                             </div>
                                                         </Card>
                                                     </div>
@@ -1890,46 +2143,61 @@ export function Dashboard() {
 
                                             {activeAiTool === 'roadmap' && (
                                                 <Card className="p-0 overflow-hidden flex flex-col h-full">
-                                                    <div className="p-5 md:p-6 border-b border-white/5 bg-gradient-to-r from-brand-primary/10 via-transparent to-transparent">
+                                                    <div className="p-5 md:p-6 border-b border-white/5 bg-linear-to-r from-brand-primary/10 via-transparent to-transparent">
                                                         <h3 className="text-lg font-display font-bold text-text-app">
                                                             Intelligence Roadmap
                                                         </h3>
                                                         <p className="text-[10px] font-mono text-muted-app uppercase tracking-[0.2em] mt-1 opacity-50">
-                                                            AI-generated growth strategy
+                                                            AI-generated growth
+                                                            strategy
                                                         </p>
                                                     </div>
                                                     <div className="p-5 md:p-6 flex-1">
                                                         <AIRoadmap
                                                             user={user}
-                                                            submissions={submissions}
-                                                            analytics={analytics}
+                                                            submissions={
+                                                                submissions
+                                                            }
+                                                            analytics={
+                                                                analytics
+                                                            }
                                                         />
                                                     </div>
                                                 </Card>
                                             )}
 
                                             {activeAiTool === 'weakness' && (
-                                                <Card className="p-5 md:p-8 relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-transparent to-transparent shadow-[0_12px_36px_rgba(0,0,0,0.14)] backdrop-blur-md">
+                                                <Card className="p-5 md:p-8 relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-white/5 via-transparent to-transparent shadow-[0_12px_36px_rgba(0,0,0,0.14)] backdrop-blur-md">
                                                     <div className="flex items-center gap-3 mb-6">
-                                                        <Brain className="text-brand-primary animate-pulse" size={24} />
+                                                        <Brain
+                                                            className="text-brand-primary animate-pulse"
+                                                            size={24}
+                                                        />
                                                         <div>
                                                             <h3 className="text-lg font-display font-bold text-text-app">
-                                                                Cognitive Weakness Analysis
+                                                                Cognitive
+                                                                Weakness
+                                                                Analysis
                                                             </h3>
                                                             <p className="text-[10px] font-mono text-muted-app uppercase tracking-[0.2em]">
-                                                                Automated weakness and skill diagnostics
+                                                                Automated
+                                                                weakness and
+                                                                skill
+                                                                diagnostics
                                                             </p>
                                                         </div>
                                                     </div>
                                                     <AIWeaknessAnalyzer
-                                                        submissions={submissions}
+                                                        submissions={
+                                                            submissions
+                                                        }
                                                         analytics={analytics}
-                                                        currentRating={user?.rating ?? 800}
+                                                        currentRating={
+                                                            user?.rating ?? 800
+                                                        }
                                                     />
                                                 </Card>
                                             )}
-
-
                                         </motion.div>
                                     </AnimatePresence>
                                 </div>
@@ -2162,23 +2430,27 @@ export function Dashboard() {
                                     {/* Inner sub-tabs selector */}
                                     <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white/5 border border-white/10 w-fit">
                                         <button
-                                            onClick={() => setSocialSubTab('cards')}
+                                            onClick={() =>
+                                                setSocialSubTab('cards')
+                                            }
                                             className={cn(
-                                                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300",
+                                                'px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300',
                                                 socialSubTab === 'cards'
-                                                    ? "bg-brand-primary text-black shadow-md shadow-brand-primary/20"
-                                                    : "text-muted-app hover:text-text-app hover:bg-white/5"
+                                                    ? 'bg-brand-primary text-black shadow-md shadow-brand-primary/20'
+                                                    : 'text-muted-app hover:text-text-app hover:bg-white/5',
                                             )}
                                         >
                                             Share Achievements
                                         </button>
                                         <button
-                                            onClick={() => setSocialSubTab('stream')}
+                                            onClick={() =>
+                                                setSocialSubTab('stream')
+                                            }
                                             className={cn(
-                                                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300",
+                                                'px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300',
                                                 socialSubTab === 'stream'
-                                                    ? "bg-brand-primary text-black shadow-md shadow-brand-primary/20"
-                                                    : "text-muted-app hover:text-text-app hover:bg-white/5"
+                                                    ? 'bg-brand-primary text-black shadow-md shadow-brand-primary/20'
+                                                    : 'text-muted-app hover:text-text-app hover:bg-white/5',
                                             )}
                                         >
                                             Community Stream & Stats
@@ -2198,10 +2470,12 @@ export function Dashboard() {
                                                     <div className="flex items-center justify-between mb-8">
                                                         <div>
                                                             <h3 className="text-xl md:text-2xl font-display font-bold text-text-app">
-                                                                Engagement Stream
+                                                                Engagement
+                                                                Stream
                                                             </h3>
                                                             <p className="text-[10px] font-mono text-muted-app uppercase tracking-[0.2em] mt-2 opacity-40">
-                                                                Public blog entries and
+                                                                Public blog
+                                                                entries and
                                                                 announcements
                                                             </p>
                                                         </div>
@@ -2212,68 +2486,72 @@ export function Dashboard() {
 
                                                     {blogs.length > 0 ? (
                                                         <div className="space-y-6">
-                                                            {blogs.map((blog) => (
-                                                                <div
-                                                                    key={blog.id}
-                                                                    className="p-4 md:p-6 rounded-xl md:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group"
-                                                                    onClick={() =>
-                                                                        window.open(
-                                                                            `https://codeforces.com/blog/entry/${blog.id}`,
-                                                                            '_blank',
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <div className="flex items-center justify-between mb-3">
-                                                                        <span className="text-[9px] font-mono font-bold text-brand-primary uppercase tracking-[0.2em]">
-                                                                            {format(
-                                                                                new Date(
-                                                                                    blog.creationTimeSeconds *
-                                                                                        1000,
-                                                                                ),
-                                                                                'MMM dd, yyyy',
-                                                                            )}
-                                                                        </span>
-                                                                        <div className="flex items-center gap-4 text-muted-app text-[10px] font-bold">
-                                                                            <div className="flex items-center gap-1">
-                                                                                <ArrowUp
-                                                                                    size={
-                                                                                        12
+                                                            {blogs.map(
+                                                                (blog) => (
+                                                                    <div
+                                                                        key={
+                                                                            blog.id
+                                                                        }
+                                                                        className="p-4 md:p-6 rounded-xl md:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group"
+                                                                        onClick={() =>
+                                                                            window.open(
+                                                                                `https://codeforces.com/blog/entry/${blog.id}`,
+                                                                                '_blank',
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <div className="flex items-center justify-between mb-3">
+                                                                            <span className="text-[9px] font-mono font-bold text-brand-primary uppercase tracking-[0.2em]">
+                                                                                {format(
+                                                                                    new Date(
+                                                                                        blog.creationTimeSeconds *
+                                                                                            1000,
+                                                                                    ),
+                                                                                    'MMM dd, yyyy',
+                                                                                )}
+                                                                            </span>
+                                                                            <div className="flex items-center gap-4 text-muted-app text-[10px] font-bold">
+                                                                                <div className="flex items-center gap-1">
+                                                                                    <ArrowUp
+                                                                                        size={
+                                                                                            12
+                                                                                        }
+                                                                                        className="text-emerald-500"
+                                                                                    />
+                                                                                    {
+                                                                                        blog.rating
                                                                                     }
-                                                                                    className="text-emerald-500"
-                                                                                />
-                                                                                {
-                                                                                    blog.rating
-                                                                                }
+                                                                                </div>
                                                                             </div>
                                                                         </div>
+                                                                        <h4 className="text-base font-bold text-text-app group-hover:text-brand-primary transition-colors wrap-break-word whitespace-normal mb-2">
+                                                                            {blog.title.replace(
+                                                                                /<\/?[^>]+(>|$)/g,
+                                                                                '',
+                                                                            )}
+                                                                        </h4>
+                                                                        <div className="flex items-center gap-3">
+                                                                            {blog.tags.map(
+                                                                                (
+                                                                                    tag: string,
+                                                                                ) => (
+                                                                                    <span
+                                                                                        key={
+                                                                                            tag
+                                                                                        }
+                                                                                        className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-muted-app/60 border border-white/5"
+                                                                                    >
+                                                                                        #
+                                                                                        {
+                                                                                            tag
+                                                                                        }
+                                                                                    </span>
+                                                                                ),
+                                                                            )}
+                                                                        </div>
                                                                     </div>
-                                                                    <h4 className="text-base font-bold text-text-app group-hover:text-brand-primary transition-colors wrap-break-word whitespace-normal mb-2">
-                                                                        {blog.title.replace(
-                                                                            /<\/?[^>]+(>|$)/g,
-                                                                            '',
-                                                                        )}
-                                                                    </h4>
-                                                                    <div className="flex items-center gap-3">
-                                                                        {blog.tags.map(
-                                                                            (
-                                                                                tag: string,
-                                                                            ) => (
-                                                                                <span
-                                                                                    key={
-                                                                                        tag
-                                                                                    }
-                                                                                    className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-muted-app/60 border border-white/5"
-                                                                                >
-                                                                                    #
-                                                                                    {
-                                                                                        tag
-                                                                                    }
-                                                                                </span>
-                                                                            ),
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            ))}
+                                                                ),
+                                                            )}
                                                         </div>
                                                     ) : (
                                                         <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -2282,8 +2560,9 @@ export function Dashboard() {
                                                                 className="text-muted-app opacity-20 mb-4"
                                                             />
                                                             <p className="text-sm font-medium text-muted-app">
-                                                                No public blog entries
-                                                                found for this user.
+                                                                No public blog
+                                                                entries found
+                                                                for this user.
                                                             </p>
                                                         </div>
                                                     )}
@@ -2298,10 +2577,12 @@ export function Dashboard() {
                                                     <div className="space-y-6">
                                                         <div className="p-5 md:p-6 rounded-2xl bg-brand-primary/5 border border-brand-primary/10">
                                                             <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-2 opacity-60">
-                                                                Total Contribution
+                                                                Total
+                                                                Contribution
                                                             </p>
                                                             <p className="text-3xl font-display font-black text-text-app">
-                                                                {user.contribution || 0}
+                                                                {user.contribution ||
+                                                                    0}
                                                             </p>
                                                         </div>
                                                         <div className="p-5 md:p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10">
@@ -2310,10 +2591,12 @@ export function Dashboard() {
                                                             </p>
                                                             <p className="text-3xl font-display font-black text-text-app">
                                                                 {(user as any)
-                                                                    .friendOfCount || 0}
+                                                                    .friendOfCount ||
+                                                                    0}
                                                             </p>
                                                             <p className="text-[9px] text-muted-app mt-1 uppercase font-bold tracking-tighter">
-                                                                Followers on Codeforces
+                                                                Followers on
+                                                                Codeforces
                                                             </p>
                                                         </div>
                                                         <div className="p-5 md:p-6 rounded-2xl bg-orange-500/5 border border-orange-500/10">
@@ -2393,7 +2676,7 @@ export function Dashboard() {
             <AnimatePresence>
                 {isProfileModalOpen && (
                     <div
-                        className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 backdrop-blur-xl"
+                        className="fixed inset-0 z-200 flex items-center justify-center p-4 sm:p-6 backdrop-blur-xl"
                         style={{ background: 'var(--overlay-bg)' }}
                         onClick={() => setIsProfileModalOpen(false)}
                     >
@@ -2401,7 +2684,7 @@ export function Dashboard() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="w-full max-w-2xl rounded-[24px] sm:rounded-[40px] overflow-hidden shadow-3xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
+                            className="w-full max-w-2xl rounded-3xl sm:rounded-[40px] overflow-hidden shadow-3xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
                             style={{
                                 background: 'var(--bg-app)',
                                 border: '1px solid var(--glass-border)',
@@ -2590,7 +2873,7 @@ export function Dashboard() {
             <AnimatePresence>
                 {selectedSubmission && (
                     <div
-                        className="fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md"
+                        className="fixed inset-0 z-200 flex items-center justify-center p-6 backdrop-blur-md"
                         style={{ background: 'var(--overlay-bg)' }}
                         onClick={() => setSelectedSubmission(null)}
                     >
