@@ -137,8 +137,9 @@ export function AIContestDebrief({
     const activeContest = React.useMemo(() => {
         if (!selectedContestId) return null;
         return (
-            ratingHistory.find((h) => h.contestId.toString() === selectedContestId) ||
-            null
+            ratingHistory.find(
+                (h) => h.contestId.toString() === selectedContestId,
+            ) || null
         );
     }, [selectedContestId, ratingHistory]);
 
@@ -244,7 +245,11 @@ Return ONLY a JSON object with these fields:
                 );
             } else {
                 setDebrief(
-                    generateFallbackDebrief(ratingHistory, currentRating, handle),
+                    generateFallbackDebrief(
+                        ratingHistory,
+                        currentRating,
+                        handle,
+                    ),
                 );
             }
         } finally {
@@ -322,7 +327,7 @@ Return ONLY a JSON object with these fields:
                     <div
                         key={i}
                         className={cn(
-                            'text-center rounded-xl px-3 py-1.5 text-xs font-black border transition-colors flex-1 sm:flex-initial min-w-[50px]',
+                            'text-center rounded-xl px-3 py-1.5 text-xs font-black border transition-colors flex-1 sm:flex-initial min-w-12.5',
                             d > 0
                                 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                                 : d < 0
