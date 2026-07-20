@@ -34,7 +34,10 @@ export class CodeforcesService {
                 return this.fetch(url, retries - 1);
             }
             if (error.response?.status && error.response.status < 500) {
-                console.warn(`Error fetching ${url} (Status ${error.response.status}):`, error.message);
+                console.warn(
+                    `Error fetching ${url} (Status ${error.response.status}):`,
+                    error.message,
+                );
             } else {
                 console.error(`Error fetching ${url}:`, error.message);
             }
