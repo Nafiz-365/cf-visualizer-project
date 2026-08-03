@@ -108,7 +108,7 @@ export function Leaderboards() {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="mb-6 bg-brand-primary/10 p-4 rounded-3xl text-brand-primary border border-brand-primary/20"
+                    className="mb-6 bg-brand-primary/10 p-4 rounded-3xl text-brand-primary border border-brand-primary/30 shadow-[0_0_30px_rgba(79,142,247,0.3)] animate-pulse"
                 >
                     <Trophy size={24} className="md:w-8 md:h-8" />
                 </motion.div>
@@ -121,15 +121,15 @@ export function Leaderboards() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-                <div className="lg:col-span-2 space-y-6 md:space-y-8">
-                    <Card className="p-0 overflow-hidden">
+            <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.95fr] gap-6 md:gap-8 items-start">
+                <div className="space-y-6 md:space-y-8">
+                    <Card className="p-0 overflow-hidden h-full">
                         <div className="p-5 md:p-8 border-b border-white/5 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                             <div>
-                                <h3 className="text-base md:text-xl font-display font-bold text-text-app tracking-tight mb-1">
-                                    Top Rated Users
+                                <h3 className="text-base md:text-xl font-display font-black text-text-app tracking-tight mb-1">
+                                    TOP RATED ENTITIES
                                 </h3>
-                                <p className="text-[10px] uppercase font-mono font-bold tracking-widest text-muted-app">
+                                <p className="text-[10px] uppercase font-mono font-bold tracking-widest text-brand-primary/80">
                                     Global Standings (Updated Daily)
                                 </p>
                             </div>
@@ -148,20 +148,26 @@ export function Leaderboards() {
                             </div>
                         </div>
 
-                        <div className="overflow-y-auto max-h-200 custom-scrollbar overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="sticky top-0 z-10 bg-bg-app shadow-sm shadow-white/5">
-                                    <tr className="border-b border-white/5">
-                                        <th className="px-3 md:px-8 py-2.5 md:py-4 text-[9px] md:text-[10px] font-black text-muted-app uppercase tracking-widest">
+                        <div className="overflow-y-auto max-h-76 sm:max-h-92 md:max-h-108 custom-scrollbar overflow-x-auto">
+                            <table className="w-full text-left table-fixed">
+                                <colgroup>
+                                    <col className="w-16 md:w-20" />
+                                    <col className="w-auto" />
+                                    <col className="w-20 md:w-28" />
+                                    <col className="w-24 md:w-36" />
+                                </colgroup>
+                                <thead className="sticky top-0 z-10 bg-bg-app/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)] border-b border-brand-primary/20">
+                                    <tr>
+                                        <th className="px-2 sm:px-3 md:px-6 py-3 md:py-4 text-[9px] md:text-[11px] font-black text-brand-primary uppercase tracking-widest font-mono text-left">
                                             Rank
                                         </th>
-                                        <th className="px-3 md:px-8 py-2.5 md:py-4 text-[9px] md:text-[10px] font-black text-muted-app uppercase tracking-widest">
+                                        <th className="px-2 sm:px-3 md:px-6 py-3 md:py-4 text-[9px] md:text-[11px] font-black text-brand-primary uppercase tracking-widest font-mono text-left">
                                             Handle
                                         </th>
-                                        <th className="px-3 md:px-8 py-2.5 md:py-4 text-[9px] md:text-[10px] font-black text-muted-app uppercase tracking-widest">
+                                        <th className="px-2 sm:px-3 md:px-6 py-3 md:py-4 text-[9px] md:text-[11px] font-black text-brand-primary uppercase tracking-widest font-mono text-left">
                                             Rating
                                         </th>
-                                        <th className="px-3 md:px-8 py-2.5 md:py-4 text-[9px] md:text-[10px] font-black text-muted-app uppercase tracking-widest text-right">
+                                        <th className="px-2 sm:px-3 md:px-6 py-3 md:py-4 text-[9px] md:text-[11px] font-black text-brand-primary uppercase tracking-widest font-mono text-left">
                                             Location
                                         </th>
                                     </tr>
@@ -186,17 +192,17 @@ export function Leaderboards() {
                                               .map((user, i) => (
                                                   <tr
                                                       key={user.handle}
-                                                      className="group hover:bg-white/3 transition-colors cursor-pointer"
+                                                      className="group hover:bg-card-app/50 transition-all cursor-pointer hover:shadow-[inset_0_0_20px_rgba(79,142,247,0.1)] border-b border-white/5 last:border-0"
                                                       onClick={() =>
                                                           navigate(
                                                               `/dashboard/${user.handle}`,
                                                           )
                                                       }
                                                   >
-                                                      <td className="px-3 md:px-8 py-2.5 md:py-4">
+                                                      <td className="px-2 sm:px-3 md:px-6 py-2 md:py-3">
                                                           <span
                                                               className={cn(
-                                                                  'text-[10px] md:text-xs font-black px-1.5 md:px-2 py-0.5 md:py-1 rounded bg-white/5 border border-white/10',
+                                                                  'text-[9px] sm:text-[10px] md:text-xs font-black px-1.5 md:px-2 py-0.5 md:py-1 rounded bg-white/5 border border-white/10',
                                                                   i === 0 &&
                                                                       'text-amber-400 bg-amber-400/10 border-amber-400/20',
                                                                   i === 1 &&
@@ -208,10 +214,10 @@ export function Leaderboards() {
                                                               #{i + 1}
                                                           </span>
                                                       </td>
-                                                      <td className="px-3 md:px-8 py-2.5 md:py-4">
-                                                          <div className="flex items-center gap-2 md:gap-3">
+                                                      <td className="px-2 sm:px-3 md:px-6 py-2 md:py-3 overflow-hidden">
+                                                          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 min-w-0">
                                                               <div
-                                                                  className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center font-black text-[9px] md:text-[10px] text-white shrink-0"
+                                                                  className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center font-black text-[9px] md:text-[10px] text-white shrink-0"
                                                                   style={{
                                                                       backgroundColor:
                                                                           CodeforcesService.getRankColor(
@@ -223,13 +229,13 @@ export function Leaderboards() {
                                                                       .charAt(0)
                                                                       .toUpperCase()}
                                                               </div>
-                                                              <div className="min-w-0">
-                                                                  <p className="text-xs md:text-sm font-bold text-text-app group-hover:text-brand-primary transition-colors wrap-break-word whitespace-normal max-w-20 sm:max-w-37.5 md:max-w-none">
+                                                              <div className="min-w-0 overflow-hidden">
+                                                                  <p className="text-[11px] sm:text-xs md:text-sm font-bold text-text-app group-hover:text-brand-primary transition-colors truncate">
                                                                       {
                                                                           user.handle
                                                                       }
                                                                   </p>
-                                                                  <p className="text-[8px] md:text-[10px] font-mono text-muted-app uppercase tracking-widest wrap-break-word whitespace-normal">
+                                                                  <p className="text-[8px] md:text-[10px] font-mono text-muted-app uppercase tracking-widest truncate">
                                                                       {(
                                                                           user.rank ||
                                                                           'Newbie'
@@ -241,16 +247,16 @@ export function Leaderboards() {
                                                               </div>
                                                           </div>
                                                       </td>
-                                                      <td className="px-3 md:px-8 py-2.5 md:py-4 text-xs md:text-sm font-mono font-bold text-text-app">
+                                                      <td className="px-2 sm:px-3 md:px-6 py-2 md:py-3 text-[11px] sm:text-xs md:text-sm font-mono font-bold text-text-app">
                                                           {user.rating}
                                                       </td>
-                                                      <td className="px-3 md:px-8 py-2.5 md:py-4 text-right">
-                                                          <div className="flex items-center justify-end gap-1 md:gap-2 text-muted-app text-[9px] md:text-[10px] font-bold uppercase tracking-widest">
+                                                      <td className="px-2 sm:px-3 md:px-6 py-2 md:py-3 overflow-hidden">
+                                                          <div className="flex items-center gap-1 md:gap-2 text-brand-primary/70 text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase tracking-widest font-mono">
                                                               <MapPin
                                                                   size={10}
-                                                                  className="opacity-40"
+                                                                  className="opacity-70 shrink-0"
                                                               />
-                                                              <span className="wrap-break-word whitespace-normal max-w-15 sm:max-w-none">
+                                                              <span className="truncate">
                                                                   {user.country ||
                                                                       'Global'}
                                                               </span>
@@ -264,9 +270,9 @@ export function Leaderboards() {
                     </Card>
                 </div>
 
-                <div className="space-y-8">
-                    <Card className="p-8">
-                        <div className="flex items-center justify-between mb-8">
+                <div className="space-y-6 md:space-y-8">
+                    <Card className="p-5 md:p-6 lg:p-7 h-full">
+                        <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-2">
                                 <Filter
                                     size={16}
@@ -278,9 +284,9 @@ export function Leaderboards() {
                             </div>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-5">
                             <div>
-                                <p className="text-[10px] text-muted-app font-bold uppercase tracking-widest mb-3">
+                                <p className="text-[10px] text-muted-app font-bold uppercase tracking-widest mb-2.5">
                                     Contest Type
                                 </p>
                                 <div className="flex flex-wrap gap-2">
@@ -296,7 +302,7 @@ export function Leaderboards() {
                                                 className={cn(
                                                     'px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all',
                                                     contestFilter === type
-                                                        ? 'bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20'
+                                                        ? 'bg-brand-primary text-white text-text-app border-brand-primary shadow-lg shadow-brand-primary/20'
                                                         : 'bg-white/5 text-muted-app border-white/10 hover:bg-white/10',
                                                 )}
                                             >
@@ -308,7 +314,7 @@ export function Leaderboards() {
                             </div>
 
                             <div>
-                                <p className="text-[10px] text-muted-app font-bold uppercase tracking-widest mb-3">
+                                <p className="text-[10px] text-muted-app font-bold uppercase tracking-widest mb-2.5">
                                     Time Range
                                 </p>
                                 <div className="flex flex-wrap gap-2">
@@ -327,7 +333,7 @@ export function Leaderboards() {
                                             className={cn(
                                                 'px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all',
                                                 timeFilter === range.id
-                                                    ? 'bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20'
+                                                    ? 'bg-brand-primary text-white text-text-app border-brand-primary shadow-lg shadow-brand-primary/20'
                                                     : 'bg-white/5 text-muted-app border-white/10 hover:bg-white/10',
                                             )}
                                         >
@@ -339,64 +345,78 @@ export function Leaderboards() {
                         </div>
                     </Card>
 
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-2 px-2">
-                            <Calendar
-                                size={14}
-                                className="text-brand-secondary"
-                            />
-                            <h3 className="text-[10px] font-mono font-bold text-muted-app uppercase tracking-[0.2em]">
-                                Recent Contests
-                            </h3>
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-2 px-1">
+                            <div className="flex items-center gap-2">
+                                <Calendar
+                                    size={14}
+                                    className="text-brand-secondary"
+                                />
+                                <h3 className="text-[10px] font-mono font-bold text-muted-app uppercase tracking-[0.2em]">
+                                    Recent Contests
+                                </h3>
+                            </div>
+                            <span className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-muted-app/70">
+                                {filteredContests.length} items
+                            </span>
                         </div>
 
-                        <div className="space-y-2">
-                            <AnimatePresence mode="popLayout">
-                                {filteredContests.map((contest) => (
-                                    <motion.div
-                                        layout
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, scale: 0.95 }}
-                                        key={contest.id}
-                                        className="glass-premium group p-5 bg-white/1 hover:bg-white/3 transition-all cursor-pointer rounded-3xl"
-                                        onClick={() =>
-                                            navigate(`/contest/${contest.id}`)
-                                        }
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex-1 min-w-0 pr-4">
-                                                <h4 className="text-xs font-bold text-text-app wrap-break-word whitespace-normal group-hover:text-brand-primary transition-colors">
-                                                    {contest.name}
-                                                </h4>
-                                                <p className="text-[9px] font-mono text-muted-app uppercase tracking-widest mt-1.5 font-bold">
-                                                    {contest.startTimeSeconds &&
-                                                        format(
-                                                            new Date(
-                                                                contest.startTimeSeconds *
-                                                                    1000,
-                                                            ),
-                                                            'MMM dd, yyyy',
-                                                        )}
-                                                </p>
-                                            </div>
-                                            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-brand-primary/10 transition-colors">
-                                                <ChevronRight
-                                                    size={14}
-                                                    className="text-muted-app group-hover:text-brand-primary transition-all group-hover:translate-x-0.5"
-                                                />
-                                            </div>
+                        <div className="rounded-2xl border border-white/8 bg-white/3 p-2 shadow-inner shadow-black/10">
+                            <div className="max-h-64 sm:max-h-72 md:max-h-80 lg:max-h-88 overflow-y-auto overflow-x-hidden custom-scrollbar pr-2 pl-1 py-1 scroll-smooth overscroll-contain">
+                                <div className="space-y-2">
+                                    <AnimatePresence mode="popLayout">
+                                        {filteredContests.map((contest) => (
+                                            <motion.div
+                                                layout
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{
+                                                    opacity: 0,
+                                                    scale: 0.95,
+                                                }}
+                                                key={contest.id}
+                                                className="glass-premium group p-3.5 sm:p-4 bg-white/1 hover:bg-white/3 transition-all cursor-pointer rounded-2xl border border-white/5 shadow-sm hover:shadow-md snap-start"
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/contest/${contest.id}`,
+                                                    )
+                                                }
+                                            >
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <div className="flex-1 min-w-0 pr-2">
+                                                        <h4 className="text-[11px] sm:text-xs font-bold text-text-app wrap-break-word whitespace-normal group-hover:text-brand-primary transition-colors leading-snug">
+                                                            {contest.name}
+                                                        </h4>
+                                                        <p className="text-[8px] sm:text-[9px] font-mono text-muted-app uppercase tracking-widest mt-1.5 font-bold">
+                                                            {contest.startTimeSeconds &&
+                                                                format(
+                                                                    new Date(
+                                                                        contest.startTimeSeconds *
+                                                                            1000,
+                                                                    ),
+                                                                    'MMM dd, yyyy',
+                                                                )}
+                                                        </p>
+                                                    </div>
+                                                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-brand-primary/10 transition-colors shrink-0">
+                                                        <ChevronRight
+                                                            size={13}
+                                                            className="text-muted-app group-hover:text-brand-primary transition-all group-hover:translate-x-0.5"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
+                                    {filteredContests.length === 0 && (
+                                        <div className="py-10 bg-white/1 rounded-2xl border border-dashed border-white/5 text-center">
+                                            <p className="text-[10px] font-mono text-muted-app uppercase tracking-[0.2em]">
+                                                No Matches Found
+                                            </p>
                                         </div>
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
-                            {filteredContests.length === 0 && (
-                                <div className="py-12 bg-white/1 rounded-2xl border border-dashed border-white/5 text-center">
-                                    <p className="text-[10px] font-mono text-muted-app uppercase tracking-[0.2em]">
-                                        No Matches Found
-                                    </p>
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 </div>
