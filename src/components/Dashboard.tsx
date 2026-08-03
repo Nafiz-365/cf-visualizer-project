@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -32,6 +32,8 @@ import {
     Menu,
     X,
     AlertTriangle,
+    Activity,
+    Rss,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { CodeforcesService } from '../services/codeforces';
@@ -73,203 +75,15 @@ import {
     MessageSquare,
 } from 'lucide-react';
 
-const getRankColor = (rank: string) => {
-    const r = rank?.toLowerCase() || '';
-    if (r.includes('legendary') || r.includes('international grandmaster'))
-        return 'text-red-500';
-    if (r.includes('grandmaster')) return 'text-red-400';
-    if (r.includes('master')) return 'text-orange-400';
-    if (r.includes('candidate master')) return 'text-purple-400';
-    if (r.includes('expert')) return 'text-blue-400';
-    if (r.includes('specialist')) return 'text-cyan-400';
-    if (r.includes('pupil')) return 'text-green-400';
-    return 'text-gray-400';
-};
-
-const getRankBg = (rank: string) => {
-    const r = rank?.toLowerCase() || '';
-    if (r.includes('legendary') || r.includes('international grandmaster'))
-        return 'bg-red-500/10 border-red-500/20';
-    if (r.includes('grandmaster')) return 'bg-red-400/10 border-red-400/20';
-    if (r.includes('master')) return 'bg-orange-400/10 border-orange-400/20';
-    if (r.includes('candidate master'))
-        return 'bg-purple-400/10 border-purple-400/20';
-    if (r.includes('expert')) return 'bg-blue-400/10 border-blue-400/20';
-    if (r.includes('specialist')) return 'bg-cyan-400/10 border-cyan-400/20';
-    if (r.includes('pupil')) return 'bg-green-400/10 border-green-400/20';
-    return 'bg-gray-400/10 border-gray-400/20';
-};
 import { User, RatingChange, Submission, Problem, Contest } from '../types';
-
-const generateFallbackUser = (handle: string): User => ({
-    handle,
-    contribution: 42,
-    rank: 'expert',
-    rating: 1650,
-    maxRank: 'candidate master',
-    maxRating: 1910,
-    lastOnlineTimeSeconds: Math.floor(Date.now() / 1000) - 3600,
-    registrationTimeSeconds: Math.floor(Date.now() / 1000) - 31536000 * 2,
-    friendOfCount: 153,
-    avatar: 'https://userpic.codeforces.org/no-avatar.jpg',
-    titlePhoto: 'https://userpic.codeforces.org/no-avatar.jpg',
-});
-
-const generateFallbackRatingHistory = (handle: string): RatingChange[] => [
-    {
-        contestId: 1800,
-        contestName: 'Codeforces Round 850 (Div. 2)',
-        handle,
-        rank: 450,
-        ratingUpdateTimeSeconds:
-            Math.floor(Date.now() / 1000) - 100 * 24 * 3600,
-        oldRating: 1400,
-        newRating: 1480,
-    },
-    {
-        contestId: 1810,
-        contestName: 'Codeforces Round 860 (Div. 2)',
-        handle,
-        rank: 250,
-        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 80 * 24 * 3600,
-        oldRating: 1480,
-        newRating: 1550,
-    },
-    {
-        contestId: 1820,
-        contestName: 'Codeforces Round 870 (Div. 2)',
-        handle,
-        rank: 180,
-        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 60 * 24 * 3600,
-        oldRating: 1550,
-        newRating: 1680,
-    },
-    {
-        contestId: 1830,
-        contestName: 'Codeforces Round 880 (Div. 2)',
-        handle,
-        rank: 710,
-        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 40 * 24 * 3600,
-        oldRating: 1680,
-        newRating: 1630,
-    },
-    {
-        contestId: 1840,
-        contestName: 'Codeforces Round 890 (Div. 2)',
-        handle,
-        rank: 310,
-        ratingUpdateTimeSeconds: Math.floor(Date.now() / 1000) - 20 * 24 * 3600,
-        oldRating: 1630,
-        newRating: 1650,
-    },
-];
-
-const generateFallbackSubmissions = (handle: string): Submission[] => [
-    {
-        id: 200001,
-        contestId: 1840,
-        creationTimeSeconds: Math.floor(Date.now() / 1000) - 2 * 3600,
-        relativeTimeSeconds: 5000,
-        problem: {
-            contestId: 1840,
-            index: 'A',
-            name: 'Sasha and Array Coloring',
-            type: 'PROGRAMMING',
-            rating: 800,
-            tags: ['greedy', 'sortings'],
-        },
-        author: {
-            contestId: 1840,
-            members: [{ handle }],
-            participantType: 'PRACTICE',
-            ghost: false,
-        },
-        programmingLanguage: 'GNU C++20',
-        verdict: 'OK',
-        testset: 'TESTS',
-        passedTestCount: 35,
-        timeConsumedMillis: 45,
-        memoryConsumedBytes: 1024 * 1024,
-    },
-    {
-        id: 200002,
-        contestId: 1840,
-        creationTimeSeconds: Math.floor(Date.now() / 1000) - 3 * 3600,
-        relativeTimeSeconds: 6500,
-        problem: {
-            contestId: 1840,
-            index: 'B',
-            name: 'Binary Cafe',
-            type: 'PROGRAMMING',
-            rating: 1100,
-            tags: ['bitmasks', 'math'],
-        },
-        author: {
-            contestId: 1840,
-            members: [{ handle }],
-            participantType: 'PRACTICE',
-            ghost: false,
-        },
-        programmingLanguage: 'GNU C++20',
-        verdict: 'OK',
-        testset: 'TESTS',
-        passedTestCount: 42,
-        timeConsumedMillis: 60,
-        memoryConsumedBytes: 1512 * 1024,
-    },
-    {
-        id: 200003,
-        contestId: 1840,
-        creationTimeSeconds: Math.floor(Date.now() / 1000) - 4 * 3600,
-        relativeTimeSeconds: 8000,
-        problem: {
-            contestId: 1840,
-            index: 'C',
-            name: 'Ski Resort',
-            type: 'PROGRAMMING',
-            rating: 1200,
-            tags: ['combinatorics', 'greedy', 'math', 'two pointers'],
-        },
-        author: {
-            contestId: 1840,
-            members: [{ handle }],
-            participantType: 'PRACTICE',
-            ghost: false,
-        },
-        programmingLanguage: 'GNU C++20',
-        verdict: 'OK',
-        testset: 'TESTS',
-        passedTestCount: 51,
-        timeConsumedMillis: 110,
-        memoryConsumedBytes: 2048 * 1024,
-    },
-    {
-        id: 200004,
-        contestId: 1840,
-        creationTimeSeconds: Math.floor(Date.now() / 1000) - 24 * 3600,
-        relativeTimeSeconds: 12000,
-        problem: {
-            contestId: 1840,
-            index: 'D',
-            name: 'Wooden Toy Festival',
-            type: 'PROGRAMMING',
-            rating: 1400,
-            tags: ['binary search', 'greedy', 'sortings'],
-        },
-        author: {
-            contestId: 1840,
-            members: [{ handle }],
-            participantType: 'PRACTICE',
-            ghost: false,
-        },
-        programmingLanguage: 'GNU C++20',
-        verdict: 'WRONG_ANSWER',
-        testset: 'TESTS',
-        passedTestCount: 12,
-        timeConsumedMillis: 30,
-        memoryConsumedBytes: 512 * 1024,
-    },
-];
+import { getRankColor, getRankBg } from '../lib/utils';
+import {
+    generateFallbackUser,
+    generateFallbackRatingHistory,
+    generateFallbackSubmissions,
+} from '../lib/fallbackData';
+import { InsightCard } from './InsightCard';
+import { DetailItem } from './DetailItem';
 
 export function Dashboard() {
     const { handle } = useParams<{ handle: string }>();
@@ -294,6 +108,8 @@ export function Dashboard() {
     const [sortKey, setSortKey] = useState<string>('creationTimeSeconds');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
     const [searchQuery, setSearchQuery] = useState('');
+    // Deferred value: the input stays instant, the heavy filter runs at lower priority
+    const deferredSearch = useDeferredValue(searchQuery);
     const [verdictFilter, setVerdictFilter] = useState('ALL');
     const [languageFilter, setLanguageFilter] = useState('ALL');
 
@@ -371,78 +187,81 @@ export function Dashboard() {
         setLoading(true);
         setError(null);
         setIsOfflineMode(false);
-        try {
-            // Define a safe fetch helper to prevent non-critical failures from breaking the app
-            const safeFetch = async <T,>(
-                promise: Promise<T>,
-                defaultValue: T,
-            ): Promise<T> => {
-                try {
-                    return await promise;
-                } catch (e) {
-                    console.warn('Non-critical fetch failed:', e);
-                    return defaultValue;
-                }
-            };
+        setAiInsights([]);
 
-            let u: User;
-            let r: RatingChange[];
-            let s: Submission[];
+        const seedUser = generateFallbackUser(h);
+        const seedRating = generateFallbackRatingHistory(h);
+        const seedSubmissions = generateFallbackSubmissions(h);
 
+        setUser(seedUser);
+        setRatingHistory(seedRating);
+        setSubmissions(seedSubmissions);
+        setLoading(false);
+
+        const safeFetch = async <T,>(
+            promise: Promise<T>,
+            defaultValue: T,
+        ): Promise<T> => {
             try {
-                const [fetchedUser, fetchedRating, fetchedStatus] =
-                    await Promise.all([
-                        CodeforcesService.getUserInfo(h),
-                        CodeforcesService.getUserRating(h),
-                        CodeforcesService.getUserStatus(h),
-                    ]);
-                u = fetchedUser;
-                r = fetchedRating;
-                s = fetchedStatus;
-            } catch (err: any) {
-                // If it is a 404 User Not Found, propagate it
-                const is404 =
-                    err.response?.status === 404 ||
-                    err.message?.toLowerCase().includes('not found') ||
-                    err.response?.data?.comment
-                        ?.toLowerCase()
-                        .includes('not found');
+                return await promise;
+            } catch (e) {
+                console.warn('Non-critical fetch failed:', e);
+                return defaultValue;
+            }
+        };
 
-                if (is404) {
-                    throw err;
-                }
+        try {
+            const [fetchedUser, fetchedRating] = await Promise.all([
+                CodeforcesService.getUserInfo(h),
+                CodeforcesService.getUserRating(h),
+            ]);
 
-                // Otherwise fall back to simulated profile
+            setUser(fetchedUser);
+            setRatingHistory(fetchedRating);
+
+            const fetchedStatus = await safeFetch(
+                CodeforcesService.getUserStatus(h),
+                seedSubmissions,
+            );
+            setSubmissions(fetchedStatus);
+
+            const stats = calculateAnalytics(fetchedStatus, fetchedRating);
+            void generateAIInsights(fetchedUser, fetchedRating, stats);
+        } catch (err: any) {
+            const is404 =
+                err.response?.status === 404 ||
+                err.message?.toLowerCase().includes('not found') ||
+                err.response?.data?.comment
+                    ?.toLowerCase()
+                    .includes('not found');
+
+            if (is404) {
+                setError(err.message || 'Failed to fetch user data');
+            } else {
                 console.warn(
                     'Critical fetch failed, falling back to simulated trace data:',
                     err,
                 );
                 setIsOfflineMode(true);
-                u = generateFallbackUser(h);
-                r = generateFallbackRatingHistory(h);
-                s = generateFallbackSubmissions(h);
+                setUser(seedUser);
+                setRatingHistory(seedRating);
+                setSubmissions(seedSubmissions);
             }
-
-            const [p, c, b] = await Promise.all([
-                safeFetch(CodeforcesService.getProblemSet(), []),
-                safeFetch(CodeforcesService.getContests(), []),
-                safeFetch(CodeforcesService.getUserBlogEntries(h), []),
-            ]);
-            setUser(u);
-            setRatingHistory(r);
-            setSubmissions(s);
-            setProblemset(p);
-            setContests(c);
-            setBlogs(b);
-
-            // Trigger AI Analysis
-            const stats = calculateAnalytics(s);
-            generateAIInsights(u, r, stats);
-        } catch (err: any) {
-            setError(err.message || 'Failed to fetch user data');
-        } finally {
-            setLoading(false);
         }
+
+        void Promise.all([
+            safeFetch(CodeforcesService.getProblemSet(), []),
+            safeFetch(CodeforcesService.getContests(), []),
+            safeFetch(CodeforcesService.getUserBlogEntries(h), []),
+        ])
+            .then(([p, c, b]) => {
+                setProblemset(p);
+                setContests(c);
+                setBlogs(b);
+            })
+            .catch(() => {
+                // Optional extras failed, but core UI should remain usable.
+            });
     };
 
     const refreshSubmissions = async () => {
@@ -489,7 +308,10 @@ export function Dashboard() {
         }
     };
 
-    const calculateAnalytics = (subs: Submission[]) => {
+    const calculateAnalytics = (
+        subs: Submission[],
+        history: RatingChange[] = [],
+    ) => {
         const solved = subs.filter((s) => s.verdict === 'OK');
         const uniqueSolved = new Set(
             solved.map((s) => `${s.problem.contestId}-${s.problem.index}`),
@@ -551,8 +373,8 @@ export function Dashboard() {
 
     const analytics = useMemo(() => {
         if (!submissions.length) return null;
-        return calculateAnalytics(submissions);
-    }, [submissions]);
+        return calculateAnalytics(submissions, ratingHistory);
+    }, [submissions, ratingHistory]);
 
     // Compute live session stats for the AI tab
     const liveSessionStats = useMemo(() => {
@@ -600,8 +422,8 @@ export function Dashboard() {
     const processedSubmissions = useMemo(() => {
         let filtered = [...submissions];
 
-        if (searchQuery) {
-            const q = searchQuery.toLowerCase();
+        if (deferredSearch) {
+            const q = deferredSearch.toLowerCase();
             filtered = filtered.filter(
                 (s) =>
                     s.problem.name.toLowerCase().includes(q) ||
@@ -662,7 +484,7 @@ export function Dashboard() {
         return filtered;
     }, [
         submissions,
-        searchQuery,
+        deferredSearch,
         verdictFilter,
         languageFilter,
         sortKey,
@@ -779,7 +601,7 @@ export function Dashboard() {
                                 damping: 25,
                                 stiffness: 200,
                             }}
-                            className="md:hidden fixed left-0 top-0 w-[84vw] max-w-[20rem] h-screen bg-bg-app/95 border-r border-white/10 z-100 flex flex-col p-5 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-2xl"
+                            className="md:hidden fixed left-0 top-0 w-[84vw] max-w-[20rem] h-screen bg-bg-app border-r border-white/10 mobile-sidebar z-100 flex flex-col p-5 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-2xl"
                         >
                             <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                                 <div className="flex items-center gap-3">
@@ -930,7 +752,7 @@ export function Dashboard() {
             <main className="flex-1 ml-0 mt-0 md:mt-0 md:ml-20 lg:ml-64 overflow-y-auto custom-scrollbar relative">
                 <header className="sticky top-0 z-40 bg-bg-app/80 backdrop-blur-xl border-b border-white/5 px-3 sm:px-4 md:px-8 py-3 md:py-4">
                     <div className="flex items-center justify-between gap-2 sm:gap-3 max-w-7xl mx-auto">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 md:gap-5">
                             <button
                                 onClick={() =>
                                     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -940,28 +762,24 @@ export function Dashboard() {
                             >
                                 <Menu size={20} />
                             </button>
-
+                            {/* User Profile Pill */}
                             <button
                                 onClick={() => setIsProfileModalOpen(true)}
-                                className="group flex items-center gap-2 sm:gap-3 rounded-4xl bg-brand-primary/10 border border-white/10 px-2.5 sm:px-3 py-2 transition-all duration-300 hover:border-brand-primary/20"
+                                className="group flex items-center gap-2 sm:gap-3 rounded-full bg-white/5 border border-white/10 px-1.5 py-1.5 pr-4 transition-all duration-300 hover:bg-white/10 hover:border-brand-primary/30 hover:shadow-[0_0_15px_rgba(var(--brand-primary),0.15)]"
                             >
                                 <div className="relative">
                                     <img
                                         src={user.avatar}
-                                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl border border-white/10 object-cover shadow-lg transition-transform duration-300 group-hover:scale-105"
+                                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/10 object-cover shadow-sm transition-transform duration-300 group-hover:scale-105"
+                                        alt="User avatar"
                                     />
-                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-bg-app border-2 border-white/10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                                        <Target
-                                            size={8}
-                                            className="text-brand-primary"
-                                        />
-                                    </div>
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-bg-app shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
                                 </div>
                                 <div className="min-w-0 text-left">
-                                    <p className="text-sm font-black text-text-app leading-tight truncate">
+                                    <p className="text-xs sm:text-sm font-bold text-text-app leading-tight truncate group-hover:text-brand-primary transition-colors">
                                         {user.handle}
                                     </p>
-                                    <p className="text-[10px] uppercase tracking-[0.25em] text-muted-app">
+                                    <p className="text-[9px] font-mono uppercase tracking-widest text-muted-app">
                                         {user.rank || 'Unranked'}
                                     </p>
                                 </div>
@@ -969,30 +787,36 @@ export function Dashboard() {
                         </div>
 
                         <div className="flex items-center gap-2">
+                            <div className="hidden sm:flex items-center gap-2 mr-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[9px] font-mono font-bold uppercase tracking-[0.15em] text-emerald-500/80">
+                                    Live Sync
+                                </span>
+                            </div>
+
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="rounded-2xl p-2 text-text-app border border-white/10 hover:bg-white/10"
+                                className="rounded-xl p-2 text-muted-app border border-white/5 hover:bg-white/10 hover:text-text-app hover:border-white/10 transition-all"
                                 onClick={handleShare}
+                                title="Share Dashboard"
                             >
                                 {copied ? (
-                                    <span className="text-[10px] font-black uppercase tracking-[0.22em]">
+                                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-brand-primary">
                                         Copied
                                     </span>
                                 ) : (
-                                    <Share2
-                                        size={14}
-                                        className="text-text-app"
-                                    />
+                                    <Share2 size={16} />
                                 )}
                             </Button>
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="rounded-2xl p-2 text-text-app border border-white/10 hover:bg-white/10"
+                                className="rounded-xl p-2 text-muted-app border border-white/5 hover:bg-white/10 hover:text-text-app hover:border-white/10 transition-all"
                                 onClick={exportSubmissionsToCSV}
+                                title="Export CSV"
                             >
-                                <Download size={14} className="text-text-app" />
+                                <Download size={16} />
                             </Button>
                         </div>
                     </div>
@@ -2464,189 +2288,354 @@ export function Dashboard() {
                                             submissions={submissions}
                                         />
                                     ) : (
-                                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-                                            <div className="lg:col-span-8 space-y-6 md:space-y-8">
-                                                <Card className="p-4 md:p-8">
-                                                    <div className="flex items-center justify-between mb-8">
-                                                        <div>
-                                                            <h3 className="text-xl md:text-2xl font-display font-bold text-text-app">
-                                                                Engagement
-                                                                Stream
-                                                            </h3>
-                                                            <p className="text-[10px] font-mono text-muted-app uppercase tracking-[0.2em] mt-2 opacity-40">
-                                                                Public blog
-                                                                entries and
-                                                                announcements
-                                                            </p>
-                                                        </div>
-                                                        <div className="p-3 bg-brand-primary/10 rounded-2xl text-brand-primary">
-                                                            <Users size={24} />
-                                                        </div>
-                                                    </div>
+                                        (() => {
+                                            const totalBlogUpvotes =
+                                                blogs.reduce(
+                                                    (sum, blog) =>
+                                                        sum + blog.rating,
+                                                    0,
+                                                );
+                                            const friends =
+                                                (user as any).friendOfCount ||
+                                                0;
 
-                                                    {blogs.length > 0 ? (
-                                                        <div className="space-y-6">
-                                                            {blogs.map(
-                                                                (blog) => (
-                                                                    <div
-                                                                        key={
-                                                                            blog.id
+                                            let karmaBadge = {
+                                                label: 'OBSERVER',
+                                                color: 'text-slate-400',
+                                                bg: 'bg-slate-400/10',
+                                                border: 'border-slate-400/20',
+                                            };
+                                            if ((user.contribution || 0) >= 100)
+                                                karmaBadge = {
+                                                    label: 'COMMUNITY PILLAR',
+                                                    color: 'text-amber-400',
+                                                    bg: 'bg-amber-400/10',
+                                                    border: 'border-amber-400/20',
+                                                };
+                                            else if (
+                                                (user.contribution || 0) > 0
+                                            )
+                                                karmaBadge = {
+                                                    label: 'ACTIVE NODE',
+                                                    color: 'text-emerald-400',
+                                                    bg: 'bg-emerald-400/10',
+                                                    border: 'border-emerald-400/20',
+                                                };
+                                            else if (
+                                                (user.contribution || 0) < 0
+                                            )
+                                                karmaBadge = {
+                                                    label: 'ROGUE ELEMENT',
+                                                    color: 'text-red-400',
+                                                    bg: 'bg-red-400/10',
+                                                    border: 'border-red-400/20',
+                                                };
+
+                                            let fameBadge = {
+                                                label: 'STANDARD NODE',
+                                                color: 'text-slate-400',
+                                                bg: 'bg-slate-400/10',
+                                                border: 'border-slate-400/20',
+                                            };
+                                            if (friends >= 1000)
+                                                fameBadge = {
+                                                    label: 'LEGENDARY ENTITY',
+                                                    color: 'text-purple-400',
+                                                    bg: 'bg-purple-400/10',
+                                                    border: 'border-purple-400/20',
+                                                };
+                                            else if (friends >= 500)
+                                                fameBadge = {
+                                                    label: 'FAMOUS NODE',
+                                                    color: 'text-pink-400',
+                                                    bg: 'bg-pink-400/10',
+                                                    border: 'border-pink-400/20',
+                                                };
+                                            else if (friends >= 100)
+                                                fameBadge = {
+                                                    label: 'LOCAL HERO',
+                                                    color: 'text-cyan-400',
+                                                    bg: 'bg-cyan-400/10',
+                                                    border: 'border-cyan-400/20',
+                                                };
+
+                                            return (
+                                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+                                                    <div className="lg:col-span-8 space-y-6 md:space-y-8">
+                                                        <Card className="p-4 md:p-8">
+                                                            <div className="flex items-center justify-between mb-8">
+                                                                <div>
+                                                                    <h3 className="text-xl md:text-2xl font-display font-bold text-text-app">
+                                                                        COMMUNICATION
+                                                                        INTERCEPTS
+                                                                    </h3>
+                                                                    <p className="text-[10px] font-mono text-cyan-500 uppercase tracking-[0.2em] mt-2 opacity-60">
+                                                                        Public
+                                                                        blog
+                                                                        entries
+                                                                        and
+                                                                        announcements
+                                                                    </p>
+                                                                </div>
+                                                                <div className="p-3 bg-cyan-500/10 rounded-2xl text-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                                                                    <Activity
+                                                                        size={
+                                                                            24
                                                                         }
-                                                                        className="p-4 md:p-6 rounded-xl md:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group"
-                                                                        onClick={() =>
-                                                                            window.open(
-                                                                                `https://codeforces.com/blog/entry/${blog.id}`,
-                                                                                '_blank',
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        <div className="flex items-center justify-between mb-3">
-                                                                            <span className="text-[9px] font-mono font-bold text-brand-primary uppercase tracking-[0.2em]">
-                                                                                {format(
-                                                                                    new Date(
-                                                                                        blog.creationTimeSeconds *
-                                                                                            1000,
-                                                                                    ),
-                                                                                    'MMM dd, yyyy',
-                                                                                )}
-                                                                            </span>
-                                                                            <div className="flex items-center gap-4 text-muted-app text-[10px] font-bold">
-                                                                                <div className="flex items-center gap-1">
-                                                                                    <ArrowUp
-                                                                                        size={
-                                                                                            12
+                                                                    />
+                                                                </div>
+                                                            </div>
+
+                                                            {blogs.length >
+                                                            0 ? (
+                                                                <div className="space-y-4 max-h-125 overflow-y-auto custom-scrollbar pr-2">
+                                                                    {blogs.map(
+                                                                        (
+                                                                            blog,
+                                                                        ) => (
+                                                                            <div
+                                                                                key={
+                                                                                    blog.id
+                                                                                }
+                                                                                className="p-4 md:p-5 rounded-xl bg-card-app border border-border-app hover:border-brand-primary/60 hover:shadow-[0_0_15px_rgba(0,238,255,0.2)] transition-all cursor-pointer group relative overflow-hidden"
+                                                                                onClick={() =>
+                                                                                    window.open(
+                                                                                        `https://codeforces.com/blog/entry/${blog.id}`,
+                                                                                        '_blank',
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                {/* Radar Sweep Effect */}
+                                                                                <div className="absolute inset-0 bg-linear-to-r from-transparent via-brand-primary/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+
+                                                                                <div className="flex items-center justify-between mb-2 relative z-10">
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
+                                                                                        <span className="text-[10px] font-mono font-bold text-brand-primary uppercase tracking-widest">
+                                                                                            LOG
+                                                                                            //{' '}
+                                                                                            {format(
+                                                                                                new Date(
+                                                                                                    blog.creationTimeSeconds *
+                                                                                                        1000,
+                                                                                                ),
+                                                                                                'yyyy.MM.dd',
+                                                                                            )}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className="flex items-center gap-2 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-emerald-400 text-[10px] font-bold font-mono">
+                                                                                        <ArrowUp
+                                                                                            size={
+                                                                                                10
+                                                                                            }
+                                                                                        />
+                                                                                        {
+                                                                                            blog.rating
                                                                                         }
-                                                                                        className="text-emerald-500"
-                                                                                    />
-                                                                                    {
-                                                                                        blog.rating
-                                                                                    }
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <h4 className="text-sm md:text-base font-bold text-text-app group-hover:text-brand-primary transition-colors wrap-break-word whitespace-normal mb-3 relative z-10 font-mono">
+                                                                                    &gt;{' '}
+                                                                                    {blog.title.replace(
+                                                                                        /<\/?[^>]+(>|$)/g,
+                                                                                        '',
+                                                                                    )}
+                                                                                </h4>
+
+                                                                                <div className="flex flex-wrap items-center gap-2 relative z-10">
+                                                                                    {blog.tags.map(
+                                                                                        (
+                                                                                            tag: string,
+                                                                                        ) => (
+                                                                                            <span
+                                                                                                key={
+                                                                                                    tag
+                                                                                                }
+                                                                                                className="text-[8px] md:text-[9px] font-mono px-1.5 py-0.5 rounded bg-brand-primary/10 text-brand-primary/80 border border-brand-primary/20 uppercase tracking-wider"
+                                                                                            >
+                                                                                                #
+                                                                                                {
+                                                                                                    tag
+                                                                                                }
+                                                                                            </span>
+                                                                                        ),
+                                                                                    )}
                                                                                 </div>
                                                                             </div>
+                                                                        ),
+                                                                    )}
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex flex-col items-center justify-center py-20 text-center">
+                                                                    <Users
+                                                                        size={
+                                                                            48
+                                                                        }
+                                                                        className="text-muted-app opacity-20 mb-4"
+                                                                    />
+                                                                    <p className="text-sm font-medium text-muted-app">
+                                                                        No
+                                                                        public
+                                                                        blog
+                                                                        entries
+                                                                        found
+                                                                        for this
+                                                                        user.
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                        </Card>
+                                                    </div>
+
+                                                    <div className="lg:col-span-4 space-y-8">
+                                                        <Card className="p-5 md:p-8 relative overflow-hidden">
+                                                            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full blur-3xl" />
+                                                            <h3 className="text-sm font-black text-text-app uppercase tracking-widest mb-8">
+                                                                Social Influence
+                                                                HUD
+                                                            </h3>
+                                                            <div className="space-y-4 relative z-10">
+                                                                <div className="p-4 rounded-xl bg-card-app border border-border-app backdrop-blur-md relative overflow-hidden group shadow-sm hover:shadow-md transition-shadow">
+                                                                    <div className="absolute top-0 left-0 w-1 h-full bg-brand-primary" />
+                                                                    <div className="flex justify-between items-start pl-3">
+                                                                        <div>
+                                                                            <p className="text-[9px] font-mono font-bold text-muted-app uppercase tracking-widest mb-1">
+                                                                                Total
+                                                                                Contribution
+                                                                            </p>
+                                                                            <div className="flex items-baseline gap-2">
+                                                                                <p className="text-2xl md:text-3xl font-display font-black text-text-app">
+                                                                                    {user.contribution ||
+                                                                                        0}
+                                                                                </p>
+                                                                                <span
+                                                                                    className={`text-[8px] px-1.5 py-0.5 rounded-sm border font-mono uppercase tracking-widest ${karmaBadge.color} ${karmaBadge.bg} ${karmaBadge.border}`}
+                                                                                >
+                                                                                    {
+                                                                                        karmaBadge.label
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
                                                                         </div>
-                                                                        <h4 className="text-base font-bold text-text-app group-hover:text-brand-primary transition-colors wrap-break-word whitespace-normal mb-2">
-                                                                            {blog.title.replace(
-                                                                                /<\/?[^>]+(>|$)/g,
-                                                                                '',
-                                                                            )}
-                                                                        </h4>
-                                                                        <div className="flex items-center gap-3">
-                                                                            {blog.tags.map(
-                                                                                (
-                                                                                    tag: string,
-                                                                                ) => (
-                                                                                    <span
-                                                                                        key={
-                                                                                            tag
-                                                                                        }
-                                                                                        className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-muted-app/60 border border-white/5"
-                                                                                    >
-                                                                                        #
-                                                                                        {
-                                                                                            tag
-                                                                                        }
-                                                                                    </span>
-                                                                                ),
-                                                                            )}
+                                                                        <div className="p-2 bg-brand-primary/10 rounded-lg text-brand-primary">
+                                                                            <Activity
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
                                                                         </div>
                                                                     </div>
-                                                                ),
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex flex-col items-center justify-center py-20 text-center">
-                                                            <Users
-                                                                size={48}
-                                                                className="text-muted-app opacity-20 mb-4"
-                                                            />
-                                                            <p className="text-sm font-medium text-muted-app">
-                                                                No public blog
-                                                                entries found
-                                                                for this user.
-                                                            </p>
-                                                        </div>
-                                                    )}
-                                                </Card>
-                                            </div>
+                                                                </div>
 
-                                            <div className="lg:col-span-4 space-y-8">
-                                                <Card className="p-5 md:p-8">
-                                                    <h3 className="text-sm font-black text-text-app uppercase tracking-widest mb-8">
-                                                        Social Influence
-                                                    </h3>
-                                                    <div className="space-y-6">
-                                                        <div className="p-5 md:p-6 rounded-2xl bg-brand-primary/5 border border-brand-primary/10">
-                                                            <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-2 opacity-60">
-                                                                Total
-                                                                Contribution
-                                                            </p>
-                                                            <p className="text-3xl font-display font-black text-text-app">
-                                                                {user.contribution ||
-                                                                    0}
-                                                            </p>
-                                                        </div>
-                                                        <div className="p-5 md:p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10">
-                                                            <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-2 opacity-60">
-                                                                Social Influence
-                                                            </p>
-                                                            <p className="text-3xl font-display font-black text-text-app">
-                                                                {(user as any)
-                                                                    .friendOfCount ||
-                                                                    0}
-                                                            </p>
-                                                            <p className="text-[9px] text-muted-app mt-1 uppercase font-bold tracking-tighter">
-                                                                Followers on
-                                                                Codeforces
-                                                            </p>
-                                                        </div>
-                                                        <div className="p-5 md:p-6 rounded-2xl bg-orange-500/5 border border-orange-500/10">
-                                                            <p className="text-[9px] font-black text-orange-500 uppercase tracking-widest mb-2 opacity-60">
-                                                                Blog Count
-                                                            </p>
-                                                            <p className="text-3xl font-display font-black text-text-app">
-                                                                {blogs.length}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </Card>
+                                                                <div className="p-4 rounded-xl bg-card-app border border-border-app backdrop-blur-md relative overflow-hidden group shadow-sm hover:shadow-md transition-shadow">
+                                                                    <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
+                                                                    <div className="flex justify-between items-start pl-3">
+                                                                        <div>
+                                                                            <p className="text-[9px] font-mono font-bold text-muted-app uppercase tracking-widest mb-1">
+                                                                                Network
+                                                                                Followers
+                                                                            </p>
+                                                                            <div className="flex items-baseline gap-2">
+                                                                                <p className="text-2xl md:text-3xl font-display font-black text-text-app">
+                                                                                    {
+                                                                                        friends
+                                                                                    }
+                                                                                </p>
+                                                                                <span
+                                                                                    className={`text-[8px] px-1.5 py-0.5 rounded-sm border font-mono uppercase tracking-widest ${fameBadge.color} ${fameBadge.bg} ${fameBadge.border}`}
+                                                                                >
+                                                                                    {
+                                                                                        fameBadge.label
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500">
+                                                                            <Users
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                                                <Card className="p-5 md:p-8">
-                                                    <h3 className="text-sm font-black text-text-app uppercase tracking-widest mb-8">
-                                                        Community Status
-                                                    </h3>
-                                                    <div className="space-y-4">
-                                                        <div className="flex items-center justify-between py-2 border-b border-white/5">
-                                                            <span className="text-[10px] font-bold text-muted-app uppercase">
-                                                                Last Online
-                                                            </span>
-                                                            <span className="text-[10px] font-mono text-text-app font-bold">
-                                                                {format(
-                                                                    new Date(
-                                                                        user.lastOnlineTimeSeconds *
-                                                                            1000,
-                                                                    ),
-                                                                    'MMM dd, HH:mm',
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex items-center justify-between py-2 border-b border-white/5">
-                                                            <span className="text-[10px] font-bold text-muted-app uppercase">
-                                                                Member Since
-                                                            </span>
-                                                            <span className="text-[10px] font-mono text-text-app font-bold">
-                                                                {format(
-                                                                    new Date(
-                                                                        user.registrationTimeSeconds *
-                                                                            1000,
-                                                                    ),
-                                                                    'MMM dd, yyyy',
-                                                                )}
-                                                            </span>
-                                                        </div>
+                                                                <div className="p-4 rounded-xl bg-card-app border border-border-app backdrop-blur-md relative overflow-hidden group shadow-sm hover:shadow-md transition-shadow">
+                                                                    <div className="absolute top-0 left-0 w-1 h-full bg-orange-500" />
+                                                                    <div className="flex justify-between items-start pl-3">
+                                                                        <div>
+                                                                            <p className="text-[9px] font-mono font-bold text-muted-app uppercase tracking-widest mb-1">
+                                                                                Data
+                                                                                Transmissions
+                                                                            </p>
+                                                                            <div className="flex items-baseline gap-2">
+                                                                                <p className="text-2xl md:text-3xl font-display font-black text-text-app">
+                                                                                    {
+                                                                                        blogs.length
+                                                                                    }
+                                                                                </p>
+                                                                                <span className="text-[8px] px-1.5 py-0.5 rounded-sm border font-mono uppercase tracking-widest text-orange-400 bg-orange-400/10 border-orange-400/20">
+                                                                                    {
+                                                                                        totalBlogUpvotes
+                                                                                    }{' '}
+                                                                                    UPVOTES
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500">
+                                                                            <Rss
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </Card>
+
+                                                        <Card className="p-5 md:p-8">
+                                                            <h3 className="text-sm font-black text-text-app uppercase tracking-widest mb-8">
+                                                                Community Status
+                                                            </h3>
+                                                            <div className="space-y-4">
+                                                                <div className="flex items-center justify-between py-2 border-b border-white/5">
+                                                                    <span className="text-[10px] font-bold text-muted-app uppercase">
+                                                                        Last
+                                                                        Online
+                                                                    </span>
+                                                                    <span className="text-[10px] font-mono text-text-app font-bold">
+                                                                        {format(
+                                                                            new Date(
+                                                                                user.lastOnlineTimeSeconds *
+                                                                                    1000,
+                                                                            ),
+                                                                            'MMM dd, HH:mm',
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex items-center justify-between py-2 border-b border-white/5">
+                                                                    <span className="text-[10px] font-bold text-muted-app uppercase">
+                                                                        Member
+                                                                        Since
+                                                                    </span>
+                                                                    <span className="text-[10px] font-mono text-text-app font-bold">
+                                                                        {format(
+                                                                            new Date(
+                                                                                user.registrationTimeSeconds *
+                                                                                    1000,
+                                                                            ),
+                                                                            'MMM dd, yyyy',
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </Card>
                                                     </div>
-                                                </Card>
-                                            </div>
-                                        </div>
+                                                </div>
+                                            );
+                                        })()
                                     )}
                                 </div>
                             )}
@@ -3014,71 +3003,6 @@ export function Dashboard() {
                     </div>
                 )}
             </AnimatePresence>
-        </div>
-    );
-}
-
-function InsightCard({ title, desc, icon: Icon, color }: any) {
-    return (
-        <Card className="p-6 transition-all duration-500 group relative bg-linear-to-br from-card-app to-white/1 hover:-translate-y-1 hover:shadow-2xl">
-            <div
-                className={cn(
-                    'p-3 rounded-2xl w-fit mb-5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg',
-                    color ||
-                        'text-brand-primary bg-brand-primary/10 shadow-brand-primary/5',
-                )}
-            >
-                <Icon size={18} />
-            </div>
-            <h4 className="text-base font-display font-bold text-text-app mb-2 tracking-tight group-hover:text-brand-primary transition-colors">
-                {title}
-            </h4>
-            <p className="text-xs leading-relaxed text-muted-app font-medium opacity-80 group-hover:opacity-100 transition-opacity">
-                {desc}
-            </p>
-
-            {/* Interactive Detail */}
-            <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                <span className="text-[9px] font-black uppercase tracking-widest text-brand-primary">
-                    Analytical Detail
-                </span>
-                <div className="w-8 h-px bg-brand-primary/30" />
-            </div>
-
-            <div className="absolute -right-4 -bottom-4 opacity-[0.02] group-hover:opacity-[0.05] transition-all duration-700 group-hover:scale-150 rotate-12 pointer-events-none">
-                {Icon && <Icon size={80} />}
-            </div>
-        </Card>
-    );
-}
-
-function DetailItem({ label, value, isVerdict, isMono, outerClassName }: any) {
-    return (
-        <div className={cn('space-y-1.5 p-4 rounded-3xl', outerClassName)}>
-            <p className="text-[10px] text-muted-app uppercase font-black tracking-[0.2em]">
-                {label}
-            </p>
-            {isVerdict ? (
-                <span
-                    className={cn(
-                        'text-[10px] font-black px-2 py-0.5 rounded-md border uppercase tracking-wider',
-                        value === 'OK'
-                            ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                            : 'bg-red-500/10 text-red-500 border-red-500/20',
-                    )}
-                >
-                    {value === 'OK' ? 'Accepted' : value.replace(/_/g, ' ')}
-                </span>
-            ) : (
-                <p
-                    className={cn(
-                        'text-sm font-bold text-text-app',
-                        isMono && 'font-mono text-brand-primary',
-                    )}
-                >
-                    {value}
-                </p>
-            )}
         </div>
     );
 }
