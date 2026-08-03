@@ -523,17 +523,17 @@ export function Dashboard() {
         1000,
     );
 
-    const TABS = [
-        { id: 'overview', label: 'Overview', icon: LayoutList },
-        { id: 'contest-analyzer', label: 'Contest Analyzer', icon: Trophy },
-        { id: 'predictor', label: 'Predictor', icon: TrendingUp },
-        { id: 'ai', label: 'AI Command Center', icon: Zap },
-        { id: 'prep', label: 'Preparation', icon: Target },
-        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-        { id: 'journey', label: 'Journey', icon: Milestone },
-        { id: 'submissions', label: 'History', icon: Code2 },
-        { id: 'social', label: 'Social & Share', icon: Users },
-    ] as const;
+const TABS = [
+    { id: 'overview', label: 'Overview', icon: LayoutList },
+    { id: 'contest-analyzer', label: 'Contest Analyzer', icon: Trophy },
+    { id: 'predictor', label: 'Predictor', icon: TrendingUp },
+    { id: 'ai', label: 'AI Command Center', icon: Zap },
+    { id: 'prep', label: 'Preparation', icon: Target },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'journey', label: 'Journey', icon: Milestone },
+    { id: 'submissions', label: 'History', icon: Code2 },
+    { id: 'social', label: 'Social & Share', icon: Users },
+] as const;
 
     if (loading) {
         return (

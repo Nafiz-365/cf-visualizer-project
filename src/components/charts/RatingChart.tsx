@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     ResponsiveContainer,
     AreaChart,
@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { RatingChange } from '../../types';
 import { format } from 'date-fns';
+import { cn } from '../../lib/utils';
 
 const RANK_LEVELS = [
     { name: 'Grandmaster', min: 2400, color: 'rgba(239, 68, 68, 0.05)' },
@@ -27,20 +28,24 @@ interface RatingChartProps {
 }
 
 function RatingChartImpl({ data }: RatingChartProps) {
-    const chartData = data.map((d) => ({
-        date: format(new Date(d.ratingUpdateTimeSeconds * 1000), 'MMM yyyy'),
-        rating: d.newRating,
-        change: d.newRating - d.oldRating,
-        contest: d.contestName,
-        rank: d.rank,
-    }));
+    const { chartData, minRating, maxRating } = useMemo(() => {
+        const mapped = data.map((d) => ({
+            date: format(new Date(d.ratingUpdateTimeSeconds * 1000), 'MMM yyyy'),
+            rating: d.newRating,
+            change: d.newRating - d.oldRating,
+            contest: d.contestName,
+            rank: d.rank,
+        }));
+        const minVal = Math.min(...data.map((d) => d.newRating));
+        const maxVal = Math.max(...data.map((d) => d.newRating));
+        return {
+            chartData: mapped,
+            minRating: Math.max(0, minVal - 200),
+            maxRating: maxVal + 300,
+        };
+    }, [data]);
 
     if (data.length === 0) return null;
-
-    const minVal = Math.min(...data.map((d) => d.newRating));
-    const maxVal = Math.max(...data.map((d) => d.newRating));
-    const minRating = Math.max(0, minVal - 200);
-    const maxRating = maxVal + 300;
 
     return (
         <div className="w-full h-full group">
@@ -233,8 +238,6 @@ function RatingChartImpl({ data }: RatingChartProps) {
     );
 }
 
-function cn(...classes: any[]) {
-    return classes.filter(Boolean).join(' ');
-}
+
 
 export const RatingChart = React.memo(RatingChartImpl);
