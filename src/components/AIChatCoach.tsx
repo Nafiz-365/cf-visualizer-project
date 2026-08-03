@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import { buildCoachProfileSummary } from '../lib/coachProfile';
 
 interface Message {
     id: string;
@@ -38,13 +39,25 @@ const SUGGESTED_QUESTIONS = [
     'Explain Big-O notation.',
 ];
 
-function buildSystemContext(user: User, analytics: any, ratingHistory: any[]) {
+function buildSystemContext(
+    user: User,
+    submissions: Submission[],
+    analytics: any,
+    ratingHistory: any[],
+) {
     const recentDeltas = ratingHistory
         .slice(-5)
         .map((r: any) => r.newRating - r.oldRating)
         .join(', ');
+    const profile = buildCoachProfileSummary(
+        user,
+        submissions,
+        analytics,
+        ratingHistory,
+    );
+
     return `
-You are a helpful, friendly AI assistant — like Gemini or ChatGPT. You can discuss ANY topic the user brings up: coding, math, science, life advice, general knowledge, creative writing, or anything else.
+You are a warm, naturally conversational AI assistant. You sound like a polished, helpful companion and write in a way that feels close to ChatGPT: clear, natural, concise, and easy to read. You are thoughtful, slightly witty when appropriate, and genuinely supportive without sounding overly formal. You can discuss any topic the user brings up: coding, math, science, life advice, general knowledge, creative writing, or anything else.
 
 You also have full context about this user's Codeforces profile, so you can give personalized competitive programming advice when asked:
 - Handle: ${user.handle}
@@ -58,14 +71,19 @@ You also have full context about this user's Codeforces profile, so you can give
 - Contest Count: ${analytics?.contestCount ?? 0}
 - Rating Success Rate: ${analytics?.deltaSuccessRate ?? 0}%
 - Recent Rating Deltas (last 5): ${recentDeltas || 'N/A'}
+- Coach Profile Insight: ${profile.strengthSignal}
+- Coach Profile Improvement: ${profile.weaknessSignal}
+- Recommended Next Step: ${profile.nextStep}
+- Momentum Note: ${profile.recentMomentum}
 
-Be conversational, helpful, and concise. If the topic is not about competitive programming, just answer naturally like a general AI assistant.
+Write in a friendly, natural tone. Be encouraging, practical, and genuinely helpful. Prefer short paragraphs, clear wording, and answers that feel like a real conversation. Sound polished and confident, but not stiff. Think of the style as a modern AI assistant: smooth, concise, calm, and slightly conversational. Keep responses natural and human-like rather than overly promotional, overly formal, or overly structured. Avoid turning simple answers into long structured templates, checklists, or overly formal plans unless the user explicitly asks for a detailed study plan. If the user asks a general question, respond naturally and helpfully. If the topic is coding or competitive programming, tailor the answer to their profile with smart, relevant guidance and a smooth flow. When possible, include one concrete next step or suggestion. Let the wording feel a bit more effortless and confident, like a strong assistant who knows what they are talking about.
 `.trim();
 }
 
 function generateFallbackResponse(
     question: string,
     user: User,
+    submissions: Submission[],
     analytics: any,
 ): string {
     const q = question.toLowerCase();
@@ -73,6 +91,7 @@ function generateFallbackResponse(
     const bestTag = analytics?.bestTag ?? 'implementation';
     const accuracy = analytics?.accuracy ?? 0;
     const avgDiff = analytics?.avgDifficulty ?? 800;
+    const profile = buildCoachProfileSummary(user, submissions, analytics, []);
 
     // General knowledge fallbacks
     if (
@@ -81,7 +100,7 @@ function generateFallbackResponse(
         q.includes('breadth') ||
         q.includes('depth')
     ) {
-        return `BFS (Breadth-First Search) explores nodes level by level using a queue — great for finding the shortest path in unweighted graphs. DFS (Depth-First Search) uses a stack (or recursion) to go as deep as possible first — useful for cycle detection, topological sort, and backtracking problems.`;
+        return `BFS explores a graph level by level using a queue, which makes it great for finding the shortest path in unweighted graphs. DFS goes deeper first using a stack or recursion, and it is especially useful for cycle detection, topological sorting, and backtracking.`;
     }
     if (
         q.includes('big-o') ||
@@ -89,35 +108,35 @@ function generateFallbackResponse(
         q.includes('complexity') ||
         q.includes('time complexity')
     ) {
-        return `Big-O notation describes how an algorithm's runtime grows relative to input size. O(1) is constant, O(log n) is logarithmic (like binary search), O(n) is linear, O(n²) is quadratic (like bubble sort), and O(2ⁿ) is exponential. Always aim for the lowest Big-O you can achieve.`;
+        return `Big-O notation is basically a way of describing how an algorithm scales as the input grows. O(1) is constant time, O(log n) is logarithmic, O(n) is linear, O(n²) is quadratic, and O(2ⁿ) is exponential. In practice, you usually want the smallest growth rate you can get.`;
     }
     if (
         q.includes('dynamic programming') ||
         q.includes(' dp ') ||
         q.includes('memoization')
     ) {
-        return `Dynamic Programming solves complex problems by breaking them into overlapping subproblems and storing results to avoid redundant work. The key insight is: if a problem has "optimal substructure" and "overlapping subproblems," DP applies. Start by defining the state, then find the recurrence relation.`;
+        return `Dynamic programming is a way of solving tricky problems by breaking them into smaller pieces and remembering the results so you do not recompute them over and over. It works especially well when a problem has overlapping subproblems and an optimal structure. A good starting point is to define the state first, then figure out the recurrence.`;
     }
     if (
         q.includes('motivat') ||
         q.includes('give up') ||
         q.includes('inspire')
     ) {
-        return `Every expert was once a beginner who didn't quit. Rating drops are part of the journey — what separates those who improve from those who don't is what they do the day after a bad contest. Keep solving, keep upsolving, and trust the process.`;
+        return `Every strong coder has had rough days. A bad contest does not mean you are getting worse — it usually means you are in the middle of learning. The people who improve are the ones who keep showing up, reviewing their mistakes, and trying again the next day.`;
     }
     if (
         q.includes('consistent') ||
         q.includes('habit') ||
         q.includes('routine')
     ) {
-        return `Consistency beats intensity. Solving 2-3 problems daily for a month beats a 10-hour grind once a week. Set a specific time each day, even if it's just 30 minutes, and protect that time. Progress compounds.`;
+        return `Consistency usually beats intensity. Doing a little bit each day tends to help more than one huge grind once a week. Pick a regular time, even if it is only 30 minutes, and protect it. Small habits stack up faster than people expect.`;
     }
     if (
         q.includes('fun fact') ||
         q.includes('interesting') ||
         q.includes('trivia')
     ) {
-        return `Fun fact: The first "bug" in computing was a literal bug — a moth found trapped in a relay of the Harvard Mark II computer in 1947. Grace Hopper's team taped it into their log book with the note "First actual case of bug being found." The term "debugging" stuck.`;
+        return `Fun fact: the first real computer bug was literally a bug. In 1947, a moth got trapped in the hardware of the Harvard Mark II, and the team logged it as the first actual case of a bug being found. That is where the phrase “debugging” came from.`;
     }
 
     // CF-specific fallbacks
@@ -126,20 +145,20 @@ function generateFallbackResponse(
         q.includes('next rank') ||
         q.includes('improve')
     ) {
-        return `To reach the next rank from ${rating}, concentrate on problems rated ${rating + 100}–${Math.min(rating + 300, 3500)}. Your strongest tag is "${bestTag}" — use it as a springboard to explore adjacent algorithms.`;
+        return `To move up from ${rating}, I would focus on problems in the ${rating + 100}–${Math.min(rating + 300, 3500)} range. Since your strongest tag is "${bestTag}", it is a smart idea to lean on that strength while gradually exploring nearby topics. ${profile.nextStep}`;
     }
     if (q.includes('weak') || q.includes('worst') || q.includes('struggle')) {
-        return `Based on your average solved difficulty of ${avgDiff} vs your rating of ${rating}, you may be avoiding harder problems. Try dedicating 3 sessions/week to problems rated ${avgDiff + 100}–${avgDiff + 300}.`;
+        return `Since your average solved difficulty is ${avgDiff} while your rating is ${rating}, you may be playing it a bit too safe. Trying three sessions a week on problems in the ${avgDiff + 100}–${avgDiff + 300} range could help you improve faster. ${profile.weaknessSignal}`;
     }
     if (
         q.includes('stagnate') ||
         q.includes('stuck') ||
         q.includes('plateau')
     ) {
-        return `Rating stagnation often comes from solving too many comfort-zone problems. With ${accuracy}% accuracy, your instincts are solid. After each contest, upsolve the hardest problem you couldn't finish.`;
+        return `Stagnation often happens when you stay in your comfort zone for too long. With ${accuracy}% accuracy, your instincts are already pretty solid. After each contest, try to upsolve the hardest problem you could not finish and see what you missed. ${profile.strengthSignal}`;
     }
     if (q.includes('contest') || q.includes('performance')) {
-        return `At rating ${rating}, aim to solve the first 2 problems in under 20 minutes each. Practice speed on problems rated ${Math.max(800, rating - 300)}–${rating - 100} to build fluency.`;
+        return `At rating ${rating}, a good target is to solve the first two problems in under 20 minutes each. Practicing on problems in the ${Math.max(800, rating - 300)}–${rating - 100} range can help you build fluency and confidence.`;
     }
     if (
         q.includes('plan') ||
@@ -147,14 +166,14 @@ function generateFallbackResponse(
         q.includes('schedule') ||
         q.includes('training')
     ) {
-        return `2-week plan: Days 1–3: upsolve 2 problems above your rating. Days 4–5: virtual contest. Days 6–7: review failed attempts. Target "${bestTag}" plus one new topic per week.`;
+        return `A simple 2-week plan could be: Days 1–3, upsolve two problems a bit above your level. Days 4–5, do a virtual contest. Days 6–7, review what went wrong and focus on "${bestTag}" plus one new topic. That gives you both practice and recovery. ${profile.recentMomentum}`;
     }
 
     // Generic fallback
-    return `I'm your AI assistant — I can help with competitive programming, general coding concepts, or anything else on your mind! Your CF profile shows ${analytics?.totalSolved ?? 0} problems solved at rating ${rating}. Ask me anything.`;
+    return `I am your AI assistant, and I can help with competitive programming, coding concepts, or just about anything else you want to talk through. Your Codeforces profile shows ${analytics?.totalSolved ?? 0} solved problems at rating ${rating}, so I can tailor the advice to your level too. ${profile.strengthSignal} ${profile.nextStep}`;
 }
 
-export function AIChatCoach({
+function AIChatCoachImpl({
     user,
     submissions,
     analytics,
@@ -164,7 +183,7 @@ export function AIChatCoach({
         {
             id: 'welcome',
             role: 'assistant',
-            content: `Hey ${user.handle}! I'm your AI assistant — I know your Codeforces profile (${analytics?.totalSolved ?? 0} solved, rated ${user.rating ?? 'N/A'}), but feel free to ask me about anything: coding, algorithms, general knowledge, or just have a chat. What's on your mind?`,
+            content: `Hey ${user.handle}! I am your AI assistant, and I can help with coding, algorithms, general knowledge, or just a casual chat. I also know your Codeforces profile (${analytics?.totalSolved ?? 0} solved, rated ${user.rating ?? 'N/A'}), so I can tailor the advice to your level. What do you want to work on?`,
             timestamp: new Date(),
         },
     ]);
@@ -194,10 +213,11 @@ export function AIChatCoach({
 
         const systemContext = buildSystemContext(
             user,
+            submissions,
             analytics,
             ratingHistory,
         );
-        const prompt = `${systemContext}\n\nUser says: "${messageText}"\n\nRespond naturally and helpfully. If the question is about competitive programming, use their profile stats. If it's about anything else, answer like a knowledgeable general AI assistant. Write in plain conversational text (no JSON, no markdown bullet lists).`;
+        const prompt = `${systemContext}\n\nUser says: "${messageText}"\n\nAnswer the user's question directly and naturally, as if you are chatting with them in a friendly, helpful way. Keep it warm, conversational, and easy to read. Use simple wording, short paragraphs, and a slightly personal tone when it fits. Sound confident, polished, and calm, like a skilled assistant that feels modern and natural. If the question is about competitive programming, use their profile stats naturally and give thoughtful advice. If it is about something else, answer like a knowledgeable general AI assistant. Avoid JSON, avoid stiff formatting, and avoid sounding robotic, overly formal, or too scripted. Keep answers compact and human-sounding rather than turning them into long, bullet-heavy plans. Make the reply feel like a helpful ChatGPT answer: direct, clear, lightly conversational, and a little more effortless.`;
 
         try {
             const response = await fetch('/api/ai/generate', {
@@ -211,6 +231,7 @@ export function AIChatCoach({
                 content = generateFallbackResponse(
                     messageText,
                     user,
+                    submissions,
                     analytics,
                 );
             } else {
@@ -225,6 +246,7 @@ export function AIChatCoach({
                     content = generateFallbackResponse(
                         messageText,
                         user,
+                        submissions,
                         analytics,
                     );
                 }
@@ -248,6 +270,7 @@ export function AIChatCoach({
                     content: generateFallbackResponse(
                         messageText,
                         user,
+                        submissions,
                         analytics,
                     ),
                     timestamp: new Date(),
@@ -278,101 +301,128 @@ export function AIChatCoach({
     };
 
     return (
-        <div className="flex flex-col h-full">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4 shrink-0">
-                <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-brand-secondary/20 border border-brand-secondary/20 flex items-center justify-center">
-                        <Bot size={13} className="text-brand-secondary" />
+        <div className="flex flex-col h-full gap-0">
+            {/* ── Header ─────────────────────────────────────────── */}
+            <div className="flex items-center justify-between mb-4 shrink-0 pb-3 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                    {/* Glowing AI orb */}
+                    <div className="relative w-9 h-9 shrink-0">
+                        <div className="absolute inset-0 rounded-full bg-brand-secondary/20 blur-md animate-pulse" />
+                        <div className="relative w-9 h-9 rounded-full bg-linear-to-br from-brand-secondary/30 to-brand-primary/20 border border-brand-secondary/25 flex items-center justify-center shadow-[0_0_18px_rgba(157,110,245,0.25)]">
+                            <Sparkles
+                                size={14}
+                                className="text-brand-secondary"
+                            />
+                        </div>
                     </div>
                     <div>
-                        <p className="text-[10px] text-brand-secondary font-black uppercase tracking-widest leading-none">
-                            AI Coach Chat
+                        <p className="text-[11px] text-text-app font-bold leading-none tracking-wide">
+                            AI Coach
                         </p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                            <span className="text-[9px] text-muted-app/60">
+                        <div className="flex items-center gap-1.5 mt-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse" />
+                            <span className="text-[9px] text-emerald-400/70 font-bold uppercase tracking-widest">
                                 Online
                             </span>
                         </div>
                     </div>
                 </div>
-                <Button
-                    variant="ghost"
-                    size="sm"
+                <button
                     onClick={clearChat}
-                    className="text-[9px] h-7 gap-1.5 opacity-30 hover:opacity-100 transition-opacity"
+                    className="p-2 rounded-xl text-muted-app/40 hover:text-muted-app hover:bg-white/5 transition-all duration-200 group"
+                    aria-label="Clear chat"
                 >
-                    <RefreshCw size={10} />
-                    Clear
-                </Button>
+                    <RefreshCw
+                        size={13}
+                        className="group-hover:rotate-180 transition-transform duration-500"
+                    />
+                </button>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1 mb-3">
+            {/* ── Message List ────────────────────────────────────── */}
+            <div className="flex-1 overflow-y-auto space-y-4 pr-1 mb-3 custom-scrollbar">
                 <AnimatePresence initial={false}>
                     {messages.map((msg) => (
                         <motion.div
                             key={msg.id}
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.18 }}
+                            initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
                             className={cn(
-                                'flex gap-2',
+                                'flex gap-2.5 items-end',
                                 msg.role === 'user'
                                     ? 'justify-end'
                                     : 'justify-start',
                             )}
                         >
+                            {/* AI Avatar */}
                             {msg.role === 'assistant' && (
-                                <div className="w-6 h-6 rounded-full bg-brand-secondary/15 border border-brand-secondary/20 flex items-center justify-center shrink-0 mt-0.5">
+                                <div className="w-6 h-6 rounded-full bg-linear-to-br from-brand-secondary/40 to-brand-primary/20 border border-brand-secondary/20 flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(157,110,245,0.2)]">
                                     <Bot
                                         size={10}
                                         className="text-brand-secondary"
                                     />
                                 </div>
                             )}
+
+                            {/* Bubble */}
                             <div
                                 className={cn(
-                                    'max-w-[80%] rounded-2xl px-3 py-2 text-[11px] leading-relaxed',
+                                    'max-w-[82%] rounded-2xl px-3.5 py-2.5 text-[11.5px] leading-relaxed',
                                     msg.role === 'user'
-                                        ? 'bg-brand-secondary/20 text-text-app rounded-tr-sm font-medium'
-                                        : 'bg-white/5 text-muted-app border border-white/5 rounded-tl-sm',
+                                        ? 'bg-linear-to-br from-brand-secondary/30 to-brand-primary/20 text-text-app rounded-br-sm border border-brand-secondary/20 shadow-[0_4px_24px_rgba(157,110,245,0.12)] font-medium'
+                                        : 'bg-white/4 text-muted-app border border-white/8 rounded-bl-sm shadow-[0_2px_12px_rgba(0,0,0,0.2)] backdrop-blur-sm',
                                 )}
                             >
                                 {msg.content}
+                                <p
+                                    className={cn(
+                                        'text-[8.5px] mt-1.5 opacity-30 font-mono',
+                                        msg.role === 'user'
+                                            ? 'text-right'
+                                            : 'text-left',
+                                    )}
+                                >
+                                    {msg.timestamp.toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                    })}
+                                </p>
                             </div>
+
+                            {/* User Avatar */}
                             {msg.role === 'user' && (
-                                <div className="w-6 h-6 rounded-full bg-white/8 border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
-                                    <UserIcon
-                                        size={10}
-                                        className="text-muted-app/60"
-                                    />
+                                <div className="w-6 h-6 rounded-full bg-white/8 border border-white/10 flex items-center justify-center shrink-0 text-[8px] font-bold text-muted-app/70 uppercase">
+                                    {user.handle?.[0] ?? <UserIcon size={10} />}
                                 </div>
                             )}
                         </motion.div>
                     ))}
 
+                    {/* Wave typing indicator */}
                     {isLoading && (
                         <motion.div
                             key="typing"
-                            initial={{ opacity: 0, y: 6 }}
+                            initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex gap-2 justify-start"
+                            exit={{ opacity: 0 }}
+                            className="flex gap-2.5 items-end justify-start"
                         >
-                            <div className="w-6 h-6 rounded-full bg-brand-secondary/15 border border-brand-secondary/20 flex items-center justify-center shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-linear-to-br from-brand-secondary/40 to-brand-primary/20 border border-brand-secondary/20 flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(157,110,245,0.2)]">
                                 <Bot
                                     size={10}
                                     className="text-brand-secondary"
                                 />
                             </div>
-                            <div className="bg-white/5 border border-white/5 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1">
+                            <div className="bg-white/4 border border-white/8 rounded-2xl rounded-bl-sm px-4 py-3.5 flex items-center gap-1 backdrop-blur-sm">
                                 {[0, 1, 2].map((i) => (
                                     <span
                                         key={i}
-                                        className="w-1.5 h-1.5 rounded-full bg-muted-app/40 animate-bounce"
+                                        className="w-1.5 h-1.5 rounded-full bg-brand-secondary/60"
                                         style={{
-                                            animationDelay: `${i * 0.15}s`,
+                                            animation:
+                                                'wave 1.2s ease-in-out infinite',
+                                            animationDelay: `${i * 0.2}s`,
                                         }}
                                     />
                                 ))}
@@ -383,23 +433,19 @@ export function AIChatCoach({
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Suggested questions */}
+            {/* ── Suggested Questions (horizontal scroll chips) ─── */}
             {messages.length <= 2 && !isLoading && (
                 <div className="mb-3 shrink-0">
-                    <p className="text-[9px] text-muted-app/30 uppercase tracking-widest font-bold mb-1.5">
+                    <p className="text-[9px] text-muted-app/30 uppercase tracking-widest font-black mb-2">
                         Try asking
                     </p>
-                    <div className="flex flex-col gap-1">
-                        {SUGGESTED_QUESTIONS.slice(0, 3).map((q) => (
+                    <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-1.5">
+                        {SUGGESTED_QUESTIONS.map((q) => (
                             <button
                                 key={q}
                                 onClick={() => sendMessage(q)}
-                                className="text-left text-[10px] text-muted-app/60 border border-white/5 rounded-lg px-3 py-1.5 hover:border-brand-secondary/30 hover:text-brand-secondary hover:bg-brand-secondary/5 transition-all flex items-center gap-2 group"
+                                className="shrink-0 text-left text-[10px] text-muted-app/70 border border-white/8 rounded-full px-3 py-1.5 hover:border-brand-secondary/40 hover:text-brand-secondary hover:bg-brand-secondary/8 transition-all whitespace-nowrap"
                             >
-                                <ChevronRight
-                                    size={9}
-                                    className="opacity-40 group-hover:opacity-100 shrink-0"
-                                />
                                 {q}
                             </button>
                         ))}
@@ -407,30 +453,35 @@ export function AIChatCoach({
                 </div>
             )}
 
-            {/* Input */}
-            <div className="flex gap-2 shrink-0">
-                <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Ask your coach anything..."
-                    disabled={isLoading}
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-[11px] text-text-app placeholder:text-muted-app/30 focus:outline-none focus:border-brand-secondary/40 transition-colors disabled:opacity-40"
-                />
+            {/* ── Input Bar ───────────────────────────────────────── */}
+            <div className="flex gap-2 shrink-0 items-center">
+                <div className="flex-1 relative">
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Ask your coach anything…"
+                        disabled={isLoading}
+                        className="w-full bg-white/4 border border-white/10 rounded-2xl px-4 py-2.5 text-[12px] text-text-app placeholder:text-muted-app/25 focus:outline-none focus:border-brand-secondary/50 focus:shadow-[0_0_0_3px_rgba(157,110,245,0.08)] transition-all duration-200 disabled:opacity-40"
+                    />
+                </div>
                 <button
                     onClick={() => sendMessage()}
                     disabled={!input.trim() || isLoading}
-                    className="h-10 w-10 rounded-xl bg-brand-secondary/20 border border-brand-secondary/20 flex items-center justify-center text-brand-secondary hover:bg-brand-secondary/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+                    className="h-10 w-10 rounded-2xl bg-linear-to-br from-brand-secondary/40 to-brand-primary/30 border border-brand-secondary/25 flex items-center justify-center text-brand-secondary hover:from-brand-secondary/60 hover:to-brand-primary/40 hover:shadow-[0_0_20px_rgba(157,110,245,0.3)] transition-all duration-200 disabled:opacity-25 disabled:cursor-not-allowed shrink-0"
+                    aria-label="Send message"
                 >
                     {isLoading ? (
                         <Loader2 size={14} className="animate-spin" />
                     ) : (
-                        <Send size={14} />
+                        <Send size={13} />
                     )}
                 </button>
             </div>
         </div>
     );
 }
+
+export const AIChatCoach = React.memo(AIChatCoachImpl);
