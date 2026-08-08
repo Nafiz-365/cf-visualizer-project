@@ -185,6 +185,85 @@
 }
 
 /* ================================================================
+   SOCIAL CARD PREVIEW — Force dark mode inside the Live Canvas Feed
+   The card preview must always render with its original dark theme
+   so text (text-white, text-cyan-400 etc.) stays visible regardless
+   of the app-level light/dark toggle.
+   ================================================================ */
+.social-card-preview,
+.social-card-preview * {
+    color-scheme: dark;
+}
+
+/* Undo all light-mode bg-white overrides inside the preview */
+.light .social-card-preview .bg-white\/1 {
+    background-color: rgba(255, 255, 255, 0.01) !important;
+}
+.light .social-card-preview .bg-white\/2 {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+.light .social-card-preview .bg-white\/3 {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+.light .social-card-preview .bg-white\/4 {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+}
+.light .social-card-preview .bg-white\/5 {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .social-card-preview .bg-white\/6 {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+}
+.light .social-card-preview .bg-white\/8 {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+.light .social-card-preview .bg-white\/10 {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .social-card-preview .bg-white\/20 {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.light .social-card-preview .border-white\/5 {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .social-card-preview .border-white\/8 {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.light .social-card-preview .border-white\/10 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .social-card-preview .border-white\/20 {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Ensure text colors stay bright inside the preview */
+.light .social-card-preview .text-white {
+    color: #ffffff !important;
+}
+.light .social-card-preview .text-slate-300 {
+    color: #cbd5e1 !important;
+}
+.light .social-card-preview .text-slate-400 {
+    color: #94a3b8 !important;
+}
+.light .social-card-preview .text-slate-500 {
+    color: #64748b !important;
+}
+.light .social-card-preview .text-slate-600 {
+    color: #475569 !important;
+}
+
+/* Ensure input fields inside the card preview stay dark-themed */
+.light .social-card-preview input,
+.light .social-card-preview select,
+.light .social-card-preview textarea {
+    background-color: rgba(15, 23, 42, 0.3) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ================================================================
    BASE
    ================================================================ */
 
@@ -1538,6 +1617,14 @@ select option {
     );
 }
 
+
+
+
+
+
+
+
+
 .user-card-3 {
     border-top: 2px solid #f75087;
     background: linear-gradient(
@@ -1613,4 +1700,66 @@ select option {
 
 .light .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+/* ================================================================
+   MARKDOWN CHAT (AI Coach)
+   ================================================================ */
+.markdown-chat {
+    word-break: break-word;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.markdown-chat p {
+    margin-bottom: 0.75rem;
+}
+
+.markdown-chat p:last-child {
+    margin-bottom: 0;
+}
+
+.markdown-chat pre {
+    background: rgba(0, 0, 0, 0.4) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.markdown-chat code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+}
+
+.markdown-chat pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
+.markdown-chat ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.markdown-chat ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.markdown-chat a {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+}
+
+.light .markdown-chat pre {
+    background: #1e1e1e !important;
+    border-color: transparent;
 }

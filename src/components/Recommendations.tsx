@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Problem, Submission } from '../types';
 import { Card } from './ui/Card';
-import { ExternalLink, Target, Sparkles } from 'lucide-react';
+import { ExternalLink, Target, Sparkles, Bookmark } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { BookmarkNoteModal } from './BookmarkNoteModal';
 
 interface RecommendationsProps {
     submissions: Submission[];
@@ -15,6 +16,63 @@ function RecommendationsImpl({
     problemset,
     currentRating,
 }: RecommendationsProps) {
+    const [bookmarked, setBookmarked] = useState<Set<string>>(new Set());
+    const [activeBookmark, setActiveBookmark] = useState<{ id: string, name: string } | null>(null);
+
+    useEffect(() => {
+        fetch('/api/bookmarks')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const ids = new Set<string>(data.bookmarks.map((b: any) => b.problem_id));
+                    setBookmarked(ids);
+                }
+            })
+            .catch(console.error);
+    }, []);
+
+    const handleBookmark = async (e: React.MouseEvent, problem: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            await fetch('/api/bookmarks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    problemId: `${problem.contestId}${problem.index}`,
+                    problemName: problem.name
+                })
+            });
+            setBookmarked(prev => new Set(prev).add(`${problem.contestId}${problem.index}`));
+            setActiveBookmark({ id: `${problem.contestId}${problem.index}`, name: problem.name });
+            window.dispatchEvent(new Event('bookmarksUpdated'));
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const handleSaveNote = async (note: string) => {
+        if (!activeBookmark) return;
+        try {
+            await fetch('/api/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    problemId: activeBookmark.id,
+                    note: note
+                })
+            });
+            window.dispatchEvent(new Event('bookmarksUpdated'));
+        } catch (e) {
+            console.error(e);
+        }
+        setActiveBookmark(null);
+    };
+
+    const handleSkipNote = () => {
+        setActiveBookmark(null);
+    };
+
     const suggestedProblems = useMemo(() => {
         if (!problemset.length || !submissions.length) return [];
 
@@ -60,6 +118,13 @@ function RecommendationsImpl({
                 </span>
             </div>
 
+
+
+
+
+
+            
+
             <div className="space-y-3">
                 {suggestedProblems.map((p, i) => (
                     <a
@@ -85,20 +150,42 @@ function RecommendationsImpl({
                             <h4 className="text-xs font-bold text-text-app group-hover:text-brand-secondary transition-colors wrap-break-word whitespace-normal">
                                 {p.name}
                             </h4>
-                            <div className="flex flex-wrap gap-1 mt-2">
-                                {p.tags.slice(0, 2).map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="text-[8px] font-bold text-muted-app/60 uppercase tracking-tighter"
-                                    >
-                                        #{tag}
-                                    </span>
-                                ))}
+                            <div className="flex flex-wrap items-center justify-between gap-1 mt-2">
+                                <div className="flex flex-wrap gap-1">
+                                    {p.tags.slice(0, 2).map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="text-[8px] font-bold text-muted-app/60 uppercase tracking-tighter"
+                                        >
+                                            #{tag}
+                                        </span>
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={(e) => handleBookmark(e, p)}
+                                    className={cn(
+                                        "p-1.5 rounded-lg transition-colors group-hover:opacity-100 opacity-60",
+                                        bookmarked.has(`${p.contestId}${p.index}`)
+                                            ? "text-brand-primary"
+                                            : "text-muted-app hover:text-brand-secondary hover:bg-brand-secondary/10"
+                                    )}
+                                    title="Bookmark problem"
+                                >
+                                    <Bookmark size={14} fill={bookmarked.has(`${p.contestId}${p.index}`) ? "currentColor" : "none"} />
+                                </button>
                             </div>
                         </div>
                     </a>
                 ))}
             </div>
+
+            <BookmarkNoteModal
+                isOpen={!!activeBookmark}
+                onClose={handleSkipNote}
+                onSave={handleSaveNote}
+                onSkip={handleSkipNote}
+                problemName={activeBookmark?.name || ''}
+            />
 
             <div className="pt-2">
                 <p className="text-[9px] text-muted-app italic font-medium leading-relaxed">

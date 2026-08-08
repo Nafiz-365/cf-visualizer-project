@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
     Search,
     Trophy,
@@ -11,14 +11,25 @@ import {
     Globe,
     History,
     X,
+    UserCircle,
+    Lock,
+    Loader2
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
+import { useAuth } from '../contexts/AuthContext';
 
 export function LandingPage() {
     const [handle, setHandle] = useState('');
     const [recent, setRecent] = useState<string[]>([]);
     const navigate = useNavigate();
+    const { userHandle, login, logout } = useAuth();
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+    const [authHandle, setAuthHandle] = useState('');
+    const [authPassword, setAuthPassword] = useState('');
+    const [authLoading, setAuthLoading] = useState(false);
+    const [authError, setAuthError] = useState('');
 
     useEffect(() => {
         const stored = JSON.parse(
@@ -43,6 +54,40 @@ export function LandingPage() {
         );
         localStorage.setItem('recent_handles', JSON.stringify(updated));
         setRecent(updated);
+    };
+
+
+
+
+
+
+    
+
+    const handleAuthSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setAuthError('');
+        setAuthLoading(true);
+        try {
+            const res = await fetch(`/api/auth/${authMode}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ handle: authHandle.trim(), password: authPassword })
+            });
+            const data = await res.json();
+            if (data.success) {
+                login(authHandle.trim());
+                setIsAuthModalOpen(false);
+                setAuthHandle('');
+                setAuthPassword('');
+                navigate(`/dashboard/${authHandle.trim()}`);
+            } else {
+                setAuthError(data.error || 'Authentication failed');
+            }
+        } catch (err) {
+            setAuthError('Network error');
+        } finally {
+            setAuthLoading(false);
+        }
     };
 
     return (
@@ -139,6 +184,25 @@ export function LandingPage() {
                 ))}
             </div>
 
+            {/* Auth Button Top Right */}
+            <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50">
+                {userHandle ? (
+                    <div className="flex items-center gap-3">
+                        <Button variant="secondary" onClick={() => navigate(`/dashboard/${userHandle}`)} className="rounded-xl px-4 text-xs">
+                            Dashboard
+                        </Button>
+                        <Button variant="ghost" onClick={logout} className="rounded-xl px-4 text-xs opacity-60 hover:opacity-100">
+                            Logout
+                        </Button>
+                    </div>
+                ) : (
+                    <Button variant="secondary" onClick={() => setIsAuthModalOpen(true)} className="rounded-xl px-4 text-xs flex items-center gap-2">
+                        <UserCircle size={14} />
+                        Sign In
+                    </Button>
+                )}
+            </div>
+
             <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-24">
                 <div className="text-center space-y-8 max-w-3xl mx-auto">
                     <motion.div
@@ -150,7 +214,7 @@ export function LandingPage() {
                             <Zap size={10} className="fill-current" />
                             Advanced Analytics for Competitive Programmers
                         </span>
-                        <h1 className="text-3xl sm:text-5xl md:text-7xl font-display font-bold text-text-app tracking-tight leading-[1.1]">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold text-text-app tracking-tight leading-[1.1] px-2">
                             Visualize Your <br className="hidden md:block" />
                             <span className="gradient-text whitespace-nowrap">
                                 Coding Excellence.
@@ -305,6 +369,99 @@ export function LandingPage() {
                     </div>
                 </div>
             </footer>
+
+            {/* Auth Modal */}
+            <AnimatePresence>
+                {isAuthModalOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                        onClick={() => setIsAuthModalOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-full max-w-md glass-premium p-6 md:p-8 rounded-3xl relative"
+                        >
+                            <button
+                                onClick={() => setIsAuthModalOpen(false)}
+                                className="absolute top-4 right-4 p-2 text-muted-app hover:text-text-app hover:bg-white/5 rounded-full transition-colors"
+                            >
+                                <X size={16} />
+                            </button>
+
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-display font-bold text-text-app">
+                                    {authMode === 'login' ? 'Welcome Back' : 'Claim Handle'}
+                                </h2>
+                                <p className="text-xs text-muted-app mt-2">
+                                    {authMode === 'login' 
+                                        ? 'Sign in to access your chat history and friends list.'
+                                        : 'Register to claim this Codeforces handle as yours.'}
+                                </p>
+                            </div>
+
+                            <form onSubmit={handleAuthSubmit} className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-app ml-1">Codeforces Handle</label>
+                                    <div className="relative">
+                                        <UserCircle size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-app" />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={authHandle}
+                                            onChange={(e) => setAuthHandle(e.target.value)}
+                                            placeholder="e.g. tourist"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-text-app focus:outline-none focus:border-brand-primary transition-colors"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-app ml-1">Password</label>
+                                    <div className="relative">
+                                        <Lock size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-app" />
+                                        <input
+                                            type="password"
+                                            required
+                                            value={authPassword}
+                                            onChange={(e) => setAuthPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-text-app focus:outline-none focus:border-brand-primary transition-colors"
+                                        />
+                                    </div>
+                                </div>
+
+                                {authError && (
+                                    <p className="text-red-400 text-xs text-center py-1 font-bold">{authError}</p>
+                                )}
+
+                                <Button
+                                    variant="primary"
+                                    disabled={authLoading}
+                                    className="w-full rounded-xl py-3 mt-4"
+                                >
+                                    {authLoading ? <Loader2 size={16} className="animate-spin" /> : (authMode === 'login' ? 'Sign In' : 'Register')}
+                                </Button>
+                            </form>
+
+                            <div className="mt-6 text-center text-xs text-muted-app">
+                                {authMode === 'login' ? "Don't have an account? " : "Already claimed? "}
+                                <button
+                                    type="button"
+                                    onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+                                    className="text-brand-primary font-bold hover:underline"
+                                >
+                                    {authMode === 'login' ? 'Register' : 'Sign In'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

@@ -3,6 +3,13 @@ import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { User, RatingChange, Submission } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+
+
+
+
+
+
+
 import {
     Share2,
     Image as ImageIcon,
@@ -1150,7 +1157,7 @@ function SocialCardsImpl({
                     </div>
 
                     {/* Interactive mock container matching exact proportions (1.90 ratio) */}
-                    <div className="aspect-[1.9] w-full rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-slate-800 relative text-left bg-slate-950">
+                    <div className="aspect-[1.9] w-full rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-slate-800 relative text-left bg-slate-950 dark social-card-preview">
                         {/* Background dot grid */}
                         <div className="absolute inset-0 bg-grid-white/[0.03] bg-size-[12px_12px] md:bg-size-[24px_24px]" />
 

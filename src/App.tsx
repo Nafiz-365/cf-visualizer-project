@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
 
 const LandingPage = lazy(() =>
@@ -119,6 +120,7 @@ function NavLink({ to, active, icon: Icon, label }: any) {
 
 function App() {
     return (
+        <AuthProvider>
         <ThemeProvider>
             <Router>
                 <div
@@ -156,6 +158,11 @@ function App() {
                             filter: 'blur(80px)',
                         }}
                     />
+
+
+
+
+                    
 
                     <div className="relative z-10">
                         <Suspense
@@ -199,7 +206,14 @@ function App() {
                 </div>
             </Router>
         </ThemeProvider>
+        </AuthProvider>
     );
 }
+
+
+
+
+
+
 
 export default App;

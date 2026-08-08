@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { User, Submission } from '../types';
 import { Button } from './ui/Button';
+
+
+
+
+
+import { Card } from './ui/Card';
 import {
     Send,
     Bot,
@@ -13,6 +19,14 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { buildCoachProfileSummary } from '../lib/coachProfile';
+import { GeminiService } from '../services/geminiService';
+import { useAuth } from '../contexts/AuthContext';
+import { Lock } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+// @ts-ignore: CSS import without type declarations
+import 'highlight.js/styles/atom-one-dark.css';
 
 interface Message {
     id: string;
@@ -192,6 +206,33 @@ function AIChatCoachImpl({
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const { userHandle } = useAuth();
+
+    const isAuthorized =
+        userHandle && userHandle.toLowerCase() === user.handle.toLowerCase();
+
+    useEffect(() => {
+        if (!user.handle || !isAuthorized) return;
+        let isMounted = true;
+        GeminiService.getChatHistory(user.handle).then((history) => {
+            if (!isMounted) return;
+            if (history && history.length > 0) {
+                setMessages(
+                    history.map((msg, i) => ({
+                        id: `db-${i}`,
+                        role: msg.role,
+                        content: msg.content,
+                        timestamp: msg.created_at
+                            ? new Date(msg.created_at + 'Z')
+                            : new Date(),
+                    })),
+                );
+            }
+        });
+        return () => {
+            isMounted = false;
+        };
+    }, [user.handle]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -210,6 +251,8 @@ function AIChatCoachImpl({
         setMessages((prev) => [...prev, userMsg]);
         setInput('');
         setIsLoading(true);
+
+        GeminiService.saveChatMessage(user.handle, 'user', messageText);
 
         const systemContext = buildSystemContext(
             user,
@@ -261,6 +304,7 @@ function AIChatCoachImpl({
                     timestamp: new Date(),
                 },
             ]);
+            GeminiService.saveChatMessage(user.handle, 'assistant', content);
         } catch {
             setMessages((prev) => [
                 ...prev,
@@ -276,6 +320,16 @@ function AIChatCoachImpl({
                     timestamp: new Date(),
                 },
             ]);
+            GeminiService.saveChatMessage(
+                user.handle,
+                'assistant',
+                generateFallbackResponse(
+                    messageText,
+                    user,
+                    submissions,
+                    analytics,
+                ),
+            );
         } finally {
             setIsLoading(false);
             setTimeout(() => inputRef.current?.focus(), 100);
@@ -290,6 +344,7 @@ function AIChatCoachImpl({
     };
 
     const clearChat = () => {
+        GeminiService.clearChatHistory(user.handle);
         setMessages([
             {
                 id: `welcome-${Date.now()}`,
@@ -300,8 +355,26 @@ function AIChatCoachImpl({
         ]);
     };
 
+    if (!isAuthorized) {
+        return (
+            <Card className="p-10 flex flex-col items-center justify-center text-center h-full">
+                <Lock
+                    size={48}
+                    className="text-brand-primary opacity-50 mb-6"
+                />
+                <h3 className="text-xl font-display font-bold text-text-app mb-2">
+                    AI Chat is Private
+                </h3>
+                <p className="text-muted-app max-w-sm">
+                    This AI chat history is encrypted. You can only chat with
+                    the AI on your own profile by signing in from the homepage.
+                </p>
+            </Card>
+        );
+    }
+
     return (
-        <div className="flex flex-col h-full gap-0">
+        <Card className="flex flex-col h-[600px] bg-card-app border border-white/5 shadow-2xl relative overflow-hidden">
             {/* ── Header ─────────────────────────────────────────── */}
             <div className="flex items-center justify-between mb-4 shrink-0 pb-3 border-b border-white/5">
                 <div className="flex items-center gap-3">
@@ -374,7 +447,14 @@ function AIChatCoachImpl({
                                         : 'bg-white/4 text-muted-app border border-white/8 rounded-bl-sm shadow-[0_2px_12px_rgba(0,0,0,0.2)] backdrop-blur-sm',
                                 )}
                             >
-                                {msg.content}
+                                <div className="markdown-chat">
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
+                                        rehypePlugins={[rehypeHighlight]}
+                                    >
+                                        {msg.content}
+                                    </ReactMarkdown>
+                                </div>
                                 <p
                                     className={cn(
                                         'text-[8.5px] mt-1.5 opacity-30 font-mono',
@@ -480,7 +560,7 @@ function AIChatCoachImpl({
                     )}
                 </button>
             </div>
-        </div>
+        </Card>
     );
 }
 

@@ -163,4 +163,43 @@ export class GeminiService {
             return [];
         }
     }
+
+
+
+
+
+
+
+    
+
+    static async getChatHistory(handle: string): Promise<{role: 'user'|'assistant', content: string, created_at: string}[]> {
+        try {
+            const res = await fetch(`/api/chat/${handle}`);
+            const data = await res.json();
+            if (data.success) return data.messages;
+        } catch (e) {
+            console.error('Failed to load chat history', e);
+        }
+        return [];
+    }
+
+    static async saveChatMessage(handle: string, role: string, content: string): Promise<void> {
+        try {
+            await fetch(`/api/chat/${handle}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role, content })
+            });
+        } catch (e) {
+            console.error('Failed to save chat message', e);
+        }
+    }
+
+    static async clearChatHistory(handle: string): Promise<void> {
+        try {
+            await fetch(`/api/chat/${handle}`, { method: 'DELETE' });
+        } catch (e) {
+            console.error('Failed to clear chat history', e);
+        }
+    }
 }

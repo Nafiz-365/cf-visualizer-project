@@ -1,13 +1,81 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Submission } from '../types';
-import { AlertCircle, ArrowRight, ExternalLink } from 'lucide-react';
+import { AlertCircle, ArrowRight, ExternalLink, Bookmark } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { BookmarkNoteModal } from './BookmarkNoteModal';
+
+
+
+
+
+
+
+
+
+
+
 
 interface UnsolvedProblemsProps {
     submissions: Submission[];
 }
 
 export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
+    const [bookmarked, setBookmarked] = useState<Set<string>>(new Set());
+    const [activeBookmark, setActiveBookmark] = useState<{ id: string, name: string } | null>(null);
+
+    useEffect(() => {
+        fetch('/api/bookmarks')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const ids = new Set<string>(data.bookmarks.map((b: any) => b.problem_id));
+                    setBookmarked(ids);
+                }
+            })
+            .catch(console.error);
+    }, []);
+
+    const handleBookmark = async (e: React.MouseEvent, problem: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            await fetch('/api/bookmarks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    problemId: `${problem.contestId}${problem.index}`,
+                    problemName: problem.name
+                })
+            });
+            setBookmarked(prev => new Set(prev).add(`${problem.contestId}${problem.index}`));
+            setActiveBookmark({ id: `${problem.contestId}${problem.index}`, name: problem.name });
+            window.dispatchEvent(new Event('bookmarksUpdated'));
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const handleSaveNote = async (note: string) => {
+        if (!activeBookmark) return;
+        try {
+            await fetch('/api/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    problemId: activeBookmark.id,
+                    note: note
+                })
+            });
+            window.dispatchEvent(new Event('bookmarksUpdated'));
+        } catch (e) {
+            console.error(e);
+        }
+        setActiveBookmark(null);
+    };
+
+    const handleSkipNote = () => {
+        setActiveBookmark(null);
+    };
     const unsolved = useMemo(() => {
         const solvedIds = new Set(
             submissions
@@ -68,7 +136,7 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                         <div className="absolute inset-0 bg-linear-to-r from-red-500/0 via-red-500/5 to-red-500/0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between p-3 rounded-2xl bg-white/2 hover:bg-red-500/5 border border-white/5 hover:border-red-500/30 transition-all duration-500 group-hover:shadow-[0_0_15px_rgba(239,68,68,0.15)] relative overflow-hidden z-10">
                             <div className="flex-1 min-w-0">
-                                <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                                     <span className="text-[10px] font-black text-brand-secondary uppercase">
                                         {problem.index}
                                     </span>
@@ -87,10 +155,24 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                                     </span>
                                 </div>
                             </div>
-                            <ExternalLink
-                                size={14}
-                                className="text-red-400/50 group-hover:text-red-400 transition-colors group-hover:scale-110"
-                            />
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={(e) => handleBookmark(e, problem)}
+                                    className={cn(
+                                        "p-1.5 transition-colors group-hover:scale-110",
+                                        bookmarked.has(`${problem.contestId}${problem.index}`)
+                                            ? "text-brand-primary"
+                                            : "text-muted-app/50 hover:text-brand-secondary"
+                                    )}
+                                    title="Bookmark problem"
+                                >
+                                    <Bookmark size={14} fill={bookmarked.has(`${problem.contestId}${problem.index}`) ? "currentColor" : "none"} />
+                                </button>
+                                <ExternalLink
+                                    size={14}
+                                    className="text-red-400/50 group-hover:text-red-400 transition-colors group-hover:scale-110"
+                                />
+                            </div>
                         </div>
                     </a>
                 ))}
@@ -104,6 +186,14 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                     </p>
                 </div>
             )}
+
+            <BookmarkNoteModal
+                isOpen={!!activeBookmark}
+                onClose={handleSkipNote}
+                onSave={handleSaveNote}
+                onSkip={handleSkipNote}
+                problemName={activeBookmark?.name || ''}
+            />
         </div>
     );
 }
