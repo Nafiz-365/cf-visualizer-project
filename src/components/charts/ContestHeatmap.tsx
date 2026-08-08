@@ -159,7 +159,7 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
                     </span>
                 </div>
             </div>
-            
+
             <div className="md:hidden text-[10px] text-muted-app/70 flex justify-end mb-2 italic px-4">
                 Swipe horizontally to view more →
             </div>
@@ -226,11 +226,5 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
         </div>
     );
 }
-
-
-
-
-
-
 
 export const ContestHeatmap = React.memo(ContestHeatmapImpl);
