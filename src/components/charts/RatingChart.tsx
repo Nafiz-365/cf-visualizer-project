@@ -30,7 +30,10 @@ interface RatingChartProps {
 function RatingChartImpl({ data }: RatingChartProps) {
     const { chartData, minRating, maxRating } = useMemo(() => {
         const mapped = data.map((d) => ({
-            date: format(new Date(d.ratingUpdateTimeSeconds * 1000), 'MMM yyyy'),
+            date: format(
+                new Date(d.ratingUpdateTimeSeconds * 1000),
+                'MMM yyyy',
+            ),
             rating: d.newRating,
             change: d.newRating - d.oldRating,
             contest: d.contestName,
@@ -237,7 +240,5 @@ function RatingChartImpl({ data }: RatingChartProps) {
         </div>
     );
 }
-
-
 
 export const RatingChart = React.memo(RatingChartImpl);
