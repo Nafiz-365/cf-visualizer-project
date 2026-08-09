@@ -15,12 +15,6 @@ import {
 import { Card, StatCard } from '../ui/Card';
 import { RatingChart } from '../charts/RatingChart';
 import { ActivityHeatmap } from '../charts/ActivityHeatmap';
-
-
-
-
-
-
 import { UpcomingContests } from '../UpcomingContests';
 
 function OverviewTabImpl({
