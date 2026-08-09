@@ -3,14 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { XCircle, Bookmark, PenLine } from 'lucide-react';
 import { Button } from './ui/Button';
 
-
-
-
-
-
-
-
-
 interface BookmarkNoteModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -37,7 +29,7 @@ export function BookmarkNoteModal({
     return (
         <AnimatePresence>
             <div
-                className="fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-sm"
+                className="fixed inset-0 z-200 flex items-center justify-center p-4 backdrop-blur-sm"
                 style={{ background: 'var(--overlay-bg)' }}
                 onClick={onClose}
             >
@@ -77,7 +69,10 @@ export function BookmarkNoteModal({
                     <div className="mb-6">
                         <label className="flex items-center gap-2 text-xs font-bold text-text-app uppercase tracking-wider mb-3">
                             <PenLine size={14} className="text-brand-primary" />
-                            Add a Private Note <span className="text-muted-app/50 lowercase">(Optional)</span>
+                            Add a Private Note{' '}
+                            <span className="text-muted-app/50 lowercase">
+                                (Optional)
+                            </span>
                         </label>
                         <textarea
                             value={note}
