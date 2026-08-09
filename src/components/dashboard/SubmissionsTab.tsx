@@ -5,13 +5,6 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
 
-
-
-
-
-
-
-
 function SubmissionsTabImpl({
     submissions,
     processedSubmissions,
@@ -83,7 +76,7 @@ function SubmissionsTabImpl({
                     Swipe table to view more →
                 </div>
                 <div className="max-h-162.5 overflow-y-auto custom-scrollbar overflow-x-auto pb-2">
-                    <table className="w-full text-left border-collapse min-w-[800px]">
+                    <table className="w-full text-left border-collapse min-w-200">
                         <thead className="sticky top-0 z-10 bg-bg-app shadow-sm shadow-white/5">
                             <tr>
                                 {[
