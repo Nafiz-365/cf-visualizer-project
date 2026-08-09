@@ -19,14 +19,6 @@ import { cn } from '../../lib/utils';
 import { SocialCards } from '../SocialCards';
 import { CompareModal } from '../CompareModal';
 
-
-
-
-
-
-
-
-
 function SocialTabImpl({
     socialSubTab,
     setSocialSubTab,
