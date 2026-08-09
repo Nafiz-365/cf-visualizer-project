@@ -367,7 +367,7 @@ function SocialTabImpl({
                                                             </div>
                                                         </div>
 
-                                                        <h4 className="text-sm md:text-base font-bold text-text-app group-hover:text-brand-primary transition-colors wrap-break-word whitespace-normal mb-3 relative z-10 font-mono">
+                                                        <h4 className="text-sm md:text-base font-bold text-text-app group-hover:text-brand-primary transition-colors break-words whitespace-normal mb-3 relative z-10 font-mono">
                                                             &gt;{' '}
                                                             {blog.title.replace(
                                                                 /<\/?[^>]+(>|$)/g,

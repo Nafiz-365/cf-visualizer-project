@@ -147,7 +147,7 @@ function RecommendationsImpl({
                                           : 'Worth it'}
                                 </span>
                             </div>
-                            <h4 className="text-xs font-bold text-text-app group-hover:text-brand-secondary transition-colors wrap-break-word whitespace-normal">
+                            <h4 className="text-xs font-bold text-text-app group-hover:text-brand-secondary transition-colors break-words whitespace-normal">
                                 {p.name}
                             </h4>
                             <div className="flex flex-wrap items-center justify-between gap-1 mt-2">
