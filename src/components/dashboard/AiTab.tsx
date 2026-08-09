@@ -84,11 +84,6 @@ function AiTabImpl({
                     </div>
                 </div>
 
-
-
-
-                
-
                 {/* Sub-tool panels */}
                 <AnimatePresence mode="wait">
                     <motion.div
