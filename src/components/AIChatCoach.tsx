@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { User, Submission } from '../types';
 import { Button } from './ui/Button';
-
-
-
-
-
 import { Card } from './ui/Card';
 import {
     Send,
@@ -374,7 +369,7 @@ function AIChatCoachImpl({
     }
 
     return (
-        <Card className="flex flex-col h-[600px] bg-card-app border border-white/5 shadow-2xl relative overflow-hidden">
+        <Card className="flex flex-col h-150 bg-card-app border border-white/5 shadow-2xl relative overflow-hidden">
             {/* ── Header ─────────────────────────────────────────── */}
             <div className="flex items-center justify-between mb-4 shrink-0 pb-3 border-b border-white/5">
                 <div className="flex items-center gap-3">
