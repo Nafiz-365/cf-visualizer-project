@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Milestone, Brain, MessageSquare } from 'lucide-react';
-
 import { Card } from '../ui/Card';
 import { AIRoadmap } from '../AIRoadmap';
 import { AIChatCoach } from '../AIChatCoach';
