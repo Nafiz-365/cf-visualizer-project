@@ -13,7 +13,7 @@ import {
     X,
     UserCircle,
     Lock,
-    Loader2
+    Loader2,
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
@@ -56,13 +56,6 @@ export function LandingPage() {
         setRecent(updated);
     };
 
-
-
-
-
-
-    
-
     const handleAuthSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setAuthError('');
@@ -71,7 +64,10 @@ export function LandingPage() {
             const res = await fetch(`/api/auth/${authMode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ handle: authHandle.trim(), password: authPassword })
+                body: JSON.stringify({
+                    handle: authHandle.trim(),
+                    password: authPassword,
+                }),
             });
             const data = await res.json();
             if (data.success) {
@@ -188,15 +184,27 @@ export function LandingPage() {
             <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50">
                 {userHandle ? (
                     <div className="flex items-center gap-3">
-                        <Button variant="secondary" onClick={() => navigate(`/dashboard/${userHandle}`)} className="rounded-xl px-4 text-xs">
+                        <Button
+                            variant="secondary"
+                            onClick={() => navigate(`/dashboard/${userHandle}`)}
+                            className="rounded-xl px-4 text-xs"
+                        >
                             Dashboard
                         </Button>
-                        <Button variant="ghost" onClick={logout} className="rounded-xl px-4 text-xs opacity-60 hover:opacity-100">
+                        <Button
+                            variant="ghost"
+                            onClick={logout}
+                            className="rounded-xl px-4 text-xs opacity-60 hover:opacity-100"
+                        >
                             Logout
                         </Button>
                     </div>
                 ) : (
-                    <Button variant="secondary" onClick={() => setIsAuthModalOpen(true)} className="rounded-xl px-4 text-xs flex items-center gap-2">
+                    <Button
+                        variant="secondary"
+                        onClick={() => setIsAuthModalOpen(true)}
+                        className="rounded-xl px-4 text-xs flex items-center gap-2"
+                    >
                         <UserCircle size={14} />
                         Sign In
                     </Button>
@@ -396,39 +404,58 @@ export function LandingPage() {
 
                             <div className="mb-8">
                                 <h2 className="text-2xl font-display font-bold text-text-app">
-                                    {authMode === 'login' ? 'Welcome Back' : 'Claim Handle'}
+                                    {authMode === 'login'
+                                        ? 'Welcome Back'
+                                        : 'Claim Handle'}
                                 </h2>
                                 <p className="text-xs text-muted-app mt-2">
-                                    {authMode === 'login' 
+                                    {authMode === 'login'
                                         ? 'Sign in to access your chat history and friends list.'
                                         : 'Register to claim this Codeforces handle as yours.'}
                                 </p>
                             </div>
 
-                            <form onSubmit={handleAuthSubmit} className="space-y-4">
+                            <form
+                                onSubmit={handleAuthSubmit}
+                                className="space-y-4"
+                            >
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-app ml-1">Codeforces Handle</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-app ml-1">
+                                        Codeforces Handle
+                                    </label>
                                     <div className="relative">
-                                        <UserCircle size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-app" />
+                                        <UserCircle
+                                            size={14}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-app"
+                                        />
                                         <input
                                             type="text"
                                             required
                                             value={authHandle}
-                                            onChange={(e) => setAuthHandle(e.target.value)}
+                                            onChange={(e) =>
+                                                setAuthHandle(e.target.value)
+                                            }
                                             placeholder="e.g. tourist"
                                             className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-text-app focus:outline-none focus:border-brand-primary transition-colors"
                                         />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-app ml-1">Password</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-app ml-1">
+                                        Password
+                                    </label>
                                     <div className="relative">
-                                        <Lock size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-app" />
+                                        <Lock
+                                            size={14}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-app"
+                                        />
                                         <input
                                             type="password"
                                             required
                                             value={authPassword}
-                                            onChange={(e) => setAuthPassword(e.target.value)}
+                                            onChange={(e) =>
+                                                setAuthPassword(e.target.value)
+                                            }
                                             placeholder="••••••••"
                                             className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-text-app focus:outline-none focus:border-brand-primary transition-colors"
                                         />
@@ -436,7 +463,9 @@ export function LandingPage() {
                                 </div>
 
                                 {authError && (
-                                    <p className="text-red-400 text-xs text-center py-1 font-bold">{authError}</p>
+                                    <p className="text-red-400 text-xs text-center py-1 font-bold">
+                                        {authError}
+                                    </p>
                                 )}
 
                                 <Button
@@ -444,18 +473,37 @@ export function LandingPage() {
                                     disabled={authLoading}
                                     className="w-full rounded-xl py-3 mt-4"
                                 >
-                                    {authLoading ? <Loader2 size={16} className="animate-spin" /> : (authMode === 'login' ? 'Sign In' : 'Register')}
+                                    {authLoading ? (
+                                        <Loader2
+                                            size={16}
+                                            className="animate-spin"
+                                        />
+                                    ) : authMode === 'login' ? (
+                                        'Sign In'
+                                    ) : (
+                                        'Register'
+                                    )}
                                 </Button>
                             </form>
 
                             <div className="mt-6 text-center text-xs text-muted-app">
-                                {authMode === 'login' ? "Don't have an account? " : "Already claimed? "}
+                                {authMode === 'login'
+                                    ? "Don't have an account? "
+                                    : 'Already claimed? '}
                                 <button
                                     type="button"
-                                    onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+                                    onClick={() =>
+                                        setAuthMode(
+                                            authMode === 'login'
+                                                ? 'register'
+                                                : 'login',
+                                        )
+                                    }
                                     className="text-brand-primary font-bold hover:underline"
                                 >
-                                    {authMode === 'login' ? 'Register' : 'Sign In'}
+                                    {authMode === 'login'
+                                        ? 'Register'
+                                        : 'Sign In'}
                                 </button>
                             </div>
                         </motion.div>

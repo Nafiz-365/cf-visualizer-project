@@ -1,7 +1,33 @@
-import React, { useState, useEffect, useMemo, useDeferredValue, lazy, Suspense } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useMemo,
+    useDeferredValue,
+    lazy,
+    Suspense,
+} from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trophy, TrendingUp, Users, XCircle, Code2, ExternalLink, Share2, Search, Zap, BarChart3, Bookmark, Download, Target, LayoutList, Menu, X, AlertTriangle, Activity } from 'lucide-react';
+import {
+    Trophy,
+    TrendingUp,
+    Users,
+    XCircle,
+    Code2,
+    ExternalLink,
+    Share2,
+    Search,
+    Zap,
+    BarChart3,
+    Bookmark,
+    Download,
+    Target,
+    LayoutList,
+    Menu,
+    X,
+    AlertTriangle,
+    Activity,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { CodeforcesService } from '../services/codeforces';
 import { Button } from './ui/Button';
@@ -12,19 +38,49 @@ import { Milestone } from 'lucide-react';
 
 import { User, RatingChange, Submission, Problem, Contest } from '../types';
 import { getRankBg } from '../lib/utils';
-import { generateFallbackUser, generateFallbackRatingHistory, generateFallbackSubmissions } from '../lib/fallbackData';
+import {
+    generateFallbackUser,
+    generateFallbackRatingHistory,
+    generateFallbackSubmissions,
+} from '../lib/fallbackData';
 import { DetailItem } from './DetailItem';
 
-const OverviewTab = lazy(() => import('./dashboard/OverviewTab').then(m => ({ default: m.OverviewTab })));
-const AnalyticsTab = lazy(() => import('./dashboard/AnalyticsTab').then(m => ({ default: m.AnalyticsTab })));
-const AiTab = lazy(() => import('./dashboard/AiTab').then(m => ({ default: m.AiTab })));
-const PrepTab = lazy(() => import('./dashboard/PrepTab').then(m => ({ default: m.PrepTab })));
-const SubmissionsTab = lazy(() => import('./dashboard/SubmissionsTab').then(m => ({ default: m.SubmissionsTab })));
-const SocialTab = lazy(() => import('./dashboard/SocialTab').then(m => ({ default: m.SocialTab })));
-const BookmarksAndNotes = lazy(() => import('./BookmarksAndNotes').then(m => ({ default: m.BookmarksAndNotes })));
-const Timeline = lazy(() => import('./Timeline').then(m => ({ default: m.Timeline })));
-const RatingPredictor = lazy(() => import('./RatingPredictor').then(m => ({ default: m.RatingPredictor })));
-const ContestAnalyzer = lazy(() => import('./ContestAnalyzer').then(m => ({ default: m.ContestAnalyzer })));
+const OverviewTab = lazy(() =>
+    import('./dashboard/OverviewTab').then((m) => ({ default: m.OverviewTab })),
+);
+const AnalyticsTab = lazy(() =>
+    import('./dashboard/AnalyticsTab').then((m) => ({
+        default: m.AnalyticsTab,
+    })),
+);
+const AiTab = lazy(() =>
+    import('./dashboard/AiTab').then((m) => ({ default: m.AiTab })),
+);
+const PrepTab = lazy(() =>
+    import('./dashboard/PrepTab').then((m) => ({ default: m.PrepTab })),
+);
+const SubmissionsTab = lazy(() =>
+    import('./dashboard/SubmissionsTab').then((m) => ({
+        default: m.SubmissionsTab,
+    })),
+);
+const SocialTab = lazy(() =>
+    import('./dashboard/SocialTab').then((m) => ({ default: m.SocialTab })),
+);
+const BookmarksAndNotes = lazy(() =>
+    import('./BookmarksAndNotes').then((m) => ({
+        default: m.BookmarksAndNotes,
+    })),
+);
+const Timeline = lazy(() =>
+    import('./Timeline').then((m) => ({ default: m.Timeline })),
+);
+const RatingPredictor = lazy(() =>
+    import('./RatingPredictor').then((m) => ({ default: m.RatingPredictor })),
+);
+const ContestAnalyzer = lazy(() =>
+    import('./ContestAnalyzer').then((m) => ({ default: m.ContestAnalyzer })),
+);
 
 export function Dashboard() {
     const { handle } = useParams<{ handle: string }>();
@@ -465,18 +521,18 @@ export function Dashboard() {
         1000,
     );
 
-const TABS = [
-    { id: 'overview', label: 'Overview', icon: LayoutList },
-    { id: 'contest-analyzer', label: 'Contest Analyzer', icon: Trophy },
-    { id: 'predictor', label: 'Predictor', icon: TrendingUp },
-    { id: 'ai', label: 'AI Command Center', icon: Zap },
-    { id: 'prep', label: 'Preparation', icon: Target },
-    { id: 'bookmarks', label: 'Saved', icon: Bookmark },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'journey', label: 'Journey', icon: Milestone },
-    { id: 'submissions', label: 'History', icon: Code2 },
-    { id: 'social', label: 'Social & Share', icon: Users },
-] as const;
+    const TABS = [
+        { id: 'overview', label: 'Overview', icon: LayoutList },
+        { id: 'contest-analyzer', label: 'Contest Analyzer', icon: Trophy },
+        { id: 'predictor', label: 'Predictor', icon: TrendingUp },
+        { id: 'ai', label: 'AI Command Center', icon: Zap },
+        { id: 'prep', label: 'Preparation', icon: Target },
+        { id: 'bookmarks', label: 'Saved', icon: Bookmark },
+        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+        { id: 'journey', label: 'Journey', icon: Milestone },
+        { id: 'submissions', label: 'History', icon: Code2 },
+        { id: 'social', label: 'Social & Share', icon: Users },
+    ] as const;
 
     if (loading) {
         return (
@@ -804,48 +860,137 @@ const TABS = [
                                 ease: [0.16, 1, 0.3, 1],
                             }}
                         >
-                        <Suspense fallback={<div className="flex justify-center items-center py-24"><Activity className="animate-spin text-brand-primary" size={32} /></div>}>
-{activeTab === 'overview' && (<OverviewTab user={user} analytics={analytics} ratingHistory={ratingHistory} focusTopic={focusTopic} nextMilestone={nextMilestone} loadingInsights={loadingInsights} aiInsights={aiInsights} submissions={submissions} isOfflineMode={isOfflineMode} handle={handle} loadData={loadData} heatmapAnchor={heatmapAnchor} setHeatmapAnchor={setHeatmapAnchor} heatmapRange={heatmapRange} setHeatmapRange={setHeatmapRange} />)}
+                            <Suspense
+                                fallback={
+                                    <div className="flex justify-center items-center py-24">
+                                        <Activity
+                                            className="animate-spin text-brand-primary"
+                                            size={32}
+                                        />
+                                    </div>
+                                }
+                            >
+                                {activeTab === 'overview' && (
+                                    <OverviewTab
+                                        user={user}
+                                        analytics={analytics}
+                                        ratingHistory={ratingHistory}
+                                        focusTopic={focusTopic}
+                                        nextMilestone={nextMilestone}
+                                        loadingInsights={loadingInsights}
+                                        aiInsights={aiInsights}
+                                        submissions={submissions}
+                                        isOfflineMode={isOfflineMode}
+                                        handle={handle}
+                                        loadData={loadData}
+                                        heatmapAnchor={heatmapAnchor}
+                                        setHeatmapAnchor={setHeatmapAnchor}
+                                        heatmapRange={heatmapRange}
+                                        setHeatmapRange={setHeatmapRange}
+                                    />
+                                )}
 
-                            {activeTab === 'journey' && (
-                                <div className="max-w-4xl mx-auto">
-                                    <Timeline
+                                {activeTab === 'journey' && (
+                                    <div className="max-w-4xl mx-auto">
+                                        <Timeline
+                                            user={user}
+                                            ratingHistory={ratingHistory}
+                                            submissions={submissions}
+                                        />
+                                    </div>
+                                )}
+
+                                {activeTab === 'analytics' && (
+                                    <AnalyticsTab
+                                        analytics={analytics}
+                                        focusTopic={focusTopic}
+                                        submissions={submissions}
+                                        ratingHistory={ratingHistory}
+                                    />
+                                )}
+
+                                {activeTab === 'submissions' && (
+                                    <SubmissionsTab
+                                        submissions={submissions}
+                                        processedSubmissions={
+                                            processedSubmissions
+                                        }
+                                        searchQuery={searchQuery}
+                                        setSearchQuery={setSearchQuery}
+                                        verdictFilter={verdictFilter}
+                                        setVerdictFilter={setVerdictFilter}
+                                        languageFilter={languageFilter}
+                                        setLanguageFilter={setLanguageFilter}
+                                        availableLanguages={availableLanguages}
+                                        sortKey={sortKey}
+                                        sortDirection={sortDirection}
+                                        toggleSort={toggleSort}
+                                        refreshing={refreshing}
+                                        refreshSubmissions={refreshSubmissions}
+                                        setSelectedSubmission={
+                                            setSelectedSubmission
+                                        }
+                                    />
+                                )}
+
+                                {activeTab === 'ai' && (
+                                    <AiTab
                                         user={user}
                                         ratingHistory={ratingHistory}
                                         submissions={submissions}
+                                        analytics={analytics}
+                                        activeAiTool={activeAiTool}
+                                        setActiveAiTool={setActiveAiTool}
+                                        aiInsights={aiInsights}
+                                        loadingInsights={loadingInsights}
+                                        liveSessionStats={liveSessionStats}
                                     />
-                                </div>
-                            )}
+                                )}
 
-{activeTab === 'analytics' && (<AnalyticsTab analytics={analytics} focusTopic={focusTopic} submissions={submissions} ratingHistory={ratingHistory} />)}
+                                {activeTab === 'prep' && (
+                                    <PrepTab
+                                        user={user}
+                                        problemset={problemset}
+                                        submissions={submissions}
+                                        contests={contests}
+                                        ratingHistory={ratingHistory}
+                                        nextMilestone={nextMilestone}
+                                        focusTopic={focusTopic}
+                                    />
+                                )}
 
-{activeTab === 'submissions' && (<SubmissionsTab submissions={submissions} processedSubmissions={processedSubmissions} searchQuery={searchQuery} setSearchQuery={setSearchQuery} verdictFilter={verdictFilter} setVerdictFilter={setVerdictFilter} languageFilter={languageFilter} setLanguageFilter={setLanguageFilter} availableLanguages={availableLanguages} sortKey={sortKey} sortDirection={sortDirection} toggleSort={toggleSort} refreshing={refreshing} refreshSubmissions={refreshSubmissions} setSelectedSubmission={setSelectedSubmission} />)}
+                                {activeTab === 'bookmarks' && (
+                                    <BookmarksAndNotes />
+                                )}
 
-{activeTab === 'ai' && (<AiTab user={user} ratingHistory={ratingHistory} submissions={submissions} analytics={analytics} activeAiTool={activeAiTool} setActiveAiTool={setActiveAiTool} aiInsights={aiInsights} loadingInsights={loadingInsights} liveSessionStats={liveSessionStats} />)}
+                                {activeTab === 'social' && (
+                                    <SocialTab
+                                        socialSubTab={socialSubTab}
+                                        setSocialSubTab={setSocialSubTab}
+                                        user={user}
+                                        ratingHistory={ratingHistory}
+                                        submissions={submissions}
+                                        blogs={blogs}
+                                    />
+                                )}
 
-{activeTab === 'prep' && (<PrepTab user={user} problemset={problemset} submissions={submissions} contests={contests} ratingHistory={ratingHistory} nextMilestone={nextMilestone} focusTopic={focusTopic} />)}
+                                {activeTab === 'predictor' && (
+                                    <RatingPredictor
+                                        currentUser={user}
+                                        ratingHistory={ratingHistory}
+                                    />
+                                )}
 
-{activeTab === 'bookmarks' && (<BookmarksAndNotes />)}
-
-{activeTab === 'social' && (<SocialTab socialSubTab={socialSubTab} setSocialSubTab={setSocialSubTab} user={user} ratingHistory={ratingHistory} submissions={submissions} blogs={blogs} />)}
-
-                            {activeTab === 'predictor' && (
-                                <RatingPredictor
-                                    currentUser={user}
-                                    ratingHistory={ratingHistory}
-                                />
-                            )}
-
-                            {activeTab === 'contest-analyzer' && (
-                                <ContestAnalyzer
-                                    ratingHistory={ratingHistory}
-                                    submissions={submissions}
-                                    problemset={problemset}
-                                    userRating={user?.rating ?? 800}
-                                    userHandle={user?.handle ?? ''}
-                                />
-                            )}
-                        </Suspense>
+                                {activeTab === 'contest-analyzer' && (
+                                    <ContestAnalyzer
+                                        ratingHistory={ratingHistory}
+                                        submissions={submissions}
+                                        problemset={problemset}
+                                        userRating={user?.rating ?? 800}
+                                        userHandle={user?.handle ?? ''}
+                                    />
+                                )}
+                            </Suspense>
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -1165,12 +1310,6 @@ const TABS = [
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
-
-                                
 
                                 <div className="flex gap-4">
                                     <a
