@@ -146,12 +146,6 @@ export function CompareModal({
                                             </p>
                                         </div>
 
-
-
-
-
-                                        
-
                                         <div className="text-4xl font-display font-black italic text-brand-secondary/50">
                                             VS
                                         </div>
@@ -170,6 +164,7 @@ export function CompareModal({
                                                     className="w-full h-full rounded-full object-cover"
                                                 />
                                             </div>
+
                                             <h3
                                                 className={cn(
                                                     'text-xl font-bold',

@@ -84,7 +84,7 @@ export function StatCard({
             <div className="relative z-10 w-full">
                 {/* Header row */}
                 <div className="flex items-start justify-between mb-2 md:mb-3">
-                    <span className="text-[7.5px] md:text-[10px] font-black uppercase tracking-[0.22em] text-(--text-muted) break-words whitespace-normal pr-2 opacity-80">
+                    <span className="text-[7.5px] md:text-[10px] font-black uppercase tracking-[0.22em] text-(--text-muted) wrap-break-word whitespace-normal pr-2 opacity-80">
                         {label}
                     </span>
                     {Icon && (
@@ -132,7 +132,7 @@ export function StatCard({
                         )}
                     </div>
                     {subValue && (
-                        <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-(--text-muted) opacity-70 break-words whitespace-normal">
+                        <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-(--text-muted) opacity-70 wrap-break-word whitespace-normal">
                             {subValue}
                         </span>
                     )}
