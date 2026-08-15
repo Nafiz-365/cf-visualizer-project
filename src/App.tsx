@@ -121,99 +121,91 @@ function NavLink({ to, active, icon: Icon, label }: any) {
 function App() {
     return (
         <AuthProvider>
-        <ThemeProvider>
-            <Router>
-                <div
-                    className="min-h-screen font-sans relative overflow-hidden"
-                    style={{
-                        background: 'var(--bg-app)',
-                        color: 'var(--text-main)',
-                    }}
-                >
-                    {/* Subtle grid */}
-                    <div className="fixed inset-0 z-0 pointer-events-none bg-grid opacity-100" />
-
-                    {/* Atmospheric Glows */}
+            <ThemeProvider>
+                <Router>
                     <div
-                        className="fixed top-[-15%] right-[-10%] w-[55%] h-[55%] rounded-full pointer-events-none z-0"
+                        className="min-h-screen font-sans relative overflow-hidden"
                         style={{
-                            background:
-                                'radial-gradient(ellipse, rgba(79,142,247,0.07) 0%, transparent 70%)',
-                            filter: 'blur(60px)',
+                            background: 'var(--bg-app)',
+                            color: 'var(--text-main)',
                         }}
-                    />
-                    <div
-                        className="fixed bottom-[-15%] left-[-10%] w-[55%] h-[55%] rounded-full pointer-events-none z-0"
-                        style={{
-                            background:
-                                'radial-gradient(ellipse, rgba(157,110,245,0.07) 0%, transparent 70%)',
-                            filter: 'blur(60px)',
-                        }}
-                    />
-                    <div
-                        className="fixed top-[40%] left-[40%] w-[30%] h-[30%] rounded-full pointer-events-none z-0"
-                        style={{
-                            background:
-                                'radial-gradient(ellipse, rgba(14,207,207,0.04) 0%, transparent 70%)',
-                            filter: 'blur(80px)',
-                        }}
-                    />
+                    >
+                        {/* Subtle grid */}
+                        <div className="fixed inset-0 z-0 pointer-events-none bg-grid opacity-100" />
 
+                        {/* Atmospheric Glows */}
+                        <div
+                            className="fixed top-[-15%] right-[-10%] w-[55%] h-[55%] rounded-full pointer-events-none z-0"
+                            style={{
+                                background:
+                                    'radial-gradient(ellipse, rgba(79,142,247,0.07) 0%, transparent 70%)',
+                                filter: 'blur(60px)',
+                            }}
+                        />
+                        <div
+                            className="fixed bottom-[-15%] left-[-10%] w-[55%] h-[55%] rounded-full pointer-events-none z-0"
+                            style={{
+                                background:
+                                    'radial-gradient(ellipse, rgba(157,110,245,0.07) 0%, transparent 70%)',
+                                filter: 'blur(60px)',
+                            }}
+                        />
+                        <div
+                            className="fixed top-[40%] left-[40%] w-[30%] h-[30%] rounded-full pointer-events-none z-0"
+                            style={{
+                                background:
+                                    'radial-gradient(ellipse, rgba(14,207,207,0.04) 0%, transparent 70%)',
+                                filter: 'blur(80px)',
+                            }}
+                        />
 
-
-
-                    
-
-                    <div className="relative z-10">
-                        <Suspense
-                            fallback={
-                                <div className="min-h-screen flex items-center justify-center text-sm text-(--text-muted)">
-                                    Loading dashboard?
-                                </div>
-                            }
-                        >
-                            <Routes>
-                                <Route path="/" element={<LandingPage />} />
-                                <Route
-                                    path="/dashboard/:handle"
-                                    element={<Dashboard />}
-                                />
-                                <Route path="/compare" element={<Compare />} />
-                                <Route
-                                    path="/leaderboards"
-                                    element={<Leaderboards />}
-                                />
-                            </Routes>
-                        </Suspense>
-                        <Navbar />
-
-                        {/* Global floating footer badge */}
-                        <div className="fixed bottom-20 md:bottom-4 right-4 z-40 pointer-events-none">
-                            <div
-                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-overline opacity-30 hover:opacity-70 transition-opacity pointer-events-auto"
-                                style={{
-                                    background: 'var(--bg-card)',
-                                    border: '1px solid var(--glass-border)',
-                                    backdropFilter: 'blur(12px)',
-                                    color: 'var(--text-muted)',
-                                }}
+                        <div className="relative z-10">
+                            <Suspense
+                                fallback={
+                                    <div className="min-h-screen flex items-center justify-center text-sm text-(--text-muted)">
+                                        Loading dashboard?
+                                    </div>
+                                }
                             >
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                                CF API
+                                <Routes>
+                                    <Route path="/" element={<LandingPage />} />
+                                    <Route
+                                        path="/dashboard/:handle"
+                                        element={<Dashboard />}
+                                    />
+                                    <Route
+                                        path="/compare"
+                                        element={<Compare />}
+                                    />
+                                    <Route
+                                        path="/leaderboards"
+                                        element={<Leaderboards />}
+                                    />
+                                </Routes>
+                            </Suspense>
+                            <Navbar />
+
+                            {/* Global floating footer badge */}
+                            <div className="fixed bottom-20 md:bottom-4 right-4 z-40 pointer-events-none">
+                                <div
+                                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-overline opacity-30 hover:opacity-70 transition-opacity pointer-events-auto"
+                                    style={{
+                                        background: 'var(--bg-card)',
+                                        border: '1px solid var(--glass-border)',
+                                        backdropFilter: 'blur(12px)',
+                                        color: 'var(--text-muted)',
+                                    }}
+                                >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                                    CF API
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </Router>
-        </ThemeProvider>
+                </Router>
+            </ThemeProvider>
         </AuthProvider>
     );
 }
-
-
-
-
-
-
 
 export default App;

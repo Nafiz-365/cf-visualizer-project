@@ -14,19 +14,23 @@ import {
     getGeminiApiKeyError,
 } from './src/lib/geminiConfig';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-codeforces-key-12345';
+const JWT_SECRET =
+    process.env.JWT_SECRET || 'super-secret-codeforces-key-12345';
 
 dotenv.config();
 
 const geminiKey = process.env.OPENROUTER_API_KEY || process.env.GEMINI_API_KEY;
 
 // Helper for robust JSON parsing
+
 function safeParseJSON(text: string) {
     try {
         return JSON.parse(text.trim());
     } catch (e) {
         // Look for the first JSON-like block [ ... ] or { ... }
+
         const match = text.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
+
         if (match) {
             try {
                 return JSON.parse(match[0].trim());
@@ -34,28 +38,34 @@ function safeParseJSON(text: string) {
                 console.error('Failed to parse extracted JSON block:', err);
             }
         }
+
         throw e;
     }
 }
 
 async function startServer() {
     const app = express();
+
     const configuredPort = Number(process.env.PORT);
+
     const PORT =
         Number.isInteger(configuredPort) && configuredPort > 0
             ? configuredPort
             : 3000;
 
     app.use(express.json({ limit: '1mb' }));
+
     app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
     app.use(cookieParser());
 
     // Initialize SQLite Database
     let db: Database | null = null;
+
     try {
         db = await open({
             filename: path.join(process.cwd(), 'database.sqlite'),
-            driver: sqlite3.Database
+            driver: sqlite3.Database,
         });
 
         await db.exec(`
@@ -65,6 +75,7 @@ async function startServer() {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
+
             CREATE TABLE IF NOT EXISTS friends (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_handle TEXT,
@@ -72,6 +83,7 @@ async function startServer() {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(user_handle, friend_handle)
             );
+
 
             CREATE TABLE IF NOT EXISTS chat_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,6 +111,7 @@ async function startServer() {
                 UNIQUE(user_handle, problem_id)
             );
         `);
+
         console.log('SQLite Database initialized successfully.');
     } catch (err) {
         console.error('Failed to initialize database:', err);
@@ -109,28 +122,37 @@ async function startServer() {
         string,
         { data: any; timestamp: number; ttl: number }
     >();
+
     let lastCfRequestTime = 0;
+
     const MIN_CF_INTERVAL = 250; // 250ms between requests to Codeforces
 
     app.get('/api/codeforces/:method', async (req, res) => {
         const { method } = req.params;
+
         const cacheKey = `${method}:${JSON.stringify(req.query)}`;
 
         // Determine TTL based on method
         let ttl = 1000 * 60 * 2; // Default 2 minutes
+
         if (method === 'problemset.problems') ttl = 1000 * 60 * 60 * 6; // 6 hours
+
         if (method === 'contest.list') ttl = 1000 * 60 * 30; // 30 minutes
+
         if (method === 'user.info') ttl = 1000 * 60 * 10; // 10 minutes
 
         // Check cache
         const cached = cfCache.get(cacheKey);
+
         if (cached && Date.now() - cached.timestamp < cached.ttl) {
             return res.json(cached.data);
         }
 
         // Rate limiting / Sequencing
         const now = Date.now();
+
         const waitTime = Math.max(0, lastCfRequestTime + MIN_CF_INTERVAL - now);
+
         lastCfRequestTime = now + waitTime;
 
         if (waitTime > 0) {
@@ -200,12 +222,6 @@ async function startServer() {
             });
         }
     });
-
-
-
-
-
-    
 
     // API route for AI coaching
     const aiCache = new Map<string, { data: any; timestamp: number }>();
@@ -327,46 +343,71 @@ async function startServer() {
     // API route for chat history database
     app.get('/api/chat/:handle', async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = req.params.handle;
             const messages = await db.all(
                 'SELECT role, content FROM chat_history WHERE handle = ? ORDER BY created_at ASC',
-                [handle]
+                [handle],
             );
             res.json({ success: true, messages });
         } catch (error) {
             console.error('Error fetching chat:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.post('/api/chat/:handle', async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = req.params.handle;
             const { role, content } = req.body;
-            if (!role || !content) return res.status(400).json({ success: false, error: 'Role and content are required' });
+            if (!role || !content)
+                return res.status(400).json({
+                    success: false,
+                    error: 'Role and content are required',
+                });
 
             await db.run(
                 'INSERT INTO chat_history (handle, role, content) VALUES (?, ?, ?)',
-                [handle, role, content]
+                [handle, role, content],
             );
             res.json({ success: true });
         } catch (error) {
             console.error('Error saving chat:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.delete('/api/chat/:handle', async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = req.params.handle;
             await db.run('DELETE FROM chat_history WHERE handle = ?', [handle]);
             res.json({ success: true });
         } catch (error) {
             console.error('Error clearing chat:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
@@ -375,63 +416,132 @@ async function startServer() {
         return jwt.sign({ handle }, JWT_SECRET, { expiresIn: '7d' });
     };
 
-    const verifyToken = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const verifyToken = (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+    ) => {
         const token = req.cookies.token;
-        if (!token) return res.status(401).json({ success: false, error: 'Unauthorized' });
+        if (!token)
+            return res
+                .status(401)
+                .json({ success: false, error: 'Unauthorized' });
         try {
             const decoded = jwt.verify(token, JWT_SECRET) as { handle: string };
             (req as any).userHandle = decoded.handle;
             next();
         } catch (e) {
-            return res.status(401).json({ success: false, error: 'Invalid token' });
+            return res
+                .status(401)
+                .json({ success: false, error: 'Invalid token' });
         }
     };
 
     app.post('/api/auth/register', async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const { handle, password } = req.body;
-            if (!handle || !password) return res.status(400).json({ success: false, error: 'Handle and password required' });
+            if (!handle || !password)
+                return res.status(400).json({
+                    success: false,
+                    error: 'Handle and password required',
+                });
 
-            const existing = await db.get('SELECT handle FROM users WHERE handle = ?', [handle]);
-            if (existing) return res.status(400).json({ success: false, error: 'Handle already registered' });
+            const existing = await db.get(
+                'SELECT handle FROM users WHERE handle = ?',
+                [handle],
+            );
+            if (existing)
+                return res.status(400).json({
+                    success: false,
+                    error: 'Handle already registered',
+                });
 
             try {
-                await axios.get(`https://codeforces.com/api/user.info?handles=${handle}`);
+                await axios.get(
+                    `https://codeforces.com/api/user.info?handles=${handle}`,
+                );
             } catch (err: any) {
-                return res.status(400).json({ success: false, error: 'User not found on Codeforces' });
+                return res.status(400).json({
+                    success: false,
+                    error: 'User not found on Codeforces',
+                });
             }
 
             const hash = await bcrypt.hash(password, 10);
-            await db.run('INSERT INTO users (handle, password_hash) VALUES (?, ?)', [handle, hash]);
-            
+            await db.run(
+                'INSERT INTO users (handle, password_hash) VALUES (?, ?)',
+                [handle, hash],
+            );
+
             const token = generateToken(handle);
-            res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 7 * 24 * 60 * 60 * 1000 });
-            res.json({ success: true, message: 'Registration successful', handle });
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
+            res.json({
+                success: true,
+                message: 'Registration successful',
+                handle,
+            });
         } catch (error) {
             console.error('Registration error:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.post('/api/auth/login', async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const { handle, password } = req.body;
-            if (!handle || !password) return res.status(400).json({ success: false, error: 'Handle and password required' });
+            if (!handle || !password)
+                return res.status(400).json({
+                    success: false,
+                    error: 'Handle and password required',
+                });
 
-            const user = await db.get('SELECT password_hash FROM users WHERE handle = ?', [handle]);
-            if (!user) return res.status(401).json({ success: false, error: 'Invalid handle or password' });
+            const user = await db.get(
+                'SELECT password_hash FROM users WHERE handle = ?',
+                [handle],
+            );
+            if (!user)
+                return res.status(401).json({
+                    success: false,
+                    error: 'Invalid handle or password',
+                });
 
             const isValid = await bcrypt.compare(password, user.password_hash);
-            if (!isValid) return res.status(401).json({ success: false, error: 'Invalid handle or password' });
+            if (!isValid)
+                return res.status(401).json({
+                    success: false,
+                    error: 'Invalid handle or password',
+                });
 
             const token = generateToken(handle);
-            res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 7 * 24 * 60 * 60 * 1000 });
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
             res.json({ success: true, message: 'Login successful', handle });
         } catch (error) {
             console.error('Login error:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
@@ -447,123 +557,228 @@ async function startServer() {
     // --- Friends API ---
     app.get('/api/friends/:handle', async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = req.params.handle;
-            const friends = await db.all('SELECT friend_handle FROM friends WHERE user_handle = ? ORDER BY created_at DESC', [handle]);
-            res.json({ success: true, friends: friends.map(f => f.friend_handle) });
+            const friends = await db.all(
+                'SELECT friend_handle FROM friends WHERE user_handle = ? ORDER BY created_at DESC',
+                [handle],
+            );
+            res.json({
+                success: true,
+                friends: friends.map((f) => f.friend_handle),
+            });
         } catch (error) {
             console.error('Error fetching friends:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.post('/api/friends/:handle', verifyToken, async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = req.params.handle;
             const authHandle = (req as any).userHandle;
-            if (handle.toLowerCase() !== authHandle.toLowerCase()) return res.status(403).json({ success: false, error: 'Forbidden' });
+            if (handle.toLowerCase() !== authHandle.toLowerCase())
+                return res
+                    .status(403)
+                    .json({ success: false, error: 'Forbidden' });
 
             const { friendHandle } = req.body;
-            if (!friendHandle) return res.status(400).json({ success: false, error: 'Friend handle required' });
+            if (!friendHandle)
+                return res
+                    .status(400)
+                    .json({ success: false, error: 'Friend handle required' });
 
             try {
-                await axios.get(`https://codeforces.com/api/user.info?handles=${friendHandle}`);
+                await axios.get(
+                    `https://codeforces.com/api/user.info?handles=${friendHandle}`,
+                );
             } catch (err: any) {
-                return res.status(400).json({ success: false, error: 'User not found on Codeforces' });
+                return res.status(400).json({
+                    success: false,
+                    error: 'User not found on Codeforces',
+                });
             }
 
-            await db.run('INSERT OR IGNORE INTO friends (user_handle, friend_handle) VALUES (?, ?)', [handle, friendHandle]);
+            await db.run(
+                'INSERT OR IGNORE INTO friends (user_handle, friend_handle) VALUES (?, ?)',
+                [handle, friendHandle],
+            );
             res.json({ success: true });
         } catch (error) {
             console.error('Error adding friend:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.delete('/api/friends/:handle/:friend', async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = req.params.handle;
             const friend = req.params.friend;
-            await db.run('DELETE FROM friends WHERE user_handle = ? AND friend_handle = ?', [handle, friend]);
+            await db.run(
+                'DELETE FROM friends WHERE user_handle = ? AND friend_handle = ?',
+                [handle, friend],
+            );
             res.json({ success: true });
         } catch (error) {
             console.error('Error removing friend:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     // --- Bookmarks API ---
     app.get('/api/bookmarks', verifyToken, async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = (req as any).userHandle;
-            const bookmarks = await db.all('SELECT * FROM bookmarks WHERE user_handle = ? ORDER BY created_at DESC', [handle]);
+            const bookmarks = await db.all(
+                'SELECT * FROM bookmarks WHERE user_handle = ? ORDER BY created_at DESC',
+                [handle],
+            );
             res.json({ success: true, bookmarks });
         } catch (error) {
             console.error('Error fetching bookmarks:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.post('/api/bookmarks', verifyToken, async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = (req as any).userHandle;
             const { problemId, problemName } = req.body;
-            if (!problemId || !problemName) return res.status(400).json({ success: false, error: 'Problem ID and Name required' });
+            if (!problemId || !problemName)
+                return res.status(400).json({
+                    success: false,
+                    error: 'Problem ID and Name required',
+                });
 
-            await db.run('INSERT OR IGNORE INTO bookmarks (user_handle, problem_id, problem_name) VALUES (?, ?, ?)', [handle, problemId, problemName]);
+            await db.run(
+                'INSERT OR IGNORE INTO bookmarks (user_handle, problem_id, problem_name) VALUES (?, ?, ?)',
+                [handle, problemId, problemName],
+            );
             res.json({ success: true });
         } catch (error) {
             console.error('Error adding bookmark:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.delete('/api/bookmarks/:problemId', verifyToken, async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = (req as any).userHandle;
             const problemId = req.params.problemId;
-            await db.run('DELETE FROM bookmarks WHERE user_handle = ? AND problem_id = ?', [handle, problemId]);
-            await db.run('DELETE FROM notes WHERE user_handle = ? AND problem_id = ?', [handle, problemId]);
+            await db.run(
+                'DELETE FROM bookmarks WHERE user_handle = ? AND problem_id = ?',
+                [handle, problemId],
+            );
+            await db.run(
+                'DELETE FROM notes WHERE user_handle = ? AND problem_id = ?',
+                [handle, problemId],
+            );
             res.json({ success: true });
         } catch (error) {
             console.error('Error removing bookmark:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     // --- Notes API ---
     app.get('/api/notes', verifyToken, async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = (req as any).userHandle;
-            const notes = await db.all('SELECT * FROM notes WHERE user_handle = ?', [handle]);
+            const notes = await db.all(
+                'SELECT * FROM notes WHERE user_handle = ?',
+                [handle],
+            );
             res.json({ success: true, notes });
         } catch (error) {
             console.error('Error fetching notes:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 
     app.post('/api/notes', verifyToken, async (req, res) => {
         try {
-            if (!db) return res.status(500).json({ success: false, error: 'Database not initialized' });
+            if (!db)
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database not initialized',
+                });
             const handle = (req as any).userHandle;
             const { problemId, note } = req.body;
-            if (!problemId || note === undefined) return res.status(400).json({ success: false, error: 'Problem ID and note required' });
+            if (!problemId || note === undefined)
+                return res.status(400).json({
+                    success: false,
+                    error: 'Problem ID and note required',
+                });
 
-            await db.run(`
+            await db.run(
+                `
                 INSERT INTO notes (user_handle, problem_id, note) VALUES (?, ?, ?)
                 ON CONFLICT(user_handle, problem_id) DO UPDATE SET note=excluded.note
-            `, [handle, problemId, note]);
+            `,
+                [handle, problemId, note],
+            );
             res.json({ success: true });
         } catch (error) {
             console.error('Error adding/updating note:', error);
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
+            res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+            });
         }
     });
 

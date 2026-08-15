@@ -16,6 +16,7 @@ export default {
                 'brand-rose': 'var(--color-brand-rose)',
                 'brand-amber': 'var(--color-brand-amber)',
             },
+
             backgroundImage: {
                 'linear-to-br':
                     'linear-gradient(135deg, var(--tw-gradient-stops))',
