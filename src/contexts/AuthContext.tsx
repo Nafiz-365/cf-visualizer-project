@@ -1,14 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-
-
-
-
-
-
-
-
-
 interface AuthContextType {
     userHandle: string | null;
     isLoadingAuth: boolean;
@@ -24,8 +15,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         fetch('/api/auth/me')
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 if (data.success && data.handle) {
                     setUserHandle(data.handle);
                 }
@@ -44,7 +35,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ userHandle, isLoadingAuth, login, logout }}>
+        <AuthContext.Provider
+            value={{ userHandle, isLoadingAuth, login, logout }}
+        >
             {children}
         </AuthContext.Provider>
     );
