@@ -384,7 +384,7 @@ export function Leaderboards() {
                                             >
                                                 <div className="flex items-center justify-between gap-3">
                                                     <div className="flex-1 min-w-0 pr-2">
-                                                        <h4 className="text-[11px] sm:text-xs font-bold text-text-app break-words whitespace-normal group-hover:text-brand-primary transition-colors leading-snug">
+                                                        <h4 className="text-[11px] sm:text-xs font-bold text-text-app wrap-break-word whitespace-normal group-hover:text-brand-primary transition-colors leading-snug">
                                                             {contest.name}
                                                         </h4>
                                                         <p className="text-[8px] sm:text-[9px] font-mono text-muted-app uppercase tracking-widest mt-1.5 font-bold">

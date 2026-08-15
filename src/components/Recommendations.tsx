@@ -17,14 +17,19 @@ function RecommendationsImpl({
     currentRating,
 }: RecommendationsProps) {
     const [bookmarked, setBookmarked] = useState<Set<string>>(new Set());
-    const [activeBookmark, setActiveBookmark] = useState<{ id: string, name: string } | null>(null);
+    const [activeBookmark, setActiveBookmark] = useState<{
+        id: string;
+        name: string;
+    } | null>(null);
 
     useEffect(() => {
         fetch('/api/bookmarks')
-            .then(r => r.json())
-            .then(data => {
+            .then((r) => r.json())
+            .then((data) => {
                 if (data.success) {
-                    const ids = new Set<string>(data.bookmarks.map((b: any) => b.problem_id));
+                    const ids = new Set<string>(
+                        data.bookmarks.map((b: any) => b.problem_id),
+                    );
                     setBookmarked(ids);
                 }
             })
@@ -40,11 +45,16 @@ function RecommendationsImpl({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     problemId: `${problem.contestId}${problem.index}`,
-                    problemName: problem.name
-                })
+                    problemName: problem.name,
+                }),
             });
-            setBookmarked(prev => new Set(prev).add(`${problem.contestId}${problem.index}`));
-            setActiveBookmark({ id: `${problem.contestId}${problem.index}`, name: problem.name });
+            setBookmarked((prev) =>
+                new Set(prev).add(`${problem.contestId}${problem.index}`),
+            );
+            setActiveBookmark({
+                id: `${problem.contestId}${problem.index}`,
+                name: problem.name,
+            });
             window.dispatchEvent(new Event('bookmarksUpdated'));
         } catch (e) {
             console.error(e);
@@ -59,8 +69,8 @@ function RecommendationsImpl({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     problemId: activeBookmark.id,
-                    note: note
-                })
+                    note: note,
+                }),
             });
             window.dispatchEvent(new Event('bookmarksUpdated'));
         } catch (e) {
@@ -118,13 +128,6 @@ function RecommendationsImpl({
                 </span>
             </div>
 
-
-
-
-
-
-            
-
             <div className="space-y-3">
                 {suggestedProblems.map((p, i) => (
                     <a
@@ -147,7 +150,7 @@ function RecommendationsImpl({
                                           : 'Worth it'}
                                 </span>
                             </div>
-                            <h4 className="text-xs font-bold text-text-app group-hover:text-brand-secondary transition-colors break-words whitespace-normal">
+                            <h4 className="text-xs font-bold text-text-app group-hover:text-brand-secondary transition-colors wrap-break-word whitespace-normal">
                                 {p.name}
                             </h4>
                             <div className="flex flex-wrap items-center justify-between gap-1 mt-2">
@@ -164,14 +167,25 @@ function RecommendationsImpl({
                                 <button
                                     onClick={(e) => handleBookmark(e, p)}
                                     className={cn(
-                                        "p-1.5 rounded-lg transition-colors group-hover:opacity-100 opacity-60",
-                                        bookmarked.has(`${p.contestId}${p.index}`)
-                                            ? "text-brand-primary"
-                                            : "text-muted-app hover:text-brand-secondary hover:bg-brand-secondary/10"
+                                        'p-1.5 rounded-lg transition-colors group-hover:opacity-100 opacity-60',
+                                        bookmarked.has(
+                                            `${p.contestId}${p.index}`,
+                                        )
+                                            ? 'text-brand-primary'
+                                            : 'text-muted-app hover:text-brand-secondary hover:bg-brand-secondary/10',
                                     )}
                                     title="Bookmark problem"
                                 >
-                                    <Bookmark size={14} fill={bookmarked.has(`${p.contestId}${p.index}`) ? "currentColor" : "none"} />
+                                    <Bookmark
+                                        size={14}
+                                        fill={
+                                            bookmarked.has(
+                                                `${p.contestId}${p.index}`,
+                                            )
+                                                ? 'currentColor'
+                                                : 'none'
+                                        }
+                                    />
                                 </button>
                             </div>
                         </div>
