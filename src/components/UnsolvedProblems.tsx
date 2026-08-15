@@ -4,31 +4,25 @@ import { AlertCircle, ArrowRight, ExternalLink, Bookmark } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { BookmarkNoteModal } from './BookmarkNoteModal';
 
-
-
-
-
-
-
-
-
-
-
-
 interface UnsolvedProblemsProps {
     submissions: Submission[];
 }
 
 export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
     const [bookmarked, setBookmarked] = useState<Set<string>>(new Set());
-    const [activeBookmark, setActiveBookmark] = useState<{ id: string, name: string } | null>(null);
+    const [activeBookmark, setActiveBookmark] = useState<{
+        id: string;
+        name: string;
+    } | null>(null);
 
     useEffect(() => {
         fetch('/api/bookmarks')
-            .then(r => r.json())
-            .then(data => {
+            .then((r) => r.json())
+            .then((data) => {
                 if (data.success) {
-                    const ids = new Set<string>(data.bookmarks.map((b: any) => b.problem_id));
+                    const ids = new Set<string>(
+                        data.bookmarks.map((b: any) => b.problem_id),
+                    );
                     setBookmarked(ids);
                 }
             })
@@ -44,11 +38,16 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     problemId: `${problem.contestId}${problem.index}`,
-                    problemName: problem.name
-                })
+                    problemName: problem.name,
+                }),
             });
-            setBookmarked(prev => new Set(prev).add(`${problem.contestId}${problem.index}`));
-            setActiveBookmark({ id: `${problem.contestId}${problem.index}`, name: problem.name });
+            setBookmarked((prev) =>
+                new Set(prev).add(`${problem.contestId}${problem.index}`),
+            );
+            setActiveBookmark({
+                id: `${problem.contestId}${problem.index}`,
+                name: problem.name,
+            });
             window.dispatchEvent(new Event('bookmarksUpdated'));
         } catch (e) {
             console.error(e);
@@ -63,8 +62,8 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     problemId: activeBookmark.id,
-                    note: note
-                })
+                    note: note,
+                }),
             });
             window.dispatchEvent(new Event('bookmarksUpdated'));
         } catch (e) {
@@ -140,7 +139,7 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                                     <span className="text-[10px] font-black text-brand-secondary uppercase">
                                         {problem.index}
                                     </span>
-                                    <h4 className="text-[11px] font-bold text-text-app break-words whitespace-normal group-hover:text-brand-secondary transition-colors">
+                                    <h4 className="text-[11px] font-bold text-text-app wrap-break-word whitespace-normal group-hover:text-brand-secondary transition-colors">
                                         {problem.name}
                                     </h4>
                                 </div>
@@ -159,14 +158,25 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                                 <button
                                     onClick={(e) => handleBookmark(e, problem)}
                                     className={cn(
-                                        "p-1.5 transition-colors group-hover:scale-110",
-                                        bookmarked.has(`${problem.contestId}${problem.index}`)
-                                            ? "text-brand-primary"
-                                            : "text-muted-app/50 hover:text-brand-secondary"
+                                        'p-1.5 transition-colors group-hover:scale-110',
+                                        bookmarked.has(
+                                            `${problem.contestId}${problem.index}`,
+                                        )
+                                            ? 'text-brand-primary'
+                                            : 'text-muted-app/50 hover:text-brand-secondary',
                                     )}
                                     title="Bookmark problem"
                                 >
-                                    <Bookmark size={14} fill={bookmarked.has(`${problem.contestId}${problem.index}`) ? "currentColor" : "none"} />
+                                    <Bookmark
+                                        size={14}
+                                        fill={
+                                            bookmarked.has(
+                                                `${problem.contestId}${problem.index}`,
+                                            )
+                                                ? 'currentColor'
+                                                : 'none'
+                                        }
+                                    />
                                 </button>
                                 <ExternalLink
                                     size={14}

@@ -4,12 +4,6 @@ import { Button } from './ui/Button';
 import { User, RatingChange, Submission } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 
-
-
-
-
-
-
 import {
     Share2,
     Image as ImageIcon,
@@ -1637,7 +1631,7 @@ function SocialCardsImpl({
                                                     <p className="text-[5px] sm:text-[7px] md:text-[9px] uppercase text-slate-400 font-mono tracking-widest mb-0.5 sm:mb-1 shrink-0">
                                                         // {stat.label}
                                                     </p>
-                                                    <p className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-bold text-white font-mono drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] break-words leading-tight">
+                                                    <p className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-bold text-white font-mono drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] wrap-break-word leading-tight">
                                                         {stat.val}
                                                     </p>
                                                 </div>

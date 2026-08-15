@@ -84,7 +84,7 @@ export function UpcomingContests() {
                                     className="text-cyan-400/50 opacity-0 group-hover:opacity-100 transition-all group-hover:scale-110 group-hover:text-cyan-400"
                                 />
                             </div>
-                            <h4 className="text-xs font-bold text-text-app mb-2 leading-tight group-hover:text-cyan-400 transition-colors break-words whitespace-normal font-display tracking-wide">
+                            <h4 className="text-xs font-bold text-text-app mb-2 leading-tight group-hover:text-cyan-400 transition-colors wrap-break-word whitespace-normal font-display tracking-wide">
                                 {contest.name}
                             </h4>
                             <div className="flex flex-wrap items-center gap-3 text-[10px] text-muted-app font-mono font-medium">
