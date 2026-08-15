@@ -33,6 +33,7 @@ function ContestHistoryImpl({ ratingHistory }: ContestHistoryProps) {
                         </th>
                     </tr>
                 </thead>
+
                 <tbody className="divide-y divide-white/5">
                     {sorted.map((contest, idx) => {
                         const delta = contest.newRating - contest.oldRating;
@@ -43,7 +44,7 @@ function ContestHistoryImpl({ ratingHistory }: ContestHistoryProps) {
                             >
                                 <td className="py-2.5 md:py-4 pl-3 md:pl-4">
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] md:text-[11px] font-bold text-text-app group-hover:text-brand-primary transition-colors break-words whitespace-normal max-w-37.5 sm:max-w-75 md:max-w-none">
+                                        <span className="text-[10px] md:text-[11px] font-bold text-text-app group-hover:text-brand-primary transition-colors wrap-break-word whitespace-normal max-w-37.5 sm:max-w-75 md:max-w-none">
                                             {contest.contestName}
                                         </span>
                                         <span className="text-[8px] md:text-[9px] font-mono text-muted-app uppercase mt-0.5 md:mt-1">
@@ -57,6 +58,7 @@ function ContestHistoryImpl({ ratingHistory }: ContestHistoryProps) {
                                         </span>
                                     </div>
                                 </td>
+
                                 <td className="py-2.5 md:py-4">
                                     <div className="flex items-center gap-1.5 md:gap-2">
                                         <Trophy
