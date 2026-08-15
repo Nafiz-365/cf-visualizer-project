@@ -164,15 +164,11 @@ export class GeminiService {
         }
     }
 
-
-
-
-
-
-
-    
-
-    static async getChatHistory(handle: string): Promise<{role: 'user'|'assistant', content: string, created_at: string}[]> {
+    static async getChatHistory(
+        handle: string,
+    ): Promise<
+        { role: 'user' | 'assistant'; content: string; created_at: string }[]
+    > {
         try {
             const res = await fetch(`/api/chat/${handle}`);
             const data = await res.json();
@@ -183,12 +179,16 @@ export class GeminiService {
         return [];
     }
 
-    static async saveChatMessage(handle: string, role: string, content: string): Promise<void> {
+    static async saveChatMessage(
+        handle: string,
+        role: string,
+        content: string,
+    ): Promise<void> {
         try {
             await fetch(`/api/chat/${handle}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ role, content })
+                body: JSON.stringify({ role, content }),
             });
         } catch (e) {
             console.error('Failed to save chat message', e);
