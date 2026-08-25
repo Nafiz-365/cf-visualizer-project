@@ -6,21 +6,11 @@ import {
     Link,
     useLocation,
 } from 'react-router-dom';
-import {
-    LayoutGrid,
-    Users,
-    Home,
-    Search,
-    Sun,
-    Moon,
-    Trophy,
-    Menu,
-    X,
-} from 'lucide-react';
+import { Users, Search, Sun, Moon, Trophy } from 'lucide-react';
 import { cn } from './lib/utils';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
-import { motion, AnimatePresence } from 'motion/react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const LandingPage = lazy(() =>
     import('./components/LandingPage').then(({ LandingPage }) => ({
@@ -160,29 +150,34 @@ function App() {
                         />
 
                         <div className="relative z-10">
-                            <Suspense
-                                fallback={
-                                    <div className="min-h-screen flex items-center justify-center text-sm text-(--text-muted)">
-                                        Loading dashboard?
-                                    </div>
-                                }
-                            >
-                                <Routes>
-                                    <Route path="/" element={<LandingPage />} />
-                                    <Route
-                                        path="/dashboard/:handle"
-                                        element={<Dashboard />}
-                                    />
-                                    <Route
-                                        path="/compare"
-                                        element={<Compare />}
-                                    />
-                                    <Route
-                                        path="/leaderboards"
-                                        element={<Leaderboards />}
-                                    />
-                                </Routes>
-                            </Suspense>
+                            <ErrorBoundary>
+                                <Suspense
+                                    fallback={
+                                        <div className="min-h-screen flex items-center justify-center text-sm text-(--text-muted)">
+                                            Loading...
+                                        </div>
+                                    }
+                                >
+                                    <Routes>
+                                        <Route
+                                            path="/"
+                                            element={<LandingPage />}
+                                        />
+                                        <Route
+                                            path="/dashboard/:handle"
+                                            element={<Dashboard />}
+                                        />
+                                        <Route
+                                            path="/compare"
+                                            element={<Compare />}
+                                        />
+                                        <Route
+                                            path="/leaderboards"
+                                            element={<Leaderboards />}
+                                        />
+                                    </Routes>
+                                </Suspense>
+                            </ErrorBoundary>
                             <Navbar />
 
                             {/* Global floating footer badge */}

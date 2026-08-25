@@ -375,7 +375,7 @@ function OverviewTabImpl({
                                 Pick a date and inspect the activity window
                             </p>
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
                             <label className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-muted-app/70">
                                 <Calendar
                                     size={12}

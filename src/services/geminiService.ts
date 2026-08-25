@@ -134,7 +134,12 @@ export class GeminiService {
     }
 
     static async customPrompt(prompt: string): Promise<any[]> {
-        const cacheKey = `custom_${btoa(encodeURIComponent(prompt)).slice(0, 32)}`;
+        // Fast djb2 string hash for safe, consistent cache keys
+        let hash = 5381;
+        for (let i = 0; i < prompt.length; i++) {
+            hash = ((hash << 5) + hash + prompt.charCodeAt(i)) | 0;
+        }
+        const cacheKey = `custom_${hash >>> 0}`;
         const cached = this.getCached(cacheKey);
         if (cached) return cached;
 

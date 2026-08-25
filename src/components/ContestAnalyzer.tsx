@@ -71,7 +71,11 @@ function ContestAnalyzerImpl({
         if (!selectedContestId) return [];
         return submissions
             .filter(
-                (s) => s.problem.contestId?.toString() === selectedContestId,
+                (s) =>
+                    s.problem.contestId?.toString() === selectedContestId &&
+                    (s.author.participantType === 'CONTESTANT' ||
+                     s.author.participantType === 'OUT_OF_COMPETITION' ||
+                     s.author.participantType === 'VIRTUAL'),
             )
             .sort((a, b) => a.creationTimeSeconds - b.creationTimeSeconds);
     }, [selectedContestId, submissions]);
@@ -96,12 +100,13 @@ function ContestAnalyzerImpl({
             if (sub.verdict === 'OK') {
                 if (!current.ok) {
                     current.ok = true;
-                    // Approximate relative solve time since start of contest (or relative to earliest submission)
-                    const baseTime =
-                        subs[0]?.creationTimeSeconds || sub.creationTimeSeconds;
-                    current.time = Math.round(
-                        (sub.creationTimeSeconds - baseTime) / 60,
-                    );
+                    // Use relativeTimeSeconds if available, else fallback to creation time delta
+                    if (sub.relativeTimeSeconds !== undefined && sub.relativeTimeSeconds >= 0) {
+                        current.time = Math.floor(sub.relativeTimeSeconds / 60);
+                    } else {
+                        const baseTime = subs[0]?.creationTimeSeconds || sub.creationTimeSeconds;
+                        current.time = Math.round((sub.creationTimeSeconds - baseTime) / 60);
+                    }
                 }
             } else {
                 if (!current.ok) {
@@ -132,17 +137,30 @@ function ContestAnalyzerImpl({
         };
     }, [activeContest, contestSubmissions]);
 
+    // All solved problems in this contest (including practice)
+    const allSolvedProblemsInContest = useMemo(() => {
+        const solved = new Set<string>();
+        submissions.forEach((s) => {
+            if (
+                s.verdict === 'OK' &&
+                s.problem.contestId?.toString() === selectedContestId
+            ) {
+                solved.add(s.problem.index);
+            }
+        });
+        return solved;
+    }, [submissions, selectedContestId]);
+
     // Upsolve Calibration - find all problems in this contest that they didn't solve during/after
     const upsolveProblems = useMemo(() => {
         if (!selectedContestId) return [];
-        const solvedDuring = analysis?.solvedIndices || new Set();
 
         // Filter problemset for this contest
         return problemset
             .filter((p) => p.contestId?.toString() === selectedContestId)
-            .filter((p) => !solvedDuring.has(p.index))
+            .filter((p) => !allSolvedProblemsInContest.has(p.index))
             .sort((a, b) => (a.rating || 0) - (b.rating || 0));
-    }, [selectedContestId, problemset, analysis]);
+    }, [selectedContestId, problemset, allSolvedProblemsInContest]);
 
     if (ratingHistory.length === 0) {
         return (

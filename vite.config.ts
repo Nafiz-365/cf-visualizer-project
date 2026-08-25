@@ -30,15 +30,24 @@ export default defineConfig(() => {
                         // React core — smallest, most cached chunk
                         'vendor-react': [
                             'react',
-
                             'react-dom',
                             'react-router-dom',
                         ],
                         // Animation library
                         'vendor-motion': ['motion'],
 
-                        // Charting library (largest vendor — 363 KB)
+                        // Charting library (largest vendor)
                         'vendor-recharts': ['recharts'],
+
+                        // 3D engine — only used by MagicRings on landing page
+                        'vendor-three': ['three'],
+
+                        // Markdown rendering — only used by AI chat
+                        'vendor-markdown': [
+                            'react-markdown',
+                            'remark-gfm',
+                            'rehype-highlight',
+                        ],
 
                         // Icon library — tree-shaken per component, still worth isolating
                         'vendor-lucide': ['lucide-react'],

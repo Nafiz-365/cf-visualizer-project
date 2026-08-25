@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     Search,
@@ -7,7 +7,6 @@ import {
     BarChart3,
     Users,
     Zap,
-    Shield,
     Globe,
     History,
     X,
@@ -18,6 +17,7 @@ import {
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { useAuth } from '../contexts/AuthContext';
+import MagicRings from './MagicRings';
 
 export function LandingPage() {
     const [handle, setHandle] = useState('');
@@ -89,16 +89,21 @@ export function LandingPage() {
     return (
         <div className="relative min-h-screen overflow-hidden bg-bg-app selection:bg-brand-primary/30">
             {/* Premium Background Mesh */}
-            <div className="mesh-background">
-                <div className="w-200 h-200 bg-brand-primary/20 -top-50 -left-50" />
-                <div
-                    className="w-150 h-150 bg-brand-secondary/15 top-[20%] -right-32"
-                    style={{ animationDelay: '-5s' }}
-                />
-                <div
-                    className="w-175 h-175 bg-brand-accent/20 -bottom-75 left-[10%]"
-                    style={{ animationDelay: '-10s' }}
-                />
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-60">
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                    <MagicRings 
+                        color="#4F8EF7" 
+                        colorTwo="#9D6EF5" 
+                        speed={1.5}
+                        ringCount={8}
+                        baseRadius={0.2}
+                        radiusStep={0.08}
+                        opacity={0.8}
+                        mouseInfluence={0.2}
+                        followMouse={true}
+                        clickBurst={true}
+                    />
+                </div>
             </div>
 
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40">
@@ -264,7 +269,7 @@ export function LandingPage() {
                         </div>
                         <Button
                             variant="gradient"
-                            className="h-14 px-8 rounded-2xl text-sm font-bold uppercase tracking-widest relative z-10"
+                            className="h-14 w-full md:w-auto px-8 rounded-2xl text-sm font-bold uppercase tracking-widest relative z-10"
                         >
                             Generate Stats
                         </Button>
@@ -393,7 +398,7 @@ export function LandingPage() {
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.95, opacity: 0, y: 20 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full max-w-md glass-premium p-6 md:p-8 rounded-3xl relative"
+                            className="w-full max-w-md glass-premium p-4 sm:p-6 md:p-8 rounded-3xl relative"
                         >
                             <button
                                 onClick={() => setIsAuthModalOpen(false)}

@@ -68,13 +68,16 @@ async function startServer() {
             driver: sqlite3.Database,
         });
 
+        // Performance pragmas
+        await db.exec('PRAGMA journal_mode = WAL;');
+        await db.exec('PRAGMA synchronous = NORMAL;');
+
         await db.exec(`
             CREATE TABLE IF NOT EXISTS users (
                 handle TEXT PRIMARY KEY,
                 password_hash TEXT NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
-
 
             CREATE TABLE IF NOT EXISTS friends (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,13 +87,12 @@ async function startServer() {
                 UNIQUE(user_handle, friend_handle)
             );
 
-
             CREATE TABLE IF NOT EXISTS chat_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 handle TEXT,
                 role TEXT,
                 content TEXT,
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS bookmarks (
@@ -110,6 +112,12 @@ async function startServer() {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(user_handle, problem_id)
             );
+
+            -- Query indexes for performance
+            CREATE INDEX IF NOT EXISTS idx_friends_user ON friends(user_handle);
+            CREATE INDEX IF NOT EXISTS idx_chat_handle ON chat_history(handle);
+            CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON bookmarks(user_handle);
+            CREATE INDEX IF NOT EXISTS idx_notes_user ON notes(user_handle);
         `);
 
         console.log('SQLite Database initialized successfully.');
@@ -118,10 +126,19 @@ async function startServer() {
     }
 
     // API Route for Codeforces Proxy
+    // Bounded LRU cache — evicts oldest entries when max size is reached
+    const MAX_CACHE_SIZE = 500;
     const cfCache = new Map<
         string,
         { data: any; timestamp: number; ttl: number }
     >();
+
+    function evictCache(cache: Map<string, any>) {
+        if (cache.size > MAX_CACHE_SIZE) {
+            const firstKey = cache.keys().next().value;
+            if (firstKey !== undefined) cache.delete(firstKey);
+        }
+    }
 
     let lastCfRequestTime = 0;
 
@@ -175,6 +192,7 @@ async function startServer() {
                     timestamp: Date.now(),
                     ttl,
                 });
+                evictCache(cfCache);
             }
 
             res.json(response.data);
@@ -226,6 +244,7 @@ async function startServer() {
     // API route for AI coaching
     const aiCache = new Map<string, { data: any; timestamp: number }>();
     const CACHE_TTL = 1000 * 60 * 60; // 1 hour cache
+    const MAX_AI_CACHE_SIZE = 200;
 
     app.post('/api/ai/generate', async (req, res) => {
         const keyError = getGeminiApiKeyError(geminiKey);
@@ -303,6 +322,10 @@ async function startServer() {
                 try {
                     const data = safeParseJSON(text);
                     aiCache.set(cacheKey, { data, timestamp: Date.now() });
+                    if (aiCache.size > MAX_AI_CACHE_SIZE) {
+                        const firstKey = aiCache.keys().next().value;
+                        if (firstKey !== undefined) aiCache.delete(firstKey);
+                    }
                     res.json(data);
                 } catch (parseError: any) {
                     console.error(
@@ -350,7 +373,7 @@ async function startServer() {
                 });
             const handle = req.params.handle;
             const messages = await db.all(
-                'SELECT role, content FROM chat_history WHERE handle = ? ORDER BY created_at ASC',
+                'SELECT role, content FROM chat_history WHERE handle = ? ORDER BY id ASC',
                 [handle],
             );
             res.json({ success: true, messages });
@@ -625,7 +648,7 @@ async function startServer() {
         }
     });
 
-    app.delete('/api/friends/:handle/:friend', async (req, res) => {
+    app.delete('/api/friends/:handle/:friend', verifyToken, async (req, res) => {
         try {
             if (!db)
                 return res.status(500).json({

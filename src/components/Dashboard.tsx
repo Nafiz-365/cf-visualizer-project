@@ -44,6 +44,7 @@ import {
     generateFallbackSubmissions,
 } from '../lib/fallbackData';
 import { DetailItem } from './DetailItem';
+import { DashboardSkeleton } from './ui/DashboardSkeleton';
 
 const OverviewTab = lazy(() =>
     import('./dashboard/OverviewTab').then((m) => ({ default: m.OverviewTab })),
@@ -186,15 +187,6 @@ export function Dashboard() {
         setIsOfflineMode(false);
         setAiInsights([]);
 
-        const seedUser = generateFallbackUser(h);
-        const seedRating = generateFallbackRatingHistory(h);
-        const seedSubmissions = generateFallbackSubmissions(h);
-
-        setUser(seedUser);
-        setRatingHistory(seedRating);
-        setSubmissions(seedSubmissions);
-        setLoading(false);
-
         const safeFetch = async <T,>(
             promise: Promise<T>,
             defaultValue: T,
@@ -218,9 +210,10 @@ export function Dashboard() {
 
             const fetchedStatus = await safeFetch(
                 CodeforcesService.getUserStatus(h),
-                seedSubmissions,
+                [],
             );
             setSubmissions(fetchedStatus);
+            setLoading(false);
 
             const stats = calculateAnalytics(fetchedStatus, fetchedRating);
             void generateAIInsights(fetchedUser, fetchedRating, stats);
@@ -234,15 +227,17 @@ export function Dashboard() {
 
             if (is404) {
                 setError(err.message || 'Failed to fetch user data');
+                setLoading(false);
             } else {
                 console.warn(
                     'Critical fetch failed, falling back to simulated trace data:',
                     err,
                 );
                 setIsOfflineMode(true);
-                setUser(seedUser);
-                setRatingHistory(seedRating);
-                setSubmissions(seedSubmissions);
+                setUser(generateFallbackUser(h));
+                setRatingHistory(generateFallbackRatingHistory(h));
+                setSubmissions(generateFallbackSubmissions(h));
+                setLoading(false);
             }
         }
 
@@ -329,19 +324,16 @@ export function Dashboard() {
             Object.entries(hours).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 0;
 
         // Performance Metrics
-        const ratingChanges = ratingHistory.map(
-            (r) => r.newRating - r.oldRating,
-        );
+        const ratingChanges = history.map((r) => r.newRating - r.oldRating);
         const maxDelta = ratingChanges.length ? Math.max(...ratingChanges) : 0;
         const minDelta = ratingChanges.length ? Math.min(...ratingChanges) : 0;
         const positiveDeltas = ratingChanges.filter((d) => d > 0).length;
         const deltaSuccessRate = ratingChanges.length
-            ? ((positiveDeltas / ratingHistory.length) * 100).toFixed(1)
+            ? ((positiveDeltas / history.length) * 100).toFixed(1)
             : 0;
-        const avgRank = ratingHistory.length
+        const avgRank = history.length
             ? Math.round(
-                  ratingHistory.reduce((acc, r) => acc + r.rank, 0) /
-                      ratingHistory.length,
+                  history.reduce((acc, r) => acc + r.rank, 0) / history.length,
               )
             : 0;
 
@@ -364,7 +356,7 @@ export function Dashboard() {
             minDelta,
             deltaSuccessRate,
             avgRank,
-            contestCount: ratingHistory.length,
+            contestCount: history.length,
         };
     };
 
@@ -535,27 +527,7 @@ export function Dashboard() {
     ] as const;
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-bg-app">
-                <div className="relative">
-                    <div className="w-16 h-16 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <Zap
-                            size={20}
-                            className="text-brand-primary animate-pulse"
-                        />
-                    </div>
-                </div>
-                <div className="text-center space-y-2">
-                    <p className="text-sm font-display font-medium text-text-app animate-pulse">
-                        Analyzing Profile Intelligence...
-                    </p>
-                    <p className="text-[10px] text-muted-app font-mono uppercase tracking-[0.2em]">
-                        Synthesizing {handle}'s achievements
-                    </p>
-                </div>
-            </div>
-        );
+        return <DashboardSkeleton handle={handle} />;
     }
 
     if (error || !user) {
@@ -774,7 +746,7 @@ export function Dashboard() {
                                     />
                                     <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-bg-app shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
                                 </div>
-                                <div className="min-w-0 text-left">
+                                <div className="min-w-0 text-left max-w-22.5 sm:max-w-37.5">
                                     <p className="text-xs sm:text-sm font-bold text-text-app leading-tight truncate group-hover:text-brand-primary transition-colors">
                                         {user.handle}
                                     </p>
