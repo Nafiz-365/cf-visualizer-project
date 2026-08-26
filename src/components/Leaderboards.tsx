@@ -377,8 +377,9 @@ export function Leaderboards() {
                                                 key={contest.id}
                                                 className="glass-premium group p-3.5 sm:p-4 bg-white/1 hover:bg-white/3 transition-all cursor-pointer rounded-2xl border border-white/5 shadow-sm hover:shadow-md snap-start"
                                                 onClick={() =>
-                                                    navigate(
-                                                        `/contest/${contest.id}`,
+                                                    window.open(
+                                                        `https://codeforces.com/contest/${contest.id}`,
+                                                        '_blank',
                                                     )
                                                 }
                                             >
