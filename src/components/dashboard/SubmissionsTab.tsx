@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { RefreshCcw, Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import { format } from 'date-fns';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { cn } from '../../lib/utils';
+import React, { useState } from "react";
+import {
+    RefreshCcw,
+    Search,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+} from "lucide-react";
+import { format } from "date-fns";
+import { Card } from "../ui/Card";
+import { Button } from "../ui/Button";
+import { cn } from "../../lib/utils";
 
 const PAGE_SIZE = 50;
 
@@ -83,7 +89,7 @@ function SubmissionsTabImpl({
                         >
                             <RefreshCcw
                                 size={14}
-                                className={refreshing ? 'animate-spin' : ''}
+                                className={refreshing ? "animate-spin" : ""}
                             />
                         </Button>
                     </div>
@@ -98,29 +104,29 @@ function SubmissionsTabImpl({
                             <tr>
                                 {[
                                     {
-                                        id: 'problem',
-                                        label: 'Problem Subject',
-                                        className: '',
+                                        id: "problem",
+                                        label: "Problem Subject",
+                                        className: "",
                                     },
                                     {
-                                        id: 'verdict',
-                                        label: 'Status',
-                                        className: '',
+                                        id: "verdict",
+                                        label: "Status",
+                                        className: "",
                                     },
                                     {
-                                        id: 'lang',
-                                        label: 'Sys',
-                                        className: 'hidden sm:table-cell',
+                                        id: "lang",
+                                        label: "Sys",
+                                        className: "hidden sm:table-cell",
                                     },
                                     {
-                                        id: 'time',
-                                        label: 'Latency',
-                                        className: 'hidden md:table-cell',
+                                        id: "time",
+                                        label: "Latency",
+                                        className: "hidden md:table-cell",
                                     },
                                     {
-                                        id: 'when',
-                                        label: 'Timestamp',
-                                        className: '',
+                                        id: "when",
+                                        label: "Timestamp",
+                                        className: "",
                                     },
                                 ].map((h) => (
                                     <th
@@ -130,7 +136,7 @@ function SubmissionsTabImpl({
                                             setPage(0);
                                         }}
                                         className={cn(
-                                            'px-4 md:px-8 py-3 md:py-5 text-[9px] uppercase font-black text-muted-app tracking-[0.2em] border-b border-white/5 cursor-pointer hover:text-brand-primary transition-colors group/header',
+                                            "px-4 md:px-8 py-3 md:py-5 text-[9px] uppercase font-black text-muted-app tracking-[0.2em] border-b border-white/5 cursor-pointer hover:text-brand-primary transition-colors group/header",
                                             h.className,
                                         )}
                                     >
@@ -139,13 +145,13 @@ function SubmissionsTabImpl({
                                             <ChevronDown
                                                 size={10}
                                                 className={cn(
-                                                    'transition-transform opacity-0 group-hover/header:opacity-100',
+                                                    "transition-transform opacity-0 group-hover/header:opacity-100",
                                                     sortKey === h.id &&
-                                                        'opacity-100',
+                                                        "opacity-100",
                                                     sortKey === h.id &&
                                                         sortDirection ===
-                                                            'asc' &&
-                                                        'rotate-180',
+                                                            "asc" &&
+                                                        "rotate-180",
                                                 )}
                                             />
                                         </div>
@@ -157,9 +163,7 @@ function SubmissionsTabImpl({
                             {paged.map((sub: any) => (
                                 <tr
                                     key={sub.id}
-                                    onClick={() =>
-                                        setSelectedSubmission(sub)
-                                    }
+                                    onClick={() => setSelectedSubmission(sub)}
                                     className="group hover:bg-brand-primary/2 transition-colors cursor-pointer"
                                 >
                                     <td className="px-4 md:px-8 py-3 md:py-5">
@@ -169,7 +173,7 @@ function SubmissionsTabImpl({
                                                 onClick={() =>
                                                     window.open(
                                                         `https://codeforces.com/contest/${sub.problem.contestId}/problem/${sub.problem.index}`,
-                                                        '_blank',
+                                                        "_blank",
                                                     )
                                                 }
                                             >
@@ -185,23 +189,23 @@ function SubmissionsTabImpl({
                                         <div className="flex items-center gap-2">
                                             <div
                                                 className={cn(
-                                                    'w-2 h-2 rounded-full',
-                                                    sub.verdict === 'OK'
-                                                        ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
-                                                        : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]',
+                                                    "w-2 h-2 rounded-full",
+                                                    sub.verdict === "OK"
+                                                        ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                                                        : "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
                                                 )}
                                             />
                                             <span
                                                 className={cn(
-                                                    'text-[10px] font-black uppercase tracking-widest',
-                                                    sub.verdict === 'OK'
-                                                        ? 'text-emerald-500'
-                                                        : 'text-red-500',
+                                                    "text-[10px] font-black uppercase tracking-widest",
+                                                    sub.verdict === "OK"
+                                                        ? "text-emerald-500"
+                                                        : "text-red-500",
                                                 )}
                                             >
-                                                {sub.verdict === 'OK'
-                                                    ? 'Accepted'
-                                                    : 'Failed'}
+                                                {sub.verdict === "OK"
+                                                    ? "Accepted"
+                                                    : "Failed"}
                                             </span>
                                         </div>
                                     </td>
@@ -216,7 +220,7 @@ function SubmissionsTabImpl({
                                             new Date(
                                                 sub.creationTimeSeconds * 1000,
                                             ),
-                                            'MMM dd, HH:mm',
+                                            "MMM dd, HH:mm",
                                         )}
                                     </td>
                                 </tr>
@@ -234,14 +238,23 @@ function SubmissionsTabImpl({
                         <div className="flex items-center gap-2">
                             <button
                                 disabled={currentPage <= 0}
-                                onClick={() => setPage(Math.max(0, currentPage - 1))}
+                                onClick={() =>
+                                    setPage(Math.max(0, currentPage - 1))
+                                }
                                 className="p-1.5 rounded-lg border border-white/10 text-muted-app hover:text-text-app hover:border-brand-primary/30 transition-all disabled:opacity-30 disabled:pointer-events-none"
                             >
                                 <ChevronLeft size={14} />
                             </button>
                             <button
                                 disabled={currentPage >= totalPages - 1}
-                                onClick={() => setPage(Math.min(totalPages - 1, currentPage + 1))}
+                                onClick={() =>
+                                    setPage(
+                                        Math.min(
+                                            totalPages - 1,
+                                            currentPage + 1,
+                                        ),
+                                    )
+                                }
                                 className="p-1.5 rounded-lg border border-white/10 text-muted-app hover:text-text-app hover:border-brand-primary/30 transition-all disabled:opacity-30 disabled:pointer-events-none"
                             >
                                 <ChevronRight size={14} />

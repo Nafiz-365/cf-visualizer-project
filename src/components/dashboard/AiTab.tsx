@@ -1,11 +1,11 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Milestone, Brain, MessageSquare } from 'lucide-react';
-import { Card } from '../ui/Card';
-import { AIRoadmap } from '../AIRoadmap';
-import { AIChatCoach } from '../AIChatCoach';
-import { AIWeaknessAnalyzer } from '../AIWeaknessAnalyzer';
-import { cn } from '../../lib/utils';
+import React from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Milestone, Brain, MessageSquare } from "lucide-react";
+import { Card } from "../ui/Card";
+import { AIRoadmap } from "../AIRoadmap";
+import { AIChatCoach } from "../AIChatCoach";
+import { AIWeaknessAnalyzer } from "../AIWeaknessAnalyzer";
+import { cn } from "../../lib/utils";
 
 function AiTabImpl({
     user,
@@ -44,18 +44,18 @@ function AiTabImpl({
                         <div className="flex flex-wrap gap-2.5">
                             {[
                                 {
-                                    id: 'chat',
-                                    label: 'Chat Coach',
+                                    id: "chat",
+                                    label: "Chat Coach",
                                     icon: MessageSquare,
                                 },
                                 {
-                                    id: 'roadmap',
-                                    label: 'Growth Roadmap',
+                                    id: "roadmap",
+                                    label: "Growth Roadmap",
                                     icon: Milestone,
                                 },
                                 {
-                                    id: 'weakness',
-                                    label: 'Weakness Diagnostic',
+                                    id: "weakness",
+                                    label: "Weakness Diagnostic",
                                     icon: Brain,
                                 },
                             ].map((tool) => {
@@ -68,10 +68,10 @@ function AiTabImpl({
                                             setActiveAiTool(tool.id as any)
                                         }
                                         className={cn(
-                                            'flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 border cursor-pointer',
+                                            "flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 border cursor-pointer",
                                             isSelected
-                                                ? 'bg-brand-primary text-black border-brand-primary shadow-lg shadow-brand-primary/20'
-                                                : 'bg-white/5 text-muted-app border-white/5 hover:border-white/10 hover:bg-white/10 hover:text-text-app',
+                                                ? "bg-brand-primary text-black border-brand-primary shadow-lg shadow-brand-primary/20"
+                                                : "bg-white/5 text-muted-app border-white/5 hover:border-white/10 hover:bg-white/10 hover:text-text-app",
                                         )}
                                     >
                                         <ToolIcon size={14} />
@@ -92,7 +92,7 @@ function AiTabImpl({
                         exit={{ opacity: 0, y: -15 }}
                         transition={{ duration: 0.3 }}
                     >
-                        {activeAiTool === 'chat' && (
+                        {activeAiTool === "chat" && (
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
                                 {/* AI Chat Coach - Main Window */}
                                 <div className="lg:col-span-8">
@@ -117,11 +117,11 @@ function AiTabImpl({
                                             <>
                                                 <p className="text-xs font-bold text-text-app mb-1 leading-relaxed">
                                                     Based on your stats,
-                                                    prioritize{' '}
+                                                    prioritize{" "}
                                                     <span className="text-brand-primary">
                                                         {analytics.bestTag}
-                                                    </span>{' '}
-                                                    and target problems rated{' '}
+                                                    </span>{" "}
+                                                    and target problems rated{" "}
                                                     <span className="text-brand-primary">
                                                         {(user?.rating ?? 800) +
                                                             100}
@@ -135,16 +135,16 @@ function AiTabImpl({
                                                     .
                                                 </p>
                                                 <p className="text-[10px] text-muted-app/60 leading-relaxed">
-                                                    Your{' '}
+                                                    Your{" "}
                                                     {analytics.deltaSuccessRate}
-                                                    % contest win rate and{' '}
+                                                    % contest win rate and{" "}
                                                     {analytics.accuracy}%
-                                                    accuracy suggest{' '}
+                                                    accuracy suggest{" "}
                                                     {Number(
                                                         analytics.deltaSuccessRate,
                                                     ) >= 50
-                                                        ? 'you\u2019re ready to push harder \u2014 attempt Div 2 C/D problems.'
-                                                        : 'consistency training will drive your next rating breakthrough.'}
+                                                        ? "you\u2019re ready to push harder \u2014 attempt Div 2 C/D problems."
+                                                        : "consistency training will drive your next rating breakthrough."}
                                                 </p>
                                             </>
                                         ) : (
@@ -162,48 +162,48 @@ function AiTabImpl({
                                         <div className="space-y-3.5">
                                             {[
                                                 {
-                                                    label: 'Intensity',
+                                                    label: "Intensity",
                                                     value: liveSessionStats.intensity,
                                                     color:
                                                         liveSessionStats.intensity ===
-                                                        'High'
-                                                            ? 'text-emerald-400'
+                                                        "High"
+                                                            ? "text-emerald-400"
                                                             : liveSessionStats.intensity ===
-                                                                'Medium'
-                                                              ? 'text-yellow-400'
-                                                              : 'text-orange-400',
+                                                                "Medium"
+                                                              ? "text-yellow-400"
+                                                              : "text-orange-400",
                                                 },
                                                 {
-                                                    label: 'Streak',
+                                                    label: "Streak",
                                                     value:
                                                         liveSessionStats.streak >
                                                         0
-                                                            ? `${liveSessionStats.streak} day${liveSessionStats.streak !== 1 ? 's' : ''}`
-                                                            : 'No streak',
+                                                            ? `${liveSessionStats.streak} day${liveSessionStats.streak !== 1 ? "s" : ""}`
+                                                            : "No streak",
                                                     color:
                                                         liveSessionStats.streak >
                                                         7
-                                                            ? 'text-emerald-400'
+                                                            ? "text-emerald-400"
                                                             : liveSessionStats.streak >
                                                                 2
-                                                              ? 'text-brand-primary'
-                                                              : 'text-muted-app/50',
+                                                              ? "text-brand-primary"
+                                                              : "text-muted-app/50",
                                                 },
                                                 {
-                                                    label: 'Efficiency',
+                                                    label: "Efficiency",
                                                     value: liveSessionStats.efficiency,
                                                     color:
                                                         Number(
                                                             analytics?.accuracy ??
                                                                 0,
                                                         ) >= 70
-                                                            ? 'text-emerald-400'
+                                                            ? "text-emerald-400"
                                                             : Number(
                                                                     analytics?.accuracy ??
                                                                         0,
                                                                 ) >= 50
-                                                              ? 'text-yellow-400'
-                                                              : 'text-orange-400',
+                                                              ? "text-yellow-400"
+                                                              : "text-orange-400",
                                                 },
                                             ].map((item) => (
                                                 <div
@@ -215,7 +215,7 @@ function AiTabImpl({
                                                     </span>
                                                     <span
                                                         className={cn(
-                                                            'text-xs font-black uppercase',
+                                                            "text-xs font-black uppercase",
                                                             item.color,
                                                         )}
                                                     >
@@ -234,25 +234,25 @@ function AiTabImpl({
                                         <div className="space-y-3.5">
                                             {[
                                                 {
-                                                    label: 'Contests',
+                                                    label: "Contests",
                                                     value:
                                                         analytics?.contestCount ??
                                                         0,
-                                                    color: 'text-brand-secondary',
+                                                    color: "text-brand-secondary",
                                                 },
                                                 {
-                                                    label: 'Avg Rank',
+                                                    label: "Avg Rank",
                                                     value: analytics?.avgRank
                                                         ? `#${analytics.avgRank}`
-                                                        : '—',
-                                                    color: 'text-text-app',
+                                                        : "—",
+                                                    color: "text-text-app",
                                                 },
                                                 {
-                                                    label: 'Best Delta',
+                                                    label: "Best Delta",
                                                     value: analytics?.maxDelta
                                                         ? `+${analytics.maxDelta}`
-                                                        : '—',
-                                                    color: 'text-emerald-400',
+                                                        : "—",
+                                                    color: "text-emerald-400",
                                                 },
                                             ].map((item) => (
                                                 <div
@@ -264,7 +264,7 @@ function AiTabImpl({
                                                     </span>
                                                     <span
                                                         className={cn(
-                                                            'text-xs font-black',
+                                                            "text-xs font-black",
                                                             item.color,
                                                         )}
                                                     >
@@ -278,7 +278,7 @@ function AiTabImpl({
                             </div>
                         )}
 
-                        {activeAiTool === 'roadmap' && (
+                        {activeAiTool === "roadmap" && (
                             <Card className="p-0 overflow-hidden flex flex-col h-full">
                                 <div className="p-5 md:p-6 border-b border-white/5 bg-linear-to-r from-brand-primary/10 via-transparent to-transparent">
                                     <h3 className="text-lg font-display font-bold text-text-app">
@@ -298,7 +298,7 @@ function AiTabImpl({
                             </Card>
                         )}
 
-                        {activeAiTool === 'weakness' && (
+                        {activeAiTool === "weakness" && (
                             <Card className="p-5 md:p-8 relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-white/5 via-transparent to-transparent shadow-[0_12px_36px_rgba(0,0,0,0.14)] backdrop-blur-md">
                                 <div className="flex items-center gap-3 mb-6">
                                     <Brain
