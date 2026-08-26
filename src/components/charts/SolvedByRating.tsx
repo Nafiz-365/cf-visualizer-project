@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 import {
     BarChart,
     Bar,
@@ -7,8 +7,8 @@ import {
     Tooltip,
     ResponsiveContainer,
     Cell,
-} from 'recharts';
-import { Submission } from '../../types';
+} from "recharts";
+import { Submission } from "../../types";
 
 interface SolvedByRatingProps {
     submissions: Submission[];
@@ -20,7 +20,7 @@ function SolvedByRatingImpl({ submissions }: SolvedByRatingProps) {
         const solvedIds = new Set();
 
         submissions
-            .filter((s) => s.verdict === 'OK' && s.problem.rating)
+            .filter((s) => s.verdict === "OK" && s.problem.rating)
             .forEach((s) => {
                 const problemId = `${s.problem.contestId}-${s.problem.index}`;
                 if (!solvedIds.has(problemId)) {
@@ -47,7 +47,7 @@ function SolvedByRatingImpl({ submissions }: SolvedByRatingProps) {
                 >
                     <XAxis
                         dataKey="rating"
-                        tick={{ fill: '#64748b', fontSize: 8, fontWeight: 900 }}
+                        tick={{ fill: "#64748b", fontSize: 8, fontWeight: 900 }}
                         axisLine={false}
                         tickLine={false}
                         dy={10}
@@ -56,7 +56,7 @@ function SolvedByRatingImpl({ submissions }: SolvedByRatingProps) {
                     <Tooltip
                         allowEscapeViewBox={{ x: true, y: true }}
                         wrapperStyle={{ zIndex: 10000 }}
-                        cursor={{ fill: 'rgba(255,255,255,0.03)', radius: 6 }}
+                        cursor={{ fill: "rgba(255,255,255,0.03)", radius: 6 }}
                         content={({
                             active,
                             payload,
@@ -64,20 +64,20 @@ function SolvedByRatingImpl({ submissions }: SolvedByRatingProps) {
                             viewBox,
                         }: any) => {
                             if (active && payload && payload.length) {
-                                let translateX = '-50%';
+                                let translateX = "-50%";
                                 if (coordinate && viewBox) {
                                     const ratio = coordinate.x / viewBox.width;
                                     if (ratio < 0.2) {
-                                        translateX = '-15%';
+                                        translateX = "-15%";
                                     } else if (ratio > 0.8) {
-                                        translateX = '-85%';
+                                        translateX = "-85%";
                                     }
                                 }
 
                                 const tooltipStyle = {
                                     transform: `translate(${translateX}, -120%)`,
                                     transition:
-                                        'transform 100ms cubic-bezier(0.16, 1, 0.3, 1)',
+                                        "transform 100ms cubic-bezier(0.16, 1, 0.3, 1)",
                                 };
 
                                 return (
@@ -108,18 +108,18 @@ function SolvedByRatingImpl({ submissions }: SolvedByRatingProps) {
                                 key={`cell-${index}`}
                                 fill={
                                     entry.rating < 1200
-                                        ? '#64748b'
+                                        ? "#64748b"
                                         : entry.rating < 1400
-                                          ? '#10b981'
+                                          ? "#10b981"
                                           : entry.rating < 1600
-                                            ? '#0ea5e9'
+                                            ? "#0ea5e9"
                                             : entry.rating < 1900
-                                              ? '#3b82f6'
+                                              ? "#3b82f6"
                                               : entry.rating < 2100
-                                                ? '#a855f7'
+                                                ? "#a855f7"
                                                 : entry.rating < 2400
-                                                  ? '#f59e0b'
-                                                  : '#ef4444'
+                                                  ? "#f59e0b"
+                                                  : "#ef4444"
                                 }
                                 fillOpacity={0.7}
                                 className="hover:fill-opacity-100 transition-all duration-300"

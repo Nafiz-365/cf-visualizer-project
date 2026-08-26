@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
-import { CodeforcesService } from '../services/codeforces';
-import { RatingChange, User } from '../types';
+import React, { useState, useEffect } from "react";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
+import { CodeforcesService } from "../services/codeforces";
+import { RatingChange, User } from "../types";
 import {
     LineChart,
     Line,
@@ -12,14 +12,14 @@ import {
     Tooltip,
     ResponsiveContainer,
     Legend,
-} from 'recharts';
-import { Search, X, Users, AlertCircle, GitCompare } from 'lucide-react';
-import { format } from 'date-fns';
-import { motion, AnimatePresence } from 'motion/react';
+} from "recharts";
+import { Search, X, Users, AlertCircle, GitCompare } from "lucide-react";
+import { format } from "date-fns";
+import { motion, AnimatePresence } from "motion/react";
 
 export function Compare() {
     const [handles, setHandles] = useState<string[]>([]);
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState("");
     const [data, setData] = useState<any[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
@@ -41,9 +41,9 @@ export function Compare() {
 
             setUsers((prev) => [...prev, user]);
             setHandles((prev) => [...prev, input.trim()]);
-            setInput('');
+            setInput("");
         } catch (err: any) {
-            setError(err.message || 'User not found');
+            setError(err.message || "User not found");
         } finally {
             setLoading(false);
         }
@@ -98,7 +98,7 @@ export function Compare() {
 
                 setData(processedData.slice(-150));
             } catch (err) {
-                console.error('Comparison data fetch failed', err);
+                console.error("Comparison data fetch failed", err);
             } finally {
                 setLoading(false);
             }
@@ -107,7 +107,7 @@ export function Compare() {
         fetchAllRatings();
     }, [handles]);
 
-    const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b'];
+    const colors = ["#3b82f6", "#8b5cf6", "#06b6d4", "#f59e0b"];
 
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-32 md:pb-20">
@@ -132,7 +132,7 @@ export function Compare() {
                 <div className="lg:col-span-1 space-y-6 md:space-y-6">
                     <Card className="bg-linear-to-br from-card-app to-white/1">
                         <h3 className="text-[10px] text-muted-app uppercase font-black tracking-[0.3em] mb-8 flex items-center gap-2">
-                            <Users size={14} className="text-brand-primary" />{' '}
+                            <Users size={14} className="text-brand-primary" />{" "}
                             Squad Matrix
                         </h3>
                         <form onSubmit={addHandle} className="space-y-4">
@@ -184,7 +184,7 @@ export function Compare() {
                                     <div className="flex items-center gap-4">
                                         <div
                                             className="relative avatar-ring shrink-0"
-                                            style={{ borderRadius: '0.875rem' }}
+                                            style={{ borderRadius: "0.875rem" }}
                                         >
                                             <img
                                                 src={user.avatar}
@@ -198,7 +198,7 @@ export function Compare() {
                                             <p
                                                 className="text-sm font-display font-bold leading-none mb-1.5"
                                                 style={{
-                                                    color: 'var(--text-main)',
+                                                    color: "var(--text-main)",
                                                 }}
                                             >
                                                 {user.handle}
@@ -269,11 +269,11 @@ export function Compare() {
                                             tickFormatter={(val) =>
                                                 format(
                                                     new Date(val * 1000),
-                                                    'MM/yy',
+                                                    "MM/yy",
                                                 )
                                             }
                                             tick={{
-                                                fill: '#64748b',
+                                                fill: "#64748b",
                                                 fontSize: 10,
                                                 fontWeight: 700,
                                             }}
@@ -281,9 +281,9 @@ export function Compare() {
                                             tickLine={false}
                                         />
                                         <YAxis
-                                            domain={['auto', 'auto']}
+                                            domain={["auto", "auto"]}
                                             tick={{
-                                                fill: '#64748b',
+                                                fill: "#64748b",
                                                 fontSize: 10,
                                                 fontWeight: 700,
                                             }}
@@ -321,16 +321,16 @@ export function Compare() {
                                                             : false;
 
                                                     const translateX = isRight
-                                                        ? '-100%'
-                                                        : '0%';
+                                                        ? "-100%"
+                                                        : "0%";
                                                     const translateY = isTop
-                                                        ? '15px'
-                                                        : '-115%';
+                                                        ? "15px"
+                                                        : "-115%";
 
                                                     const tooltipStyle = {
                                                         transform: `translate(${translateX}, ${translateY})`,
                                                         transition:
-                                                            'transform 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+                                                            "transform 150ms cubic-bezier(0.16, 1, 0.3, 1)",
                                                     };
 
                                                     return (
@@ -344,7 +344,7 @@ export function Compare() {
                                                                         label *
                                                                             1000,
                                                                     ),
-                                                                    'MMMM d, yyyy',
+                                                                    "MMMM d, yyyy",
                                                                 )}
                                                             </p>
                                                             <div className="flex flex-col gap-1.5">

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 import {
     ResponsiveContainer,
     AreaChart,
@@ -8,19 +8,19 @@ import {
     Tooltip,
     CartesianGrid,
     ReferenceLine,
-} from 'recharts';
-import { RatingChange } from '../../types';
-import { format } from 'date-fns';
-import { cn } from '../../lib/utils';
+} from "recharts";
+import { RatingChange } from "../../types";
+import { format } from "date-fns";
+import { cn } from "../../lib/utils";
 
 const RANK_LEVELS = [
-    { name: 'Grandmaster', min: 2400, color: 'rgba(239, 68, 68, 0.05)' },
-    { name: 'Master', min: 2100, color: 'rgba(251, 146, 60, 0.05)' },
-    { name: 'Candidate Master', min: 1900, color: 'rgba(192, 132, 252, 0.05)' },
-    { name: 'Expert', min: 1600, color: 'rgba(96, 165, 250, 0.05)' },
-    { name: 'Specialist', min: 1400, color: 'rgba(34, 211, 238, 0.05)' },
-    { name: 'Pupil', min: 1200, color: 'rgba(74, 222, 128, 0.05)' },
-    { name: 'Newbie', min: 0, color: 'rgba(148, 163, 184, 0.05)' },
+    { name: "Grandmaster", min: 2400, color: "rgba(239, 68, 68, 0.05)" },
+    { name: "Master", min: 2100, color: "rgba(251, 146, 60, 0.05)" },
+    { name: "Candidate Master", min: 1900, color: "rgba(192, 132, 252, 0.05)" },
+    { name: "Expert", min: 1600, color: "rgba(96, 165, 250, 0.05)" },
+    { name: "Specialist", min: 1400, color: "rgba(34, 211, 238, 0.05)" },
+    { name: "Pupil", min: 1200, color: "rgba(74, 222, 128, 0.05)" },
+    { name: "Newbie", min: 0, color: "rgba(148, 163, 184, 0.05)" },
 ];
 
 interface RatingChartProps {
@@ -32,7 +32,7 @@ function RatingChartImpl({ data }: RatingChartProps) {
         const mapped = data.map((d) => ({
             date: format(
                 new Date(d.ratingUpdateTimeSeconds * 1000),
-                'MMM yyyy',
+                "MMM yyyy",
             ),
             rating: d.newRating,
             change: d.newRating - d.oldRating,
@@ -110,18 +110,18 @@ function RatingChartImpl({ data }: RatingChartProps) {
                                 <ReferenceLine
                                     key={level.name}
                                     y={level.min}
-                                    stroke={level.color.replace('0.05', '0.08')}
+                                    stroke={level.color.replace("0.05", "0.08")}
                                     strokeDasharray="4 4"
                                     label={{
                                         value: level.name,
-                                        position: 'right',
+                                        position: "right",
                                         fill: level.color.replace(
-                                            '0.05',
-                                            '0.3',
+                                            "0.05",
+                                            "0.3",
                                         ),
                                         fontSize: 7,
                                         fontWeight: 800,
-                                        letterSpacing: '0.1em',
+                                        letterSpacing: "0.1em",
                                     }}
                                 />
                             );
@@ -135,9 +135,9 @@ function RatingChartImpl({ data }: RatingChartProps) {
                         tickLine={false}
                         tick={{
                             fontSize: 8,
-                            fill: '#64748b',
+                            fill: "#64748b",
                             fontWeight: 800,
-                            letterSpacing: '0.05em',
+                            letterSpacing: "0.05em",
                         }}
                         minTickGap={40}
                         dy={10}
@@ -146,14 +146,14 @@ function RatingChartImpl({ data }: RatingChartProps) {
                         domain={[minRating, maxRating]}
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fontSize: 8, fill: '#64748b', fontWeight: 800 }}
+                        tick={{ fontSize: 8, fill: "#64748b", fontWeight: 800 }}
                         width={40}
                     />
                     <Tooltip
                         allowEscapeViewBox={{ x: true, y: true }}
                         wrapperStyle={{ zIndex: 10000 }}
                         cursor={{
-                            stroke: 'rgba(255,255,255,0.1)',
+                            stroke: "rgba(255,255,255,0.1)",
                             strokeWidth: 1,
                         }}
                         content={({
@@ -165,20 +165,20 @@ function RatingChartImpl({ data }: RatingChartProps) {
                             if (active && payload && payload.length) {
                                 const item = payload[0].payload;
 
-                                let translateX = '-50%';
+                                let translateX = "-50%";
                                 if (coordinate && viewBox) {
                                     const ratio = coordinate.x / viewBox.width;
                                     if (ratio < 0.2) {
-                                        translateX = '-15%';
+                                        translateX = "-15%";
                                     } else if (ratio > 0.8) {
-                                        translateX = '-85%';
+                                        translateX = "-85%";
                                     }
                                 }
 
                                 const tooltipStyle = {
                                     transform: `translate(${translateX}, -120%)`,
                                     transition:
-                                        'transform 100ms cubic-bezier(0.16, 1, 0.3, 1)',
+                                        "transform 100ms cubic-bezier(0.16, 1, 0.3, 1)",
                                 };
 
                                 return (
@@ -192,13 +192,13 @@ function RatingChartImpl({ data }: RatingChartProps) {
                                             </p>
                                             <div
                                                 className={cn(
-                                                    'px-1 py-0.5 rounded text-[7px] font-black uppercase tracking-wider',
+                                                    "px-1 py-0.5 rounded text-[7px] font-black uppercase tracking-wider",
                                                     item.change >= 0
-                                                        ? 'bg-emerald-500/10 text-emerald-500'
-                                                        : 'bg-red-500/10 text-red-500',
+                                                        ? "bg-emerald-500/10 text-emerald-500"
+                                                        : "bg-red-500/10 text-red-500",
                                                 )}
                                             >
-                                                {item.change >= 0 ? '+' : ''}
+                                                {item.change >= 0 ? "+" : ""}
                                                 {item.change}
                                             </div>
                                         </div>
@@ -229,10 +229,10 @@ function RatingChartImpl({ data }: RatingChartProps) {
                         animationDuration={2000}
                         activeDot={{
                             r: 8,
-                            fill: '#3b82f6',
-                            stroke: '#fff',
+                            fill: "#3b82f6",
+                            stroke: "#fff",
                             strokeWidth: 3,
-                            filter: 'url(#glow)',
+                            filter: "url(#glow)",
                         }}
                     />
                 </AreaChart>
