@@ -806,7 +806,8 @@ async function startServer() {
     });
 
     // Vite middleware for development
-    if (process.env.NODE_ENV !== 'production') {
+    const isApiOnly = process.argv.includes('--api-only');
+    if (process.env.NODE_ENV !== 'production' && !isApiOnly) {
         const vite = await createViteServer({
             server: { middlewareMode: true },
             appType: 'spa',
