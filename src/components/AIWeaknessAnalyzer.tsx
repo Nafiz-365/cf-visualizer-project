@@ -1,16 +1,16 @@
-import React, { useState, useMemo } from 'react';
-import { Submission } from '../types';
-import { Button } from './ui/Button';
+import React, { useState, useMemo } from "react";
+import { Submission } from "../types";
+import { Button } from "./ui/Button";
 import {
     AlertTriangle,
     Loader2,
     Sparkles,
     TrendingDown,
     XCircle,
-} from 'lucide-react';
-import { GeminiService } from '../services/geminiService';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '../lib/utils';
+} from "lucide-react";
+import { GeminiService } from "../services/geminiService";
+import { motion, AnimatePresence } from "motion/react";
+import { cn } from "../lib/utils";
 
 interface WeaknessEntry {
     tag: string;
@@ -35,7 +35,7 @@ function computeTagStats(
         s.problem.tags.forEach((tag) => {
             if (!tagMap[tag]) tagMap[tag] = { attempts: 0, solved: 0 };
             tagMap[tag].attempts++;
-            if (s.verdict === 'OK') tagMap[tag].solved++;
+            if (s.verdict === "OK") tagMap[tag].solved++;
         });
     });
 
@@ -89,7 +89,7 @@ function AIWeaknessAnalyzerImpl({
         const prompt = `
 You are a competitive programming coach. A Codeforces user (rating: ${currentRating}) has these weak topics based on solve rates:
 
-${topWeak.map((t) => `- ${t.tag}: ${t.solved}/${t.attempts} solved (${t.solveRate}% rate)`).join('\n')}
+${topWeak.map((t) => `- ${t.tag}: ${t.solved}/${t.attempts} solved (${t.solveRate}% rate)`).join("\n")}
 
 For each topic, provide ONE specific, actionable sentence of advice (max 20 words). Return ONLY a JSON array of objects with:
 - "tag": the topic name (exact match from input)
@@ -135,15 +135,15 @@ For each topic, provide ONE specific, actionable sentence of advice (max 20 word
     };
 
     const getSolveRateColor = (rate: number) => {
-        if (rate < 30) return 'text-red-400';
-        if (rate < 60) return 'text-orange-400';
-        return 'text-yellow-400';
+        if (rate < 30) return "text-red-400";
+        if (rate < 60) return "text-orange-400";
+        return "text-yellow-400";
     };
 
     const getSolveRateBg = (rate: number) => {
-        if (rate < 30) return 'bg-red-500/10 border-red-500/20';
-        if (rate < 60) return 'bg-orange-500/10 border-orange-500/20';
-        return 'bg-yellow-500/10 border-yellow-500/20';
+        if (rate < 30) return "bg-red-500/10 border-red-500/20";
+        if (rate < 60) return "bg-orange-500/10 border-orange-500/20";
+        return "bg-yellow-500/10 border-yellow-500/20";
     };
 
     if (tagStats.length === 0) return null;
@@ -170,7 +170,7 @@ For each topic, provide ONE specific, actionable sentence of advice (max 20 word
                         ) : (
                             <Sparkles size={10} />
                         )}
-                        {loading ? 'Scanning...' : 'Scan Now'}
+                        {loading ? "Scanning..." : "Scan Now"}
                     </Button>
                 )}
                 {weaknesses && (
@@ -227,7 +227,7 @@ For each topic, provide ONE specific, actionable sentence of advice (max 20 word
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.06 }}
                                 className={cn(
-                                    'rounded-xl p-3 border',
+                                    "rounded-xl p-3 border",
                                     getSolveRateBg(w.solveRate),
                                 )}
                             >
@@ -241,7 +241,7 @@ For each topic, provide ONE specific, actionable sentence of advice (max 20 word
                                         </span>
                                         <span
                                             className={cn(
-                                                'text-[11px] font-black',
+                                                "text-[11px] font-black",
                                                 getSolveRateColor(w.solveRate),
                                             )}
                                         >
@@ -253,12 +253,12 @@ For each topic, provide ONE specific, actionable sentence of advice (max 20 word
                                 <div className="h-0.5 bg-white/5 rounded-full mb-2 overflow-hidden">
                                     <div
                                         className={cn(
-                                            'h-full rounded-full transition-all',
+                                            "h-full rounded-full transition-all",
                                             w.solveRate < 30
-                                                ? 'bg-red-400'
+                                                ? "bg-red-400"
                                                 : w.solveRate < 60
-                                                  ? 'bg-orange-400'
-                                                  : 'bg-yellow-400',
+                                                  ? "bg-orange-400"
+                                                  : "bg-yellow-400",
                                         )}
                                         style={{ width: `${w.solveRate}%` }}
                                     />

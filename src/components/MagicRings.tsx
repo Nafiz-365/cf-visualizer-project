@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
 
 export interface MagicRingsProps {
     color?: string;
@@ -86,8 +86,8 @@ void main() {
 `;
 
 export default function MagicRings({
-    color = '#fc42ff',
-    colorTwo = '#42fcff',
+    color = "#fc42ff",
+    colorTwo = "#42fcff",
     speed = 1,
     ringCount = 6,
     attenuation = 10,
@@ -213,7 +213,7 @@ export default function MagicRings({
             uniforms.uResolution.value.set(w * dpr, h * dpr);
         };
         resize();
-        window.addEventListener('resize', resize);
+        window.addEventListener("resize", resize);
 
         const ro = new ResizeObserver(resize);
         ro.observe(mount);
@@ -236,10 +236,10 @@ export default function MagicRings({
             burstRef.current = 1;
         };
 
-        window.addEventListener('pointermove', onMouseMove);
-        document.addEventListener('pointerenter', onMouseEnter);
-        document.addEventListener('pointerleave', onMouseLeave);
-        window.addEventListener('click', onClick);
+        window.addEventListener("pointermove", onMouseMove);
+        document.addEventListener("pointerenter", onMouseEnter);
+        document.addEventListener("pointerleave", onMouseLeave);
+        window.addEventListener("click", onClick);
 
         let frameId = 0;
         let isVisible = false;
@@ -267,8 +267,8 @@ export default function MagicRings({
 
             uniforms.uTime.value = elapsed;
             uniforms.uAttenuation.value = p.attenuation ?? 1;
-            uniforms.uColor.value.set(p.color ?? '#fc42ff');
-            uniforms.uColorTwo.value.set(p.colorTwo ?? '#00f3ff');
+            uniforms.uColor.value.set(p.color ?? "#fc42ff");
+            uniforms.uColorTwo.value.set(p.colorTwo ?? "#00f3ff");
             uniforms.uLineThickness.value = p.lineThickness ?? 1;
             uniforms.uBaseRadius.value = p.baseRadius ?? 1;
             uniforms.uRadiusStep.value = p.radiusStep ?? 1;
@@ -322,20 +322,20 @@ export default function MagicRings({
             isPageVisible = !document.hidden;
             isPageVisible ? tryStart() : tryStop();
         };
-        document.addEventListener('visibilitychange', onVisibility);
+        document.addEventListener("visibilitychange", onVisibility);
 
         tryStart();
 
         return () => {
             tryStop();
             io.disconnect();
-            document.removeEventListener('visibilitychange', onVisibility);
-            window.removeEventListener('resize', resize);
+            document.removeEventListener("visibilitychange", onVisibility);
+            window.removeEventListener("resize", resize);
             ro.disconnect();
-            window.removeEventListener('pointermove', onMouseMove);
-            document.removeEventListener('pointerenter', onMouseEnter);
-            document.removeEventListener('pointerleave', onMouseLeave);
-            window.removeEventListener('click', onClick);
+            window.removeEventListener("pointermove", onMouseMove);
+            document.removeEventListener("pointerenter", onMouseEnter);
+            document.removeEventListener("pointerleave", onMouseLeave);
+            window.removeEventListener("click", onClick);
             mount.removeChild(renderer.domElement);
             renderer.dispose();
             material.dispose();

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
 import {
     Search,
     Trophy,
@@ -13,27 +13,27 @@ import {
     UserCircle,
     Lock,
     Loader2,
-} from 'lucide-react';
-import { Button } from './ui/Button';
-import { Card } from './ui/Card';
-import { useAuth } from '../contexts/AuthContext';
-import MagicRings from './MagicRings';
+} from "lucide-react";
+import { Button } from "./ui/Button";
+import { Card } from "./ui/Card";
+import { useAuth } from "../contexts/AuthContext";
+import MagicRings from "./MagicRings";
 
 export function LandingPage() {
-    const [handle, setHandle] = useState('');
+    const [handle, setHandle] = useState("");
     const [recent, setRecent] = useState<string[]>([]);
     const navigate = useNavigate();
     const { userHandle, login, logout } = useAuth();
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-    const [authHandle, setAuthHandle] = useState('');
-    const [authPassword, setAuthPassword] = useState('');
+    const [authMode, setAuthMode] = useState<"login" | "register">("login");
+    const [authHandle, setAuthHandle] = useState("");
+    const [authPassword, setAuthPassword] = useState("");
     const [authLoading, setAuthLoading] = useState(false);
-    const [authError, setAuthError] = useState('');
+    const [authError, setAuthError] = useState("");
 
     useEffect(() => {
         const stored = JSON.parse(
-            localStorage.getItem('recent_handles') || '[]',
+            localStorage.getItem("recent_handles") || "[]",
         );
         setRecent(stored);
     }, []);
@@ -47,23 +47,23 @@ export function LandingPage() {
 
     const removeRecent = (handleToRemove: string) => {
         const stored = JSON.parse(
-            localStorage.getItem('recent_handles') || '[]',
+            localStorage.getItem("recent_handles") || "[]",
         );
         const updated = stored.filter(
             (item: string) => item !== handleToRemove,
         );
-        localStorage.setItem('recent_handles', JSON.stringify(updated));
+        localStorage.setItem("recent_handles", JSON.stringify(updated));
         setRecent(updated);
     };
 
     const handleAuthSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setAuthError('');
+        setAuthError("");
         setAuthLoading(true);
         try {
             const res = await fetch(`/api/auth/${authMode}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     handle: authHandle.trim(),
                     password: authPassword,
@@ -73,14 +73,14 @@ export function LandingPage() {
             if (data.success) {
                 login(authHandle.trim());
                 setIsAuthModalOpen(false);
-                setAuthHandle('');
-                setAuthPassword('');
+                setAuthHandle("");
+                setAuthPassword("");
                 navigate(`/dashboard/${authHandle.trim()}`);
             } else {
-                setAuthError(data.error || 'Authentication failed');
+                setAuthError(data.error || "Authentication failed");
             }
         } catch (err) {
-            setAuthError('Network error');
+            setAuthError("Network error");
         } finally {
             setAuthLoading(false);
         }
@@ -90,10 +90,18 @@ export function LandingPage() {
         <div className="relative min-h-screen overflow-hidden bg-bg-app selection:bg-brand-primary/30">
             {/* Premium Background Mesh */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-60">
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-                    <MagicRings 
-                        color="#4F8EF7" 
-                        colorTwo="#9D6EF5" 
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                    }}
+                >
+                    <MagicRings
+                        color="#4F8EF7"
+                        colorTwo="#9D6EF5"
                         speed={1.5}
                         ringCount={8}
                         baseRadius={0.2}
@@ -115,36 +123,36 @@ export function LandingPage() {
             <div className="absolute inset-0 z-1 overflow-hidden pointer-events-none">
                 {[
                     {
-                        label: 'tourist  ·  3979',
-                        sub: 'Legendary GM',
-                        top: '18%',
-                        left: '6%',
-                        delay: '0s',
-                        color: 'var(--rank-legendary)',
+                        label: "tourist  ·  3979",
+                        sub: "Legendary GM",
+                        top: "18%",
+                        left: "6%",
+                        delay: "0s",
+                        color: "var(--rank-legendary)",
                     },
                     {
-                        label: 'Petr  ·  Expert',
-                        sub: 'rating 1700',
-                        top: '65%',
-                        left: '4%',
-                        delay: '-4s',
-                        color: 'var(--rank-expert)',
+                        label: "Petr  ·  Expert",
+                        sub: "rating 1700",
+                        top: "65%",
+                        left: "4%",
+                        delay: "-4s",
+                        color: "var(--rank-expert)",
                     },
                     {
-                        label: 'Um_nik  ·  3602',
-                        sub: 'Grandmaster',
-                        top: '22%',
-                        right: '5%',
-                        delay: '-7s',
-                        color: 'var(--rank-gm)',
+                        label: "Um_nik  ·  3602",
+                        sub: "Grandmaster",
+                        top: "22%",
+                        right: "5%",
+                        delay: "-7s",
+                        color: "var(--rank-gm)",
                     },
                     {
-                        label: 'neal  ·  Master',
-                        sub: 'rating 2218',
-                        top: '72%',
-                        right: '4%',
-                        delay: '-12s',
-                        color: 'var(--rank-master)',
+                        label: "neal  ·  Master",
+                        sub: "rating 2218",
+                        top: "72%",
+                        right: "4%",
+                        delay: "-12s",
+                        color: "var(--rank-master)",
                     },
                 ].map(({ label, sub, top, left, right, delay, color }) => (
                     <div
@@ -155,9 +163,9 @@ export function LandingPage() {
                             left,
                             right,
                             animationDelay: delay,
-                            background: 'var(--bg-card)',
+                            background: "var(--bg-card)",
                             border: `1px solid ${color}28`,
-                            backdropFilter: 'blur(16px)',
+                            backdropFilter: "blur(16px)",
                             boxShadow: `0 4px 20px rgba(0,0,0,0.25), 0 0 0 1px ${color}15`,
                             animation: `float-blob 18s ${delay} infinite alternate cubic-bezier(0.45,0,0.55,1)`,
                             opacity: 0.65,
@@ -170,7 +178,7 @@ export function LandingPage() {
                             />
                             <span
                                 className="text-[10px] font-black text-overline"
-                                style={{ color: 'var(--text-main)' }}
+                                style={{ color: "var(--text-main)" }}
                             >
                                 {label}
                             </span>
@@ -252,11 +260,11 @@ export function LandingPage() {
                             {/* Glow behind input */}
                             <div
                                 className="absolute inset-0 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity"
-                                style={{ background: 'rgba(79,142,247,0.18)' }}
+                                style={{ background: "rgba(79,142,247,0.18)" }}
                             />
                             <Search
                                 className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors z-10"
-                                style={{ color: 'var(--text-muted)' }}
+                                style={{ color: "var(--text-muted)" }}
                                 size={18}
                             />
                             <input
@@ -318,9 +326,9 @@ export function LandingPage() {
                         className="flex flex-wrap items-center justify-center gap-6 pt-12"
                     >
                         {[
-                            { icon: Trophy, label: 'Global Ranking' },
-                            { icon: BarChart3, label: 'Real-time Stats' },
-                            { icon: Users, label: 'Comparison Engine' },
+                            { icon: Trophy, label: "Global Ranking" },
+                            { icon: BarChart3, label: "Real-time Stats" },
+                            { icon: Users, label: "Comparison Engine" },
                         ].map(({ icon: Icon, label }) => (
                             <div
                                 key={label}
@@ -409,14 +417,14 @@ export function LandingPage() {
 
                             <div className="mb-8">
                                 <h2 className="text-2xl font-display font-bold text-text-app">
-                                    {authMode === 'login'
-                                        ? 'Welcome Back'
-                                        : 'Claim Handle'}
+                                    {authMode === "login"
+                                        ? "Welcome Back"
+                                        : "Claim Handle"}
                                 </h2>
                                 <p className="text-xs text-muted-app mt-2">
-                                    {authMode === 'login'
-                                        ? 'Sign in to access your chat history and friends list.'
-                                        : 'Register to claim this Codeforces handle as yours.'}
+                                    {authMode === "login"
+                                        ? "Sign in to access your chat history and friends list."
+                                        : "Register to claim this Codeforces handle as yours."}
                                 </p>
                             </div>
 
@@ -483,32 +491,32 @@ export function LandingPage() {
                                             size={16}
                                             className="animate-spin"
                                         />
-                                    ) : authMode === 'login' ? (
-                                        'Sign In'
+                                    ) : authMode === "login" ? (
+                                        "Sign In"
                                     ) : (
-                                        'Register'
+                                        "Register"
                                     )}
                                 </Button>
                             </form>
 
                             <div className="mt-6 text-center text-xs text-muted-app">
-                                {authMode === 'login'
+                                {authMode === "login"
                                     ? "Don't have an account? "
-                                    : 'Already claimed? '}
+                                    : "Already claimed? "}
                                 <button
                                     type="button"
                                     onClick={() =>
                                         setAuthMode(
-                                            authMode === 'login'
-                                                ? 'register'
-                                                : 'login',
+                                            authMode === "login"
+                                                ? "register"
+                                                : "login",
                                         )
                                     }
                                     className="text-brand-primary font-bold hover:underline"
                                 >
-                                    {authMode === 'login'
-                                        ? 'Register'
-                                        : 'Sign In'}
+                                    {authMode === "login"
+                                        ? "Register"
+                                        : "Sign In"}
                                 </button>
                             </div>
                         </motion.div>
@@ -528,25 +536,25 @@ function FeatureCard({ icon: Icon, title, desc }: any) {
                             group-hover:scale-110 group-hover:rotate-3 transition-all duration-400"
                 style={{
                     background:
-                        'linear-gradient(135deg, rgba(79,142,247,0.15) 0%, rgba(157,110,245,0.10) 100%)',
-                    boxShadow: '0 4px 16px rgba(79,142,247,0.12)',
+                        "linear-gradient(135deg, rgba(79,142,247,0.15) 0%, rgba(157,110,245,0.10) 100%)",
+                    boxShadow: "0 4px 16px rgba(79,142,247,0.12)",
                 }}
             >
                 <Icon
                     size={26}
-                    style={{ color: 'var(--color-brand-primary)' }}
+                    style={{ color: "var(--color-brand-primary)" }}
                 />
             </div>
 
             <h3
                 className="text-xl md:text-2xl font-display font-bold mb-3 tracking-tight group-hover:gradient-text transition-all duration-400"
-                style={{ color: 'var(--text-main)' }}
+                style={{ color: "var(--text-main)" }}
             >
                 {title}
             </h3>
             <p
                 className="text-sm leading-relaxed font-medium opacity-75 group-hover:opacity-100 transition-opacity"
-                style={{ color: 'var(--text-muted)' }}
+                style={{ color: "var(--text-muted)" }}
             >
                 {desc}
             </p>
@@ -556,7 +564,7 @@ function FeatureCard({ icon: Icon, title, desc }: any) {
                 className="mt-6 h-0.5 rounded-full transition-all duration-500 group-hover:w-20 w-10"
                 style={{
                     background:
-                        'linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary))',
+                        "linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary))",
                 }}
             />
 

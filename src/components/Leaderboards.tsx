@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card } from './ui/Card';
-import { CodeforcesService } from '../services/codeforces';
-import { VerdictPieChart } from './charts/VerdictPieChart';
-import { ErrorState } from './ErrorState';
-import { User, Contest } from '../types';
+import React, { useState, useEffect, useMemo } from "react";
+import { Card } from "./ui/Card";
+import { CodeforcesService } from "../services/codeforces";
+import { VerdictPieChart } from "./charts/VerdictPieChart";
+import { ErrorState } from "./ErrorState";
+import { User, Contest } from "../types";
 import {
     Trophy,
     Globe,
@@ -12,23 +12,23 @@ import {
     Search,
     Calendar,
     ChevronRight,
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
-import { cn } from '../lib/utils';
-import { format, subDays, isAfter } from 'date-fns';
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { useNavigate } from "react-router-dom";
+import { cn } from "../lib/utils";
+import { format, subDays, isAfter } from "date-fns";
 
-type ContestType = 'ALL' | 'DIV1' | 'DIV2' | 'DIV3' | 'EDU';
-type TimeRange = 'ALL' | '7DAYS' | 'MONTH';
+type ContestType = "ALL" | "DIV1" | "DIV2" | "DIV3" | "EDU";
+type TimeRange = "ALL" | "7DAYS" | "MONTH";
 
 export function Leaderboards() {
     const [users, setUsers] = useState<User[]>([]);
     const [contests, setContests] = useState<Contest[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [contestFilter, setContestFilter] = useState<ContestType>('ALL');
-    const [timeFilter, setTimeFilter] = useState<TimeRange>('ALL');
-    const [search, setSearch] = useState('');
+    const [contestFilter, setContestFilter] = useState<ContestType>("ALL");
+    const [timeFilter, setTimeFilter] = useState<TimeRange>("ALL");
+    const [search, setSearch] = useState("");
     const navigate = useNavigate();
 
     const fetchData = async () => {
@@ -42,8 +42,8 @@ export function Leaderboards() {
             setUsers(topUsers);
             setContests(allContests);
         } catch (err: any) {
-            console.error('Leaderboard fetch failed', err);
-            setError(err.message || 'Failed to sync with global leaderboard');
+            console.error("Leaderboard fetch failed", err);
+            setError(err.message || "Failed to sync with global leaderboard");
         } finally {
             setLoading(false);
         }
@@ -54,25 +54,25 @@ export function Leaderboards() {
     }, []);
 
     const filteredContests = useMemo(() => {
-        let filtered = contests.filter((c) => c.phase === 'FINISHED');
+        let filtered = contests.filter((c) => c.phase === "FINISHED");
 
-        if (contestFilter !== 'ALL') {
+        if (contestFilter !== "ALL") {
             filtered = filtered.filter((c) => {
                 const name = c.name.toUpperCase();
-                if (contestFilter === 'DIV1')
-                    return name.includes('DIV. 1') && !name.includes('DIV. 2');
-                if (contestFilter === 'DIV2') return name.includes('DIV. 2');
-                if (contestFilter === 'DIV3') return name.includes('DIV. 3');
-                if (contestFilter === 'EDU')
-                    return name.includes('EDUCATIONAL');
+                if (contestFilter === "DIV1")
+                    return name.includes("DIV. 1") && !name.includes("DIV. 2");
+                if (contestFilter === "DIV2") return name.includes("DIV. 2");
+                if (contestFilter === "DIV3") return name.includes("DIV. 3");
+                if (contestFilter === "EDU")
+                    return name.includes("EDUCATIONAL");
                 return true;
             });
         }
 
-        if (timeFilter !== 'ALL') {
+        if (timeFilter !== "ALL") {
             const now = new Date();
             const cutoff =
-                timeFilter === '7DAYS' ? subDays(now, 7) : subDays(now, 30);
+                timeFilter === "7DAYS" ? subDays(now, 7) : subDays(now, 30);
             filtered = filtered.filter(
                 (c) =>
                     c.startTimeSeconds !== undefined &&
@@ -97,7 +97,7 @@ export function Leaderboards() {
             <ErrorState
                 message={error}
                 onRetry={fetchData}
-                onHome={() => navigate('/')}
+                onHome={() => navigate("/")}
             />
         );
     }
@@ -202,13 +202,13 @@ export function Leaderboards() {
                                                       <td className="px-2 sm:px-3 md:px-6 py-2 md:py-3">
                                                           <span
                                                               className={cn(
-                                                                  'text-[9px] sm:text-[10px] md:text-xs font-black px-1.5 md:px-2 py-0.5 md:py-1 rounded bg-white/5 border border-white/10',
+                                                                  "text-[9px] sm:text-[10px] md:text-xs font-black px-1.5 md:px-2 py-0.5 md:py-1 rounded bg-white/5 border border-white/10",
                                                                   i === 0 &&
-                                                                      'text-amber-400 bg-amber-400/10 border-amber-400/20',
+                                                                      "text-amber-400 bg-amber-400/10 border-amber-400/20",
                                                                   i === 1 &&
-                                                                      'text-slate-400 bg-slate-400/10 border-slate-400/20',
+                                                                      "text-slate-400 bg-slate-400/10 border-slate-400/20",
                                                                   i === 2 &&
-                                                                      'text-amber-700 bg-amber-700/10 border-amber-700/20',
+                                                                      "text-amber-700 bg-amber-700/10 border-amber-700/20",
                                                               )}
                                                           >
                                                               #{i + 1}
@@ -238,10 +238,10 @@ export function Leaderboards() {
                                                                   <p className="text-[8px] md:text-[10px] font-mono text-muted-app uppercase tracking-widest truncate">
                                                                       {(
                                                                           user.rank ||
-                                                                          'Newbie'
+                                                                          "Newbie"
                                                                       ).replace(
                                                                           /_/g,
-                                                                          ' ',
+                                                                          " ",
                                                                       )}
                                                                   </p>
                                                               </div>
@@ -258,7 +258,7 @@ export function Leaderboards() {
                                                               />
                                                               <span className="truncate">
                                                                   {user.country ||
-                                                                      'Global'}
+                                                                      "Global"}
                                                               </span>
                                                           </div>
                                                       </td>
@@ -290,7 +290,7 @@ export function Leaderboards() {
                                     Contest Type
                                 </p>
                                 <div className="flex flex-wrap gap-2">
-                                    {['ALL', 'DIV1', 'DIV2', 'DIV3', 'EDU'].map(
+                                    {["ALL", "DIV1", "DIV2", "DIV3", "EDU"].map(
                                         (type) => (
                                             <button
                                                 key={type}
@@ -300,10 +300,10 @@ export function Leaderboards() {
                                                     )
                                                 }
                                                 className={cn(
-                                                    'px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all',
+                                                    "px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all",
                                                     contestFilter === type
-                                                        ? 'bg-brand-primary text-white text-text-app border-brand-primary shadow-lg shadow-brand-primary/20'
-                                                        : 'bg-white/5 text-muted-app border-white/10 hover:bg-white/10',
+                                                        ? "bg-brand-primary text-white text-text-app border-brand-primary shadow-lg shadow-brand-primary/20"
+                                                        : "bg-white/5 text-muted-app border-white/10 hover:bg-white/10",
                                                 )}
                                             >
                                                 {type}
@@ -319,9 +319,9 @@ export function Leaderboards() {
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     {[
-                                        { id: 'ALL', label: 'All Time' },
-                                        { id: '7DAYS', label: 'Last 7 Days' },
-                                        { id: 'MONTH', label: 'Last Month' },
+                                        { id: "ALL", label: "All Time" },
+                                        { id: "7DAYS", label: "Last 7 Days" },
+                                        { id: "MONTH", label: "Last Month" },
                                     ].map((range) => (
                                         <button
                                             key={range.id}
@@ -331,10 +331,10 @@ export function Leaderboards() {
                                                 )
                                             }
                                             className={cn(
-                                                'px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all',
+                                                "px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all",
                                                 timeFilter === range.id
-                                                    ? 'bg-brand-primary text-white text-text-app border-brand-primary shadow-lg shadow-brand-primary/20'
-                                                    : 'bg-white/5 text-muted-app border-white/10 hover:bg-white/10',
+                                                    ? "bg-brand-primary text-white text-text-app border-brand-primary shadow-lg shadow-brand-primary/20"
+                                                    : "bg-white/5 text-muted-app border-white/10 hover:bg-white/10",
                                             )}
                                         >
                                             {range.label}
@@ -379,7 +379,7 @@ export function Leaderboards() {
                                                 onClick={() =>
                                                     window.open(
                                                         `https://codeforces.com/contest/${contest.id}`,
-                                                        '_blank',
+                                                        "_blank",
                                                     )
                                                 }
                                             >
@@ -395,7 +395,7 @@ export function Leaderboards() {
                                                                         contest.startTimeSeconds *
                                                                             1000,
                                                                     ),
-                                                                    'MMM dd, yyyy',
+                                                                    "MMM dd, yyyy",
                                                                 )}
                                                         </p>
                                                     </div>

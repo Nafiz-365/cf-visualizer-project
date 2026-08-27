@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { XCircle, Bookmark, PenLine } from 'lucide-react';
-import { Button } from './ui/Button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { XCircle, Bookmark, PenLine } from "lucide-react";
+import { Button } from "./ui/Button";
 
 interface BookmarkNoteModalProps {
     isOpen: boolean;
@@ -18,10 +18,10 @@ export function BookmarkNoteModal({
     onSkip,
     problemName,
 }: BookmarkNoteModalProps) {
-    const [note, setNote] = useState('');
+    const [note, setNote] = useState("");
 
     React.useEffect(() => {
-        if (!isOpen) setNote('');
+        if (!isOpen) setNote("");
     }, [isOpen]);
 
     if (!isOpen) return null;
@@ -30,7 +30,7 @@ export function BookmarkNoteModal({
         <AnimatePresence>
             <div
                 className="fixed inset-0 z-200 flex items-center justify-center p-4 backdrop-blur-sm"
-                style={{ background: 'var(--overlay-bg)' }}
+                style={{ background: "var(--overlay-bg)" }}
                 onClick={onClose}
             >
                 <motion.div
@@ -39,8 +39,8 @@ export function BookmarkNoteModal({
                     exit={{ opacity: 0, scale: 0.95, y: 10 }}
                     className="w-full max-w-md rounded-3xl overflow-hidden shadow-2xl p-6"
                     style={{
-                        background: 'var(--bg-app)',
-                        border: '1px solid var(--glass-border)',
+                        background: "var(--bg-app)",
+                        border: "1px solid var(--glass-border)",
                     }}
                     onClick={(e) => e.stopPropagation()}
                 >
@@ -69,7 +69,7 @@ export function BookmarkNoteModal({
                     <div className="mb-6">
                         <label className="flex items-center gap-2 text-xs font-bold text-text-app uppercase tracking-wider mb-3">
                             <PenLine size={14} className="text-brand-primary" />
-                            Add a Private Note{' '}
+                            Add a Private Note{" "}
                             <span className="text-muted-app/50 lowercase">
                                 (Optional)
                             </span>
@@ -95,7 +95,7 @@ export function BookmarkNoteModal({
                             className="flex-1 rounded-xl text-xs bg-brand-primary text-black hover:bg-brand-primary/90"
                             onClick={() => {
                                 onSave(note);
-                                setNote('');
+                                setNote("");
                             }}
                             disabled={!note.trim()}
                         >

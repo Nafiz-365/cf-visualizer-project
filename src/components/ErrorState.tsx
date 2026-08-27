@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { XCircle, RefreshCcw } from 'lucide-react';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
+import React from "react";
+import { motion } from "motion/react";
+import { XCircle, RefreshCcw } from "lucide-react";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
 
 interface ErrorStateProps {
     message: string;

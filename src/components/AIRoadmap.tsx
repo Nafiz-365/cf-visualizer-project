@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { User, Submission } from '../types';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
+import React, { useState } from "react";
+import { User, Submission } from "../types";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
 import {
     Map,
     ChevronRight,
@@ -9,9 +9,9 @@ import {
     Loader2,
     Sparkles,
     XCircle,
-} from 'lucide-react';
-import { GeminiService } from '../services/geminiService';
-import { motion, AnimatePresence } from 'motion/react';
+} from "lucide-react";
+import { GeminiService } from "../services/geminiService";
+import { motion, AnimatePresence } from "motion/react";
 
 interface RoadmapStep {
     title: string;
@@ -51,43 +51,43 @@ function AIRoadmapImpl({ user, submissions, analytics }: AIRoadmapProps) {
 
             const insights = await GeminiService.customPrompt(prompt);
             if (!insights || insights.length === 0) {
-                throw new Error('QUOTA_EXCEEDED'); // Trigger fallback if AI returns nothing
+                throw new Error("QUOTA_EXCEEDED"); // Trigger fallback if AI returns nothing
             }
             setRoadmap(insights);
         } catch (err: any) {
-            if (err.message === 'QUOTA_EXCEEDED') {
+            if (err.message === "QUOTA_EXCEEDED") {
                 setUsingFallback(true);
                 const r = user.rating || 800;
                 setRoadmap([
                     {
-                        title: 'Foundational Mastery',
+                        title: "Foundational Mastery",
                         topic: analytics.bestTag,
                         reason: `Consolidate your strength in ${analytics.bestTag} by solving 10 more problems in the ${r}-${r + 200} range.`,
                         difficulty: `${r}-${r + 200}`,
                     },
                     {
-                        title: 'Technical Breach',
-                        topic: 'implementation',
-                        reason: 'Focus on implementation speed to ensure you can clear early problems within the first 15 minutes of a contest.',
+                        title: "Technical Breach",
+                        topic: "implementation",
+                        reason: "Focus on implementation speed to ensure you can clear early problems within the first 15 minutes of a contest.",
                         difficulty: `${Math.max(r - 200, 800)}-${r}`,
                     },
                     {
-                        title: 'Cognitive Expansion',
-                        topic: 'math',
-                        reason: 'Mathematical foundations are critical. Master combinatorics and number theory to solve B/C level problems.',
+                        title: "Cognitive Expansion",
+                        topic: "math",
+                        reason: "Mathematical foundations are critical. Master combinatorics and number theory to solve B/C level problems.",
                         difficulty: `${r}-${r + 200}`,
                     },
                     {
-                        title: 'Next Level Tactics',
-                        topic: 'dp',
-                        reason: 'To break into the next rank, mastering Dynamic Programming is essential for higher level problem solving.',
+                        title: "Next Level Tactics",
+                        topic: "dp",
+                        reason: "To break into the next rank, mastering Dynamic Programming is essential for higher level problem solving.",
                         difficulty: `${r + 100}-${r + 400}`,
                     },
                 ]);
             } else {
-                console.error('Roadmap generation failed:', err);
+                console.error("Roadmap generation failed:", err);
                 setError(
-                    'AI Coach is temporarily offline. Please try again later.',
+                    "AI Coach is temporarily offline. Please try again later.",
                 );
             }
         } finally {
@@ -101,8 +101,8 @@ function AIRoadmapImpl({ user, submissions, analytics }: AIRoadmapProps) {
                 <div>
                     <p className="text-[10px] text-muted-app font-mono uppercase tracking-widest">
                         {usingFallback
-                            ? 'Heuristic Growth Strategy (AI Quota Reached)'
-                            : `Personalized path to ${user.maxRank || 'Expert'}`}
+                            ? "Heuristic Growth Strategy (AI Quota Reached)"
+                            : `Personalized path to ${user.maxRank || "Expert"}`}
                     </p>
                 </div>
                 {!roadmap && !error && (
@@ -118,7 +118,7 @@ function AIRoadmapImpl({ user, submissions, analytics }: AIRoadmapProps) {
                         ) : (
                             <Sparkles size={12} />
                         )}
-                        {loading ? 'Analyzing...' : 'Build Roadmap'}
+                        {loading ? "Analyzing..." : "Build Roadmap"}
                     </Button>
                 )}
             </div>

@@ -1,8 +1,8 @@
-import React, { useState, useRef, useMemo } from 'react';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
-import { User, RatingChange, Submission } from '../types';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useRef, useMemo } from "react";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
+import { User, RatingChange, Submission } from "../types";
+import { motion, AnimatePresence } from "motion/react";
 
 import {
     Share2,
@@ -18,11 +18,11 @@ import {
     Swords,
     Search,
     AlertCircle,
-} from 'lucide-react';
-import { cn } from '../lib/utils';
-import { CodeforcesService } from '../services/codeforces';
-import countries from 'i18n-iso-countries';
-import enLocale from 'i18n-iso-countries/langs/en.json';
+} from "lucide-react";
+import { cn } from "../lib/utils";
+import { CodeforcesService } from "../services/codeforces";
+import countries from "i18n-iso-countries";
+import enLocale from "i18n-iso-countries/langs/en.json";
 
 countries.registerLocale(enLocale);
 
@@ -33,24 +33,24 @@ interface SocialCardsProps {
 }
 
 type CardType =
-    | 'snapshot'
-    | 'streak'
-    | 'review'
-    | 'achievements'
-    | 'system_dump'
-    | 'head_to_head';
+    | "snapshot"
+    | "streak"
+    | "review"
+    | "achievements"
+    | "system_dump"
+    | "head_to_head";
 
 function SocialCardsImpl({
     user,
     ratingHistory,
     submissions,
 }: SocialCardsProps) {
-    const [activeCard, setActiveCard] = useState<CardType>('snapshot');
+    const [activeCard, setActiveCard] = useState<CardType>("snapshot");
     const [exporting, setExporting] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     // Opponent state for Head-to-Head
-    const [opponentInput, setOpponentInput] = useState('');
+    const [opponentInput, setOpponentInput] = useState("");
     const [opponentUser, setOpponentUser] = useState<User | null>(null);
     const [opponentSubmissions, setOpponentSubmissions] = useState<
         Submission[]
@@ -71,7 +71,7 @@ function SocialCardsImpl({
             setOpponentUser(data);
             setOpponentSubmissions(subs);
         } catch (err: any) {
-            setOpponentError(err.message || 'User not found');
+            setOpponentError(err.message || "User not found");
         } finally {
             setIsFetchingOpponent(false);
         }
@@ -80,13 +80,13 @@ function SocialCardsImpl({
     const maxRating = ratingHistory.length
         ? Math.max(...ratingHistory.map((h) => h.newRating))
         : user.rating || 1200;
-    const solvedCount = submissions.filter((s) => s.verdict === 'OK').length;
+    const solvedCount = submissions.filter((s) => s.verdict === "OK").length;
 
     // Real continuous streak calculation
     const streakDays = useMemo(() => {
         if (!submissions.length) return 0;
         const sorted = [...submissions]
-            .filter((s) => s.verdict === 'OK')
+            .filter((s) => s.verdict === "OK")
             .sort((a, b) => b.creationTimeSeconds - a.creationTimeSeconds);
         if (sorted.length === 0) return 0;
 
@@ -111,14 +111,14 @@ function SocialCardsImpl({
     }, [submissions]);
 
     const getDetailedStats = (subs: Submission[]) => {
-        const okSubmissions = subs.filter((s) => s.verdict === 'OK');
+        const okSubmissions = subs.filter((s) => s.verdict === "OK");
 
         const langCounts: Record<string, number> = {};
-        let favLang = 'N/A';
+        let favLang = "N/A";
         let maxLang = 0;
 
         const tagCounts: Record<string, number> = {};
-        let favTag = 'N/A';
+        let favTag = "N/A";
         let maxTag = 0;
 
         let totalDifficulty = 0;
@@ -148,10 +148,10 @@ function SocialCardsImpl({
             }
         });
 
-        if (favLang.includes('C++')) favLang = 'C++';
-        else if (favLang.includes('Python')) favLang = 'Python';
-        else if (favLang.includes('Java') && !favLang.includes('Script'))
-            favLang = 'Java';
+        if (favLang.includes("C++")) favLang = "C++";
+        else if (favLang.includes("Python")) favLang = "Python";
+        else if (favLang.includes("Java") && !favLang.includes("Script"))
+            favLang = "Java";
 
         return {
             favLang,
@@ -163,7 +163,7 @@ function SocialCardsImpl({
             successRate:
                 subs.length > 0
                     ? ((okSubmissions.length / subs.length) * 100).toFixed(1)
-                    : '0.0',
+                    : "0.0",
             totalSolved: okSubmissions.length,
         };
     };
@@ -179,40 +179,40 @@ function SocialCardsImpl({
 
     const cardTemplates = [
         {
-            id: 'snapshot',
-            label: 'SYS_OVERVIEW',
+            id: "snapshot",
+            label: "SYS_OVERVIEW",
             icon: ImageIcon,
-            color: '#00eeff',
+            color: "#00eeff",
         },
         {
-            id: 'streak',
-            label: 'ENGAGEMENT_CORE',
+            id: "streak",
+            label: "ENGAGEMENT_CORE",
             icon: Flame,
-            color: '#f97316',
+            color: "#f97316",
         },
         {
-            id: 'review',
-            label: 'ANNUAL_METRICS',
+            id: "review",
+            label: "ANNUAL_METRICS",
             icon: Calendar,
-            color: '#10b981',
+            color: "#10b981",
         },
         {
-            id: 'achievements',
-            label: 'ELITE_PROTOCOLS',
+            id: "achievements",
+            label: "ELITE_PROTOCOLS",
             icon: Award,
-            color: '#bc13fe',
+            color: "#bc13fe",
         },
         {
-            id: 'system_dump',
-            label: 'SYSTEM_DUMP',
+            id: "system_dump",
+            label: "SYSTEM_DUMP",
             icon: Database,
-            color: '#ef4444',
+            color: "#ef4444",
         },
         {
-            id: 'head_to_head',
-            label: 'HEAD_TO_HEAD',
+            id: "head_to_head",
+            label: "HEAD_TO_HEAD",
             icon: Swords,
-            color: '#f43f5e',
+            color: "#f43f5e",
         },
     ] as const;
 
@@ -221,7 +221,7 @@ function SocialCardsImpl({
         if (!canvas) return;
 
         setExporting(true);
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         if (!ctx) {
             setExporting(false);
             return;
@@ -231,25 +231,25 @@ function SocialCardsImpl({
         let oppAvatarImg: HTMLImageElement | null = null;
 
         if (
-            (activeCard === 'snapshot' || activeCard === 'head_to_head') &&
+            (activeCard === "snapshot" || activeCard === "head_to_head") &&
             (user.titlePhoto || user.avatar)
         ) {
             try {
                 const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(user.titlePhoto || user.avatar)}&output=png`;
                 avatarImg = await new Promise((resolve, reject) => {
                     const img = new Image();
-                    img.crossOrigin = 'anonymous';
+                    img.crossOrigin = "anonymous";
                     img.onload = () => resolve(img);
                     img.onerror = reject;
                     img.src = proxyUrl;
                 });
             } catch (e) {
-                console.error('Failed to load avatar', e);
+                console.error("Failed to load avatar", e);
             }
         }
 
         if (
-            activeCard === 'head_to_head' &&
+            activeCard === "head_to_head" &&
             opponentUser &&
             (opponentUser.titlePhoto || opponentUser.avatar)
         ) {
@@ -257,13 +257,13 @@ function SocialCardsImpl({
                 const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(opponentUser.titlePhoto || opponentUser.avatar)}&output=png`;
                 oppAvatarImg = await new Promise((resolve, reject) => {
                     const img = new Image();
-                    img.crossOrigin = 'anonymous';
+                    img.crossOrigin = "anonymous";
                     img.onload = () => resolve(img);
                     img.onerror = reject;
                     img.src = proxyUrl;
                 });
             } catch (e) {
-                console.error('Failed to load opponent avatar', e);
+                console.error("Failed to load opponent avatar", e);
             }
         }
 
@@ -272,13 +272,13 @@ function SocialCardsImpl({
 
         const loadFlag = async (countryStr?: string) => {
             if (!countryStr) return null;
-            const code = countries.getAlpha2Code(countryStr, 'en');
+            const code = countries.getAlpha2Code(countryStr, "en");
             if (!code) return null;
             try {
                 return await new Promise<HTMLImageElement>(
                     (resolve, reject) => {
                         const img = new Image();
-                        img.crossOrigin = 'anonymous';
+                        img.crossOrigin = "anonymous";
                         img.onload = () => resolve(img);
                         img.onerror = reject;
                         img.src = `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
@@ -289,10 +289,10 @@ function SocialCardsImpl({
             }
         };
 
-        if (activeCard === 'head_to_head' || activeCard === 'snapshot') {
+        if (activeCard === "head_to_head" || activeCard === "snapshot") {
             userFlagImg = await loadFlag(user.country);
         }
-        if (activeCard === 'head_to_head' && opponentUser) {
+        if (activeCard === "head_to_head" && opponentUser) {
             oppFlagImg = await loadFlag(opponentUser.country);
         }
 
@@ -300,14 +300,14 @@ function SocialCardsImpl({
         canvas.height = 630;
 
         const themeColor =
-            cardTemplates.find((t) => t.id === activeCard)?.color || '#00eeff';
+            cardTemplates.find((t) => t.id === activeCard)?.color || "#00eeff";
 
         // Background (Deep space / tech void)
-        ctx.fillStyle = '#020617';
+        ctx.fillStyle = "#020617";
         ctx.fillRect(0, 0, 1200, 630);
 
         // Dot Grid Pattern
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
         for (let x = 0; x <= 1200; x += 24) {
             for (let y = 0; y <= 630; y += 24) {
                 ctx.beginPath();
@@ -319,7 +319,7 @@ function SocialCardsImpl({
         // Radar / Radial Glow behind content
         const glow = ctx.createRadialGradient(600, 315, 0, 600, 315, 600);
         glow.addColorStop(0, `${themeColor}20`); // 12% opacity
-        glow.addColorStop(1, 'transparent');
+        glow.addColorStop(1, "transparent");
         ctx.fillStyle = glow;
         ctx.fillRect(0, 0, 1200, 630);
 
@@ -372,7 +372,7 @@ function SocialCardsImpl({
         ctx.shadowBlur = 10;
         ctx.fillStyle = themeColor;
         ctx.font = 'bold 18px "Inter", sans-serif';
-        ctx.fillText('CF VISUALIZER // TERMINAL', 80, 560);
+        ctx.fillText("CF VISUALIZER // TERMINAL", 80, 560);
         ctx.shadowBlur = 0;
 
         const drawFit = (
@@ -396,36 +396,36 @@ function SocialCardsImpl({
         };
 
         // Card Specific Content
-        if (activeCard === 'snapshot') {
+        if (activeCard === "snapshot") {
             // Main Handle with Glow
-            ctx.shadowColor = '#0ef';
+            ctx.shadowColor = "#0ef";
             ctx.shadowBlur = 20;
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = "#ffffff";
             ctx.font = 'bold 56px "Inter", sans-serif';
             ctx.fillText(user.handle.toUpperCase(), 80, 150);
             ctx.shadowBlur = 0;
 
             // Subtitle / Rank
-            ctx.fillStyle = '#0ef';
+            ctx.fillStyle = "#0ef";
             ctx.font = 'bold 20px "Inter", sans-serif';
-            ctx.letterSpacing = '4px';
+            ctx.letterSpacing = "4px";
             ctx.fillText(
-                `[ RANK: ${(user.rank || 'UNRANKED').toUpperCase()} ]`,
+                `[ RANK: ${(user.rank || "UNRANKED").toUpperCase()} ]`,
                 80,
                 190,
             );
-            ctx.letterSpacing = '0px';
+            ctx.letterSpacing = "0px";
 
             // Detailed Stats Table
             const snapRows = [
-                { label: 'RATING', val: String(user.rating || 0) },
-                { label: 'MAX RTG', val: String(user.maxRating || 'N/A') },
-                { label: 'SOLVED', val: String(detailedStats.totalSolved) },
-                { label: 'ACCURACY', val: `${detailedStats.successRate}%` },
-                { label: 'WEAPON', val: detailedStats.favLang },
-                { label: 'DOMAIN', val: detailedStats.favTag.toUpperCase() },
-                { label: 'ORG', val: user.organization || 'INDIE' },
-                { label: 'LOC', val: '', flag: userFlagImg },
+                { label: "RATING", val: String(user.rating || 0) },
+                { label: "MAX RTG", val: String(user.maxRating || "N/A") },
+                { label: "SOLVED", val: String(detailedStats.totalSolved) },
+                { label: "ACCURACY", val: `${detailedStats.successRate}%` },
+                { label: "WEAPON", val: detailedStats.favLang },
+                { label: "DOMAIN", val: detailedStats.favTag.toUpperCase() },
+                { label: "ORG", val: user.organization || "INDIE" },
+                { label: "LOC", val: "", flag: userFlagImg },
             ];
 
             const TABLE_X = 80;
@@ -443,18 +443,18 @@ function SocialCardsImpl({
                 const textY = cellY + ROW_H / 2 + 5;
 
                 // Bg
-                ctx.fillStyle = 'rgba(0, 238, 255, 0.05)';
+                ctx.fillStyle = "rgba(0, 238, 255, 0.05)";
                 ctx.fillRect(cellX, cellY, COL_W, ROW_H - 6);
 
                 // Border
-                ctx.strokeStyle = 'rgba(0, 238, 255, 0.2)';
+                ctx.strokeStyle = "rgba(0, 238, 255, 0.2)";
                 ctx.lineWidth = 1;
                 ctx.strokeRect(cellX, cellY, COL_W, ROW_H - 6);
 
                 // Label (Left-aligned)
-                ctx.fillStyle = 'rgba(165, 243, 252, 0.7)';
+                ctx.fillStyle = "rgba(165, 243, 252, 0.7)";
                 ctx.font = 'bold 14px "Courier New", monospace';
-                ctx.textAlign = 'left';
+                ctx.textAlign = "left";
                 ctx.fillText(row.label, cellX + 15, textY);
 
                 // Value (Right-aligned)
@@ -468,19 +468,19 @@ function SocialCardsImpl({
                         rightEdge,
                         textY,
                         COL_W - 100,
-                        'right',
+                        "right",
                         18,
-                        '#22d3ee',
+                        "#22d3ee",
                     );
                 }
             });
-            ctx.textAlign = 'left';
+            ctx.textAlign = "left";
 
             // Circular Progress on right
             ctx.save();
             ctx.beginPath();
             ctx.arc(1000, 330, 100, 0, 2 * Math.PI);
-            ctx.strokeStyle = 'rgba(0, 238, 255, 0.1)';
+            ctx.strokeStyle = "rgba(0, 238, 255, 0.1)";
             ctx.lineWidth = 15;
             ctx.stroke();
 
@@ -490,7 +490,7 @@ function SocialCardsImpl({
                 ctx.arc(1000, 330, 100, 0, 2 * Math.PI);
                 ctx.clip();
                 ctx.drawImage(avatarImg, 900, 230, 200, 200);
-                ctx.fillStyle = 'rgba(0, 238, 255, 0.15)'; // tech tint overlay
+                ctx.fillStyle = "rgba(0, 238, 255, 0.15)"; // tech tint overlay
                 ctx.fillRect(900, 230, 200, 200);
                 ctx.restore();
             }
@@ -499,80 +499,80 @@ function SocialCardsImpl({
             const endAngle =
                 (Math.min(user.rating || 0, 4000) / 4000) * 2 * Math.PI;
             ctx.arc(1000, 330, 100, -Math.PI / 2, -Math.PI / 2 + endAngle);
-            ctx.shadowColor = '#00eeff';
+            ctx.shadowColor = "#00eeff";
             ctx.shadowBlur = 15;
-            ctx.strokeStyle = '#00eeff';
+            ctx.strokeStyle = "#00eeff";
             ctx.lineWidth = 15;
             ctx.stroke();
             ctx.shadowBlur = 0;
             ctx.restore();
 
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = "#fff";
             ctx.font = 'bold 12px "Courier New"';
-            ctx.textAlign = 'center';
-            ctx.fillText('PWR LEVEL', 1000, 480);
-            ctx.fillStyle = '#00eeff';
+            ctx.textAlign = "center";
+            ctx.fillText("PWR LEVEL", 1000, 480);
+            ctx.fillStyle = "#00eeff";
             ctx.font = 'bold 28px "Inter"';
             ctx.fillText(`${user.rating || 0}`, 1000, 520);
-            ctx.textAlign = 'left';
-        } else if (activeCard === 'streak') {
-            ctx.shadowColor = '#f97316';
+            ctx.textAlign = "left";
+        } else if (activeCard === "streak") {
+            ctx.shadowColor = "#f97316";
             ctx.shadowBlur = 20;
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = "#ffffff";
             ctx.font = 'bold 64px "Inter", sans-serif';
-            ctx.fillText('ENGAGEMENT MAX', 80, 200);
+            ctx.fillText("ENGAGEMENT MAX", 80, 200);
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#f97316';
+            ctx.fillStyle = "#f97316";
             ctx.font = 'bold 24px "Inter", sans-serif';
-            ctx.letterSpacing = '4px';
+            ctx.letterSpacing = "4px";
             ctx.fillText(`[ SYSTEM OVERRIDE ]`, 80, 250);
-            ctx.letterSpacing = '0px';
+            ctx.letterSpacing = "0px";
 
             // Streak Value
-            ctx.shadowColor = '#f97316';
+            ctx.shadowColor = "#f97316";
             ctx.shadowBlur = 30;
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = "#fff";
             ctx.font = 'bold 140px "Inter", sans-serif';
             ctx.fillText(`${streakDays}`, 80, 420);
 
             ctx.shadowBlur = 10;
-            ctx.fillStyle = '#f97316';
+            ctx.fillStyle = "#f97316";
             ctx.font = 'bold 48px "Inter", sans-serif';
             ctx.fillText(
-                'DAYS',
+                "DAYS",
                 80 + ctx.measureText(`${streakDays}`).width + 20,
                 420,
             );
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = 'rgba(249, 115, 22, 0.1)';
+            ctx.fillStyle = "rgba(249, 115, 22, 0.1)";
             ctx.fillRect(80, 480, 1040, 80);
-            drawCorners(80, 480, 1040, 80, 10, '#f97316');
+            drawCorners(80, 480, 1040, 80, 10, "#f97316");
 
-            ctx.fillStyle = '#f97316';
+            ctx.fillStyle = "#f97316";
             ctx.font = 'bold 16px "Inter", sans-serif';
-            ctx.fillText('SYS.MSG //', 110, 525);
-            ctx.fillStyle = '#ffffff';
+            ctx.fillText("SYS.MSG //", 110, 525);
+            ctx.fillStyle = "#ffffff";
             ctx.font = '16px "Courier New", monospace';
             ctx.fillText(
                 `CONTINUOUS SOLVING STREAK DETECTED. COGNITIVE ENGINE AT PEAK.`,
                 220,
                 525,
             );
-        } else if (activeCard === 'review') {
-            ctx.shadowColor = '#10b981';
+        } else if (activeCard === "review") {
+            ctx.shadowColor = "#10b981";
             ctx.shadowBlur = 20;
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = "#ffffff";
             ctx.font = 'bold 64px "Inter", sans-serif';
-            ctx.fillText('ANNUAL METRICS', 80, 200);
+            ctx.fillText("ANNUAL METRICS", 80, 200);
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#10b981';
+            ctx.fillStyle = "#10b981";
             ctx.font = 'bold 24px "Inter", sans-serif';
-            ctx.letterSpacing = '4px';
+            ctx.letterSpacing = "4px";
             ctx.fillText(`[ DATA AGGREGATION COMPLETE ]`, 80, 250);
-            ctx.letterSpacing = '0px';
+            ctx.letterSpacing = "0px";
 
             const drawReviewBox = (
                 x: number,
@@ -580,48 +580,48 @@ function SocialCardsImpl({
                 val: string,
                 label: string,
             ) => {
-                ctx.fillStyle = 'rgba(16, 185, 129, 0.05)';
+                ctx.fillStyle = "rgba(16, 185, 129, 0.05)";
                 ctx.fillRect(x, y, 320, 180);
-                drawCorners(x, y, 320, 180, 15, '#10b981');
+                drawCorners(x, y, 320, 180, 15, "#10b981");
 
-                ctx.shadowColor = '#10b981';
+                ctx.shadowColor = "#10b981";
                 ctx.shadowBlur = 15;
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = "#ffffff";
                 ctx.font = 'bold 64px "Inter", sans-serif';
                 ctx.fillText(val, x + 40, y + 90);
                 ctx.shadowBlur = 0;
 
-                ctx.fillStyle = '#10b981';
+                ctx.fillStyle = "#10b981";
                 ctx.font = 'bold 16px "Courier New", monospace';
                 ctx.fillText(label, x + 40, y + 140);
             };
 
-            drawReviewBox(80, 320, `${solvedCount}`, '> TOTAL_SOLVED');
+            drawReviewBox(80, 320, `${solvedCount}`, "> TOTAL_SOLVED");
             drawReviewBox(
                 440,
                 320,
                 `+${Math.max(0, (user.rating || 800) - 1000)}`,
-                '> RATING_DELTA',
+                "> RATING_DELTA",
             );
             drawReviewBox(
                 800,
                 320,
                 `${ratingHistory.length}`,
-                '> ROUNDS_SYNCED',
+                "> ROUNDS_SYNCED",
             );
-        } else if (activeCard === 'achievements') {
-            ctx.shadowColor = '#bc13fe';
+        } else if (activeCard === "achievements") {
+            ctx.shadowColor = "#bc13fe";
             ctx.shadowBlur = 20;
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = "#ffffff";
             ctx.font = 'bold 64px "Inter", sans-serif';
-            ctx.fillText('ELITE PROTOCOLS', 80, 200);
+            ctx.fillText("ELITE PROTOCOLS", 80, 200);
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#bc13fe';
+            ctx.fillStyle = "#bc13fe";
             ctx.font = 'bold 24px "Inter", sans-serif';
-            ctx.letterSpacing = '4px';
+            ctx.letterSpacing = "4px";
             ctx.fillText(`[ MILESTONES UNLOCKED ]`, 80, 250);
-            ctx.letterSpacing = '0px';
+            ctx.letterSpacing = "0px";
 
             const drawBadge = (
                 x: number,
@@ -631,32 +631,32 @@ function SocialCardsImpl({
                 unlocked: boolean,
             ) => {
                 ctx.fillStyle = unlocked
-                    ? 'rgba(188, 19, 254, 0.1)'
-                    : 'rgba(255, 255, 255, 0.02)';
+                    ? "rgba(188, 19, 254, 0.1)"
+                    : "rgba(255, 255, 255, 0.02)";
                 ctx.fillRect(x, y, 480, 120);
 
                 if (unlocked) {
-                    drawCorners(x, y, 480, 120, 15, '#bc13fe');
-                    ctx.shadowColor = '#bc13fe';
+                    drawCorners(x, y, 480, 120, 15, "#bc13fe");
+                    ctx.shadowColor = "#bc13fe";
                     ctx.shadowBlur = 10;
                 } else {
-                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.strokeStyle = "rgba(255,255,255,0.1)";
                     ctx.strokeRect(x, y, 480, 120);
                 }
 
-                ctx.fillStyle = unlocked ? '#ffffff' : '#64748b';
+                ctx.fillStyle = unlocked ? "#ffffff" : "#64748b";
                 ctx.font = 'bold 24px "Inter", sans-serif';
                 ctx.fillText(name, x + 30, y + 55);
                 ctx.shadowBlur = 0;
 
-                ctx.fillStyle = unlocked ? '#e9d5ff' : '#475569';
+                ctx.fillStyle = unlocked ? "#e9d5ff" : "#475569";
                 ctx.font = '14px "Courier New", monospace';
                 ctx.fillText(desc, x + 30, y + 90);
 
-                ctx.fillStyle = unlocked ? '#bc13fe' : '#334155';
+                ctx.fillStyle = unlocked ? "#bc13fe" : "#334155";
                 ctx.font = 'bold 12px "Inter", sans-serif';
                 ctx.fillText(
-                    unlocked ? '[ VERIFIED ]' : '[ LOCKED ]',
+                    unlocked ? "[ VERIFIED ]" : "[ LOCKED ]",
                     x + 370,
                     y + 50,
                 );
@@ -665,44 +665,44 @@ function SocialCardsImpl({
             drawBadge(
                 80,
                 320,
-                'EXPERT_BURST',
-                'Peak performance >= 1600 RP',
+                "EXPERT_BURST",
+                "Peak performance >= 1600 RP",
                 user.rating && user.rating >= 1600 ? true : false,
             );
             drawBadge(
                 600,
                 320,
-                'DP_ARCHITECT',
-                'Solved > 10 DP algorithms',
+                "DP_ARCHITECT",
+                "Solved > 10 DP algorithms",
                 solvedCount > 10,
             );
             drawBadge(
                 80,
                 460,
-                'CONTEST_SPEC',
-                '5+ rated rounds completed',
+                "CONTEST_SPEC",
+                "5+ rated rounds completed",
                 ratingHistory.length >= 5,
             );
             drawBadge(
                 600,
                 460,
-                'STREAK_FIRE',
-                '7+ consecutive days active',
+                "STREAK_FIRE",
+                "7+ consecutive days active",
                 streakDays >= 7,
             );
-        } else if (activeCard === 'system_dump') {
-            ctx.shadowColor = '#ef4444';
+        } else if (activeCard === "system_dump") {
+            ctx.shadowColor = "#ef4444";
             ctx.shadowBlur = 20;
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = "#ffffff";
             ctx.font = 'bold 64px "Inter", sans-serif';
-            ctx.fillText('SYSTEM DUMP', 80, 200);
+            ctx.fillText("SYSTEM DUMP", 80, 200);
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#ef4444';
+            ctx.fillStyle = "#ef4444";
             ctx.font = 'bold 24px "Inter", sans-serif';
-            ctx.letterSpacing = '4px';
+            ctx.letterSpacing = "4px";
             ctx.fillText(`[ COMPREHENSIVE DATA EXTRACTION ]`, 80, 250);
-            ctx.letterSpacing = '0px';
+            ctx.letterSpacing = "0px";
 
             const drawDumpBox = (
                 x: number,
@@ -710,11 +710,11 @@ function SocialCardsImpl({
                 val: string,
                 label: string,
             ) => {
-                ctx.fillStyle = 'rgba(239, 68, 68, 0.05)';
+                ctx.fillStyle = "rgba(239, 68, 68, 0.05)";
                 ctx.fillRect(x, y, 240, 100);
 
                 // Tech frame
-                ctx.strokeStyle = 'rgba(239, 68, 68, 0.3)';
+                ctx.strokeStyle = "rgba(239, 68, 68, 0.3)";
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(x, y + 100);
@@ -725,13 +725,13 @@ function SocialCardsImpl({
                 ctx.closePath();
                 ctx.stroke();
 
-                ctx.fillStyle = '#94a3b8';
+                ctx.fillStyle = "#94a3b8";
                 ctx.font = 'bold 12px "Courier New", monospace';
                 ctx.fillText(`// ${label}`, x + 15, y + 25);
 
-                ctx.shadowColor = '#ef4444';
+                ctx.shadowColor = "#ef4444";
                 ctx.shadowBlur = 10;
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = "#ffffff";
                 ctx.font = 'bold 24px "Courier New", monospace';
                 let displayVal = val;
                 // scale down font if value is too long
@@ -744,16 +744,16 @@ function SocialCardsImpl({
 
             const stats = [
                 {
-                    label: 'MAX RANK',
-                    val: (user.maxRank || 'N/A').toUpperCase(),
+                    label: "MAX RANK",
+                    val: (user.maxRank || "N/A").toUpperCase(),
                 },
-                { label: 'CONTRIBUTION', val: `+${user.contribution}` },
-                { label: 'FAV LANG', val: detailedStats.favLang },
-                { label: 'TOP TAG', val: detailedStats.favTag.toUpperCase() },
-                { label: 'AVG DIFF', val: `${detailedStats.avgDifficulty}` },
-                { label: 'ACCURACY', val: `${detailedStats.successRate}%` },
-                { label: 'TOTAL SUBS', val: `${submissions.length}` },
-                { label: 'FRIENDS OF', val: `${user.friendOfCount}` },
+                { label: "CONTRIBUTION", val: `+${user.contribution}` },
+                { label: "FAV LANG", val: detailedStats.favLang },
+                { label: "TOP TAG", val: detailedStats.favTag.toUpperCase() },
+                { label: "AVG DIFF", val: `${detailedStats.avgDifficulty}` },
+                { label: "ACCURACY", val: `${detailedStats.successRate}%` },
+                { label: "TOTAL SUBS", val: `${submissions.length}` },
+                { label: "FRIENDS OF", val: `${user.friendOfCount}` },
             ];
 
             let startX = 80;
@@ -768,7 +768,7 @@ function SocialCardsImpl({
                     stat.label,
                 );
             });
-        } else if (activeCard === 'head_to_head' && opponentUser) {
+        } else if (activeCard === "head_to_head" && opponentUser) {
             // === CANVAS 1200×630 Layout ===
             // Left col: x=0..220 | Table: x=220..980 | Right col: x=980..1200
             // Title: y=0..50 | Content: y=50..620
@@ -787,14 +787,14 @@ function SocialCardsImpl({
             const CONTENT_H = CANVAS_H - TITLE_H - 10; // 570
 
             // ── Title ──────────────────────────────────
-            ctx.shadowColor = '#f43f5e';
+            ctx.shadowColor = "#f43f5e";
             ctx.shadowBlur = 12;
-            ctx.fillStyle = '#f43f5e';
+            ctx.fillStyle = "#f43f5e";
             ctx.font = 'bold 14px "Courier New", monospace';
-            ctx.textAlign = 'center';
+            ctx.textAlign = "center";
             // Simulate tracking wide like HTML
             ctx.fillText(
-                '⚔  B A T T L E   A N A L Y S I S  ⚔',
+                "⚔  B A T T L E   A N A L Y S I S  ⚔",
                 CANVAS_W / 2,
                 34,
             );
@@ -837,12 +837,12 @@ function SocialCardsImpl({
             const AVATAR_Y = CONTENT_START + AVATAR_R + 30; // y ≈ 170
 
             // ── Left avatar ────────────────────────────
-            drawAvatar(avatarImg, L_CX, AVATAR_Y, AVATAR_R, '#06b6d4');
-            ctx.shadowColor = '#06b6d4';
+            drawAvatar(avatarImg, L_CX, AVATAR_Y, AVATAR_R, "#06b6d4");
+            ctx.shadowColor = "#06b6d4";
             ctx.shadowBlur = 8;
-            ctx.fillStyle = '#06b6d4';
+            ctx.fillStyle = "#06b6d4";
             ctx.font = 'bold 18px "Inter", sans-serif';
-            ctx.textAlign = 'center';
+            ctx.textAlign = "center";
             let lHandle = user.handle;
             while (
                 ctx.measureText(lHandle).width > SIDE_W - 10 &&
@@ -851,21 +851,21 @@ function SocialCardsImpl({
                 lHandle = lHandle.slice(0, -1);
             ctx.fillText(lHandle, L_CX, AVATAR_Y + AVATAR_R + 26);
             ctx.shadowBlur = 0;
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillStyle = "#94a3b8";
             ctx.font = 'bold 10px "Courier New", monospace';
             ctx.fillText(
-                (user.maxRank || 'N/A').toUpperCase(),
+                (user.maxRank || "N/A").toUpperCase(),
                 L_CX,
                 AVATAR_Y + AVATAR_R + 44,
             );
 
             // ── Right avatar ───────────────────────────
-            drawAvatar(oppAvatarImg, R_CX, AVATAR_Y, AVATAR_R, '#f97316');
-            ctx.shadowColor = '#f97316';
+            drawAvatar(oppAvatarImg, R_CX, AVATAR_Y, AVATAR_R, "#f97316");
+            ctx.shadowColor = "#f97316";
             ctx.shadowBlur = 8;
-            ctx.fillStyle = '#f97316';
+            ctx.fillStyle = "#f97316";
             ctx.font = 'bold 18px "Inter", sans-serif';
-            ctx.textAlign = 'center';
+            ctx.textAlign = "center";
             let rHandle = opponentUser.handle;
             while (
                 ctx.measureText(rHandle).width > SIDE_W - 10 &&
@@ -874,10 +874,10 @@ function SocialCardsImpl({
                 rHandle = rHandle.slice(0, -1);
             ctx.fillText(rHandle, R_CX, AVATAR_Y + AVATAR_R + 26);
             ctx.shadowBlur = 0;
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillStyle = "#94a3b8";
             ctx.font = 'bold 10px "Courier New", monospace';
             ctx.fillText(
-                (opponentUser.maxRank || 'N/A').toUpperCase(),
+                (opponentUser.maxRank || "N/A").toUpperCase(),
                 R_CX,
                 AVATAR_Y + AVATAR_R + 44,
             );
@@ -885,44 +885,44 @@ function SocialCardsImpl({
             // ── Stats table ────────────────────────────
             const statRows = [
                 {
-                    label: 'RATING',
+                    label: "RATING",
                     left: String(user.rating || 0),
                     right: String(opponentUser.rating || 0),
                 },
                 {
-                    label: 'MAX RTG',
-                    left: String(user.maxRating || 'N/A'),
-                    right: String(opponentUser.maxRating || 'N/A'),
+                    label: "MAX RTG",
+                    left: String(user.maxRating || "N/A"),
+                    right: String(opponentUser.maxRating || "N/A"),
                 },
                 {
-                    label: 'SOLVED',
+                    label: "SOLVED",
                     left: String(detailedStats.totalSolved),
                     right: String(opponentDetailedStats.totalSolved),
                 },
                 {
-                    label: 'ACCURACY',
+                    label: "ACCURACY",
                     left: `${detailedStats.successRate}%`,
                     right: `${opponentDetailedStats.successRate}%`,
                 },
                 {
-                    label: 'WEAPON',
+                    label: "WEAPON",
                     left: detailedStats.favLang,
                     right: opponentDetailedStats.favLang,
                 },
                 {
-                    label: 'DOMAIN',
+                    label: "DOMAIN",
                     left: detailedStats.favTag.toUpperCase(),
                     right: opponentDetailedStats.favTag.toUpperCase(),
                 },
                 {
-                    label: 'ORG',
-                    left: user.organization || 'INDIE',
-                    right: opponentUser.organization || 'INDIE',
+                    label: "ORG",
+                    left: user.organization || "INDIE",
+                    right: opponentUser.organization || "INDIE",
                 },
                 {
-                    label: 'LOC',
-                    left: user.country || 'EARTH',
-                    right: opponentUser.country || 'EARTH',
+                    label: "LOC",
+                    left: user.country || "EARTH",
+                    right: opponentUser.country || "EARTH",
                     leftFlag: userFlagImg,
                     rightFlag: oppFlagImg,
                 },
@@ -945,12 +945,12 @@ function SocialCardsImpl({
                 // Alternating bg - matching HTML bg-cyan-500/5 and bg-orange-500/5
                 ctx.fillStyle =
                     i % 2 === 0
-                        ? 'rgba(6,182,212,0.05)'
-                        : 'rgba(249,115,22,0.05)';
+                        ? "rgba(6,182,212,0.05)"
+                        : "rgba(249,115,22,0.05)";
                 ctx.fillRect(TABLE_X, rowY, TABLE_W, ROW_H);
 
                 // Top separator (matching HTML border-slate-700/40)
-                ctx.strokeStyle = 'rgba(51,65,85,0.4)';
+                ctx.strokeStyle = "rgba(51,65,85,0.4)";
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(TABLE_X, rowY);
@@ -972,9 +972,9 @@ function SocialCardsImpl({
                         leftEdge - 26,
                         textY,
                         COL_L_W - 40,
-                        'right',
+                        "right",
                         15,
-                        '#06b6d4',
+                        "#06b6d4",
                     );
                 } else {
                     drawFit(
@@ -982,16 +982,16 @@ function SocialCardsImpl({
                         leftEdge,
                         textY,
                         COL_L_W - 20,
-                        'right',
+                        "right",
                         15,
-                        '#06b6d4',
+                        "#06b6d4",
                     );
                 }
 
                 // Center label
-                ctx.fillStyle = '#475569';
+                ctx.fillStyle = "#475569";
                 ctx.font = 'bold 10px "Courier New", monospace';
-                ctx.textAlign = 'center';
+                ctx.textAlign = "center";
                 ctx.fillText(row.label, TABLE_X + COL_L_W + COL_M_W / 2, textY);
 
                 // Right value (left-aligned, with flag if LOC)
@@ -1009,9 +1009,9 @@ function SocialCardsImpl({
                         rightEdge + 26,
                         textY,
                         COL_R_W - 40,
-                        'left',
+                        "left",
                         15,
-                        '#f97316',
+                        "#f97316",
                     );
                 } else {
                     drawFit(
@@ -1019,16 +1019,16 @@ function SocialCardsImpl({
                         rightEdge,
                         textY,
                         COL_R_W - 20,
-                        'left',
+                        "left",
                         15,
-                        '#f97316',
+                        "#f97316",
                     );
                 }
             });
 
             // Bottom border
             const tableBottom = TABLE_START_Y + NUM_ROWS * ROW_H;
-            ctx.strokeStyle = 'rgba(51,65,85,0.4)';
+            ctx.strokeStyle = "rgba(51,65,85,0.4)";
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(TABLE_X, tableBottom);
@@ -1037,17 +1037,17 @@ function SocialCardsImpl({
         }
 
         try {
-            const dataUrl = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
+            const dataUrl = canvas.toDataURL("image/png");
+            const link = document.createElement("a");
             link.download = `cf_visualizer_${user.handle}_${activeCard}.png`;
             link.href = dataUrl;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         } catch (err) {
-            console.error('Canvas export failed:', err);
+            console.error("Canvas export failed:", err);
             alert(
-                'Sorry, downloading failed. Please check the console for details.',
+                "Sorry, downloading failed. Please check the console for details.",
             );
         } finally {
             setExporting(false);
@@ -1081,27 +1081,27 @@ function SocialCardsImpl({
                             const Icon = template.icon;
                             const isActive = activeCard === template.id;
                             const themeClass =
-                                template.id === 'snapshot'
-                                    ? 'text-cyan-500 border-cyan-500/30 bg-cyan-500/10 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                                    : template.id === 'streak'
-                                      ? 'text-orange-500 border-orange-500/30 bg-orange-500/10 shadow-[0_0_15px_rgba(249,115,22,0.15)]'
-                                      : template.id === 'review'
-                                        ? 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
-                                        : template.id === 'system_dump'
-                                          ? 'text-red-500 border-red-500/30 bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)]'
-                                          : template.id === 'head_to_head'
-                                            ? 'text-rose-500 border-rose-500/30 bg-rose-500/10 shadow-[0_0_15px_rgba(244,63,94,0.15)]'
-                                            : 'text-purple-500 border-purple-500/30 bg-purple-500/10 shadow-[0_0_15px_rgba(188,19,254,0.15)]';
+                                template.id === "snapshot"
+                                    ? "text-cyan-500 border-cyan-500/30 bg-cyan-500/10 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+                                    : template.id === "streak"
+                                      ? "text-orange-500 border-orange-500/30 bg-orange-500/10 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
+                                      : template.id === "review"
+                                        ? "text-emerald-500 border-emerald-500/30 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                                        : template.id === "system_dump"
+                                          ? "text-red-500 border-red-500/30 bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)]"
+                                          : template.id === "head_to_head"
+                                            ? "text-rose-500 border-rose-500/30 bg-rose-500/10 shadow-[0_0_15px_rgba(244,63,94,0.15)]"
+                                            : "text-purple-500 border-purple-500/30 bg-purple-500/10 shadow-[0_0_15px_rgba(188,19,254,0.15)]";
 
                             return (
                                 <button
                                     key={template.id}
                                     onClick={() => setActiveCard(template.id)}
                                     className={cn(
-                                        'w-full flex items-center justify-between p-3 md:p-4 rounded-xl border transition-all text-left group overflow-hidden relative',
+                                        "w-full flex items-center justify-between p-3 md:p-4 rounded-xl border transition-all text-left group overflow-hidden relative",
                                         isActive
                                             ? themeClass
-                                            : 'bg-(--bg-card) border-(--glass-border) text-muted-app hover:bg-(--glass-bg) hover:text-text-app',
+                                            : "bg-(--bg-card) border-(--glass-border) text-muted-app hover:bg-(--glass-bg) hover:text-text-app",
                                     )}
                                 >
                                     <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] bg-size-[10px_10px]" />
@@ -1161,95 +1161,95 @@ function SocialCardsImpl({
                                 initial={{
                                     opacity: 0,
                                     scale: 0.98,
-                                    filter: 'blur(4px)',
+                                    filter: "blur(4px)",
                                 }}
                                 animate={{
                                     opacity: 1,
                                     scale: 1,
-                                    filter: 'blur(0px)',
+                                    filter: "blur(0px)",
                                 }}
                                 exit={{
                                     opacity: 0,
                                     scale: 1.02,
-                                    filter: 'blur(4px)',
+                                    filter: "blur(4px)",
                                 }}
                                 transition={{ duration: 0.3 }}
                                 className={cn(
-                                    'absolute inset-0 p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-between select-none overflow-hidden',
+                                    "absolute inset-0 p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-between select-none overflow-hidden",
                                 )}
                             >
                                 {/* Radial Glow */}
                                 <div
                                     className={cn(
-                                        'absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))]',
-                                        activeCard === 'snapshot' &&
-                                            'from-cyan-400 via-transparent to-transparent',
-                                        activeCard === 'streak' &&
-                                            'from-orange-500 via-transparent to-transparent',
-                                        activeCard === 'review' &&
-                                            'from-emerald-500 via-transparent to-transparent',
-                                        activeCard === 'system_dump' &&
-                                            'from-red-500 via-transparent to-transparent',
-                                        activeCard === 'achievements' &&
-                                            'from-purple-500 via-transparent to-transparent',
+                                        "absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))]",
+                                        activeCard === "snapshot" &&
+                                            "from-cyan-400 via-transparent to-transparent",
+                                        activeCard === "streak" &&
+                                            "from-orange-500 via-transparent to-transparent",
+                                        activeCard === "review" &&
+                                            "from-emerald-500 via-transparent to-transparent",
+                                        activeCard === "system_dump" &&
+                                            "from-red-500 via-transparent to-transparent",
+                                        activeCard === "achievements" &&
+                                            "from-purple-500 via-transparent to-transparent",
                                     )}
                                 />
 
                                 {/* Tech Corners in HTML */}
                                 <div
                                     className={cn(
-                                        'absolute top-2 left-2 md:top-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-t border-l md:border-t-2 md:border-l-2',
-                                        activeCard === 'snapshot'
-                                            ? 'border-cyan-500/50'
-                                            : activeCard === 'streak'
-                                              ? 'border-orange-500/50'
-                                              : activeCard === 'review'
-                                                ? 'border-emerald-500/50'
-                                                : activeCard === 'system_dump'
-                                                  ? 'border-red-500/50'
-                                                  : 'border-purple-500/50',
+                                        "absolute top-2 left-2 md:top-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-t border-l md:border-t-2 md:border-l-2",
+                                        activeCard === "snapshot"
+                                            ? "border-cyan-500/50"
+                                            : activeCard === "streak"
+                                              ? "border-orange-500/50"
+                                              : activeCard === "review"
+                                                ? "border-emerald-500/50"
+                                                : activeCard === "system_dump"
+                                                  ? "border-red-500/50"
+                                                  : "border-purple-500/50",
                                     )}
                                 />
                                 <div
                                     className={cn(
-                                        'absolute top-2 right-2 md:top-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-t border-r md:border-t-2 md:border-r-2',
-                                        activeCard === 'snapshot'
-                                            ? 'border-cyan-500/50'
-                                            : activeCard === 'streak'
-                                              ? 'border-orange-500/50'
-                                              : activeCard === 'review'
-                                                ? 'border-emerald-500/50'
-                                                : activeCard === 'system_dump'
-                                                  ? 'border-red-500/50'
-                                                  : 'border-purple-500/50',
+                                        "absolute top-2 right-2 md:top-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-t border-r md:border-t-2 md:border-r-2",
+                                        activeCard === "snapshot"
+                                            ? "border-cyan-500/50"
+                                            : activeCard === "streak"
+                                              ? "border-orange-500/50"
+                                              : activeCard === "review"
+                                                ? "border-emerald-500/50"
+                                                : activeCard === "system_dump"
+                                                  ? "border-red-500/50"
+                                                  : "border-purple-500/50",
                                     )}
                                 />
                                 <div
                                     className={cn(
-                                        'absolute bottom-2 left-2 md:bottom-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-b border-l md:border-b-2 md:border-l-2',
-                                        activeCard === 'snapshot'
-                                            ? 'border-cyan-500/50'
-                                            : activeCard === 'streak'
-                                              ? 'border-orange-500/50'
-                                              : activeCard === 'review'
-                                                ? 'border-emerald-500/50'
-                                                : activeCard === 'system_dump'
-                                                  ? 'border-red-500/50'
-                                                  : 'border-purple-500/50',
+                                        "absolute bottom-2 left-2 md:bottom-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-b border-l md:border-b-2 md:border-l-2",
+                                        activeCard === "snapshot"
+                                            ? "border-cyan-500/50"
+                                            : activeCard === "streak"
+                                              ? "border-orange-500/50"
+                                              : activeCard === "review"
+                                                ? "border-emerald-500/50"
+                                                : activeCard === "system_dump"
+                                                  ? "border-red-500/50"
+                                                  : "border-purple-500/50",
                                     )}
                                 />
                                 <div
                                     className={cn(
-                                        'absolute bottom-2 right-2 md:bottom-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-b border-r md:border-b-2 md:border-r-2',
-                                        activeCard === 'snapshot'
-                                            ? 'border-cyan-500/50'
-                                            : activeCard === 'streak'
-                                              ? 'border-orange-500/50'
-                                              : activeCard === 'review'
-                                                ? 'border-emerald-500/50'
-                                                : activeCard === 'system_dump'
-                                                  ? 'border-red-500/50'
-                                                  : 'border-purple-500/50',
+                                        "absolute bottom-2 right-2 md:bottom-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-b border-r md:border-b-2 md:border-r-2",
+                                        activeCard === "snapshot"
+                                            ? "border-cyan-500/50"
+                                            : activeCard === "streak"
+                                              ? "border-orange-500/50"
+                                              : activeCard === "review"
+                                                ? "border-emerald-500/50"
+                                                : activeCard === "system_dump"
+                                                  ? "border-red-500/50"
+                                                  : "border-purple-500/50",
                                     )}
                                 />
 
@@ -1261,20 +1261,20 @@ function SocialCardsImpl({
                                                 <div
                                                     key={i}
                                                     className={cn(
-                                                        'w-0.5 h-0.5 md:w-1 md:h-1 rounded-full',
+                                                        "w-0.5 h-0.5 md:w-1 md:h-1 rounded-full",
                                                         activeCard ===
-                                                            'snapshot'
-                                                            ? 'bg-cyan-500/40'
+                                                            "snapshot"
+                                                            ? "bg-cyan-500/40"
                                                             : activeCard ===
-                                                                'streak'
-                                                              ? 'bg-orange-500/40'
+                                                                "streak"
+                                                              ? "bg-orange-500/40"
                                                               : activeCard ===
-                                                                  'review'
-                                                                ? 'bg-emerald-500/40'
+                                                                  "review"
+                                                                ? "bg-emerald-500/40"
                                                                 : activeCard ===
-                                                                    'system_dump'
-                                                                  ? 'bg-red-500/40'
-                                                                  : 'bg-purple-500/40',
+                                                                    "system_dump"
+                                                                  ? "bg-red-500/40"
+                                                                  : "bg-purple-500/40",
                                                     )}
                                                 />
                                             ))}
@@ -1289,7 +1289,7 @@ function SocialCardsImpl({
                                 </div>
 
                                 {/* Main Card Contents */}
-                                {activeCard === 'snapshot' && (
+                                {activeCard === "snapshot" && (
                                     <div className="flex-1 flex items-center justify-between relative z-10">
                                         <div className="flex flex-col justify-center space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-6 w-full pr-2">
                                             <div className="space-y-0 md:space-y-1">
@@ -1297,46 +1297,46 @@ function SocialCardsImpl({
                                                     {user.handle.toUpperCase()}
                                                 </h3>
                                                 <p className="text-[7px] sm:text-[9px] md:text-xs font-mono font-bold text-cyan-400 uppercase tracking-[0.2em] md:tracking-[0.3em]">
-                                                    [ RANK:{' '}
-                                                    {user.rank || 'Unranked'} ]
+                                                    [ RANK:{" "}
+                                                    {user.rank || "Unranked"} ]
                                                 </p>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-1 sm:gap-2 pt-1 sm:pt-2 md:pt-4 border-t border-cyan-500/20 w-full max-w-lg">
                                                 {[
                                                     {
-                                                        label: 'RATING',
+                                                        label: "RATING",
                                                         val: user.rating || 0,
                                                     },
                                                     {
-                                                        label: 'MAX RTG',
+                                                        label: "MAX RTG",
                                                         val: maxRating,
                                                     },
                                                     {
-                                                        label: 'SOLVED',
+                                                        label: "SOLVED",
                                                         val: solvedCount,
                                                     },
                                                     {
-                                                        label: 'ACCURACY',
+                                                        label: "ACCURACY",
                                                         val: `${detailedStats.successRate}%`,
                                                     },
                                                     {
-                                                        label: 'WEAPON',
+                                                        label: "WEAPON",
                                                         val: detailedStats.favLang,
                                                     },
                                                     {
-                                                        label: 'DOMAIN',
+                                                        label: "DOMAIN",
                                                         val: detailedStats.favTag.toUpperCase(),
                                                     },
                                                     {
-                                                        label: 'ORG',
+                                                        label: "ORG",
                                                         val:
                                                             user.organization ||
-                                                            'INDIE',
+                                                            "INDIE",
                                                     },
                                                     {
-                                                        label: 'LOC',
-                                                        val: '',
+                                                        label: "LOC",
+                                                        val: "",
                                                         flag: user.country,
                                                     },
                                                 ].map((stat, idx) => (
@@ -1351,10 +1351,10 @@ function SocialCardsImpl({
                                                             {stat.flag &&
                                                                 countries.getAlpha2Code(
                                                                     stat.flag,
-                                                                    'en',
+                                                                    "en",
                                                                 ) && (
                                                                     <img
-                                                                        src={`https://flagcdn.com/w20/${countries.getAlpha2Code(stat.flag, 'en')?.toLowerCase()}.png`}
+                                                                        src={`https://flagcdn.com/w20/${countries.getAlpha2Code(stat.flag, "en")?.toLowerCase()}.png`}
                                                                         alt="flag"
                                                                         className="w-2.5 h-1.5 sm:w-3 sm:h-2 md:w-4 md:h-3 rounded-[1px] object-cover shrink-0"
                                                                         crossOrigin="anonymous"
@@ -1408,7 +1408,7 @@ function SocialCardsImpl({
                                     </div>
                                 )}
 
-                                {activeCard === 'streak' && (
+                                {activeCard === "streak" && (
                                     <div className="flex-1 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-6 relative z-10">
                                         <div className="space-y-0 md:space-y-1">
                                             <h3 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-display font-black text-white drop-shadow-[0_0_10px_rgba(249,115,22,0.6)]">
@@ -1442,7 +1442,7 @@ function SocialCardsImpl({
                                     </div>
                                 )}
 
-                                {activeCard === 'review' && (
+                                {activeCard === "review" && (
                                     <div className="flex-1 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-6 relative z-10">
                                         <div className="space-y-0 md:space-y-1">
                                             <h3 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-display font-black text-white drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]">
@@ -1456,15 +1456,15 @@ function SocialCardsImpl({
                                         <div className="grid grid-cols-3 gap-2 md:gap-4 pt-2 md:pt-4">
                                             {[
                                                 {
-                                                    label: '> TOTAL_SOLVED',
+                                                    label: "> TOTAL_SOLVED",
                                                     val: solvedCount,
                                                 },
                                                 {
-                                                    label: '> RATING_DELTA',
+                                                    label: "> RATING_DELTA",
                                                     val: `+${Math.max(0, (user.rating || 800) - 1000)}`,
                                                 },
                                                 {
-                                                    label: '> ROUNDS_SYNCED',
+                                                    label: "> ROUNDS_SYNCED",
                                                     val: ratingHistory.length,
                                                 },
                                             ].map((stat, idx) => (
@@ -1486,7 +1486,7 @@ function SocialCardsImpl({
                                     </div>
                                 )}
 
-                                {activeCard === 'achievements' && (
+                                {activeCard === "achievements" && (
                                     <div className="flex-1 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-6 relative z-10">
                                         <div className="space-y-0 md:space-y-1">
                                             <h3 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-display font-black text-white drop-shadow-[0_0_10px_rgba(188,19,254,0.6)]">
@@ -1500,8 +1500,8 @@ function SocialCardsImpl({
                                         <div className="grid grid-cols-2 gap-2 md:gap-4">
                                             {[
                                                 {
-                                                    name: 'EXPERT_BURST',
-                                                    desc: 'Peak performance >= 1600 RP',
+                                                    name: "EXPERT_BURST",
+                                                    desc: "Peak performance >= 1600 RP",
                                                     unl:
                                                         user.rating &&
                                                         user.rating >= 1600
@@ -1509,62 +1509,62 @@ function SocialCardsImpl({
                                                             : false,
                                                 },
                                                 {
-                                                    name: 'DP_ARCHITECT',
-                                                    desc: 'Solved > 10 DP algorithms',
+                                                    name: "DP_ARCHITECT",
+                                                    desc: "Solved > 10 DP algorithms",
                                                     unl: solvedCount > 10,
                                                 },
                                                 {
-                                                    name: 'CONTEST_SPEC',
-                                                    desc: '5+ rated rounds completed',
+                                                    name: "CONTEST_SPEC",
+                                                    desc: "5+ rated rounds completed",
                                                     unl:
                                                         ratingHistory.length >=
                                                         5,
                                                 },
                                                 {
-                                                    name: 'STREAK_FIRE',
-                                                    desc: '7+ consecutive days active',
+                                                    name: "STREAK_FIRE",
+                                                    desc: "7+ consecutive days active",
                                                     unl: streakDays >= 7,
                                                 },
                                             ].map((badge, idx) => (
                                                 <div
                                                     key={idx}
                                                     className={cn(
-                                                        'p-2 md:p-4 rounded-md md:rounded-lg flex flex-col justify-center border backdrop-blur-sm relative overflow-hidden',
+                                                        "p-2 md:p-4 rounded-md md:rounded-lg flex flex-col justify-center border backdrop-blur-sm relative overflow-hidden",
                                                         badge.unl
-                                                            ? 'bg-purple-900/20 border-purple-500/40'
-                                                            : 'bg-slate-900/40 border-slate-700/50',
+                                                            ? "bg-purple-900/20 border-purple-500/40"
+                                                            : "bg-slate-900/40 border-slate-700/50",
                                                     )}
                                                 >
                                                     <div className="flex justify-between items-center mb-0.5 md:mb-1">
                                                         <p
                                                             className={cn(
-                                                                'text-[8px] sm:text-xs md:text-sm font-black font-mono',
+                                                                "text-[8px] sm:text-xs md:text-sm font-black font-mono",
                                                                 badge.unl
-                                                                    ? 'text-white drop-shadow-[0_0_6px_rgba(188,19,254,0.8)]'
-                                                                    : 'text-slate-500',
+                                                                    ? "text-white drop-shadow-[0_0_6px_rgba(188,19,254,0.8)]"
+                                                                    : "text-slate-500",
                                                             )}
                                                         >
                                                             {badge.name}
                                                         </p>
                                                         <p
                                                             className={cn(
-                                                                'text-[6px] sm:text-[8px] md:text-[10px] font-black',
+                                                                "text-[6px] sm:text-[8px] md:text-[10px] font-black",
                                                                 badge.unl
-                                                                    ? 'text-purple-400'
-                                                                    : 'text-slate-600',
+                                                                    ? "text-purple-400"
+                                                                    : "text-slate-600",
                                                             )}
                                                         >
                                                             {badge.unl
-                                                                ? '[ VERIFIED ]'
-                                                                : '[ LOCKED ]'}
+                                                                ? "[ VERIFIED ]"
+                                                                : "[ LOCKED ]"}
                                                         </p>
                                                     </div>
                                                     <p
                                                         className={cn(
-                                                            'text-[5px] sm:text-[7px] md:text-[10px] font-mono',
+                                                            "text-[5px] sm:text-[7px] md:text-[10px] font-mono",
                                                             badge.unl
-                                                                ? 'text-purple-300'
-                                                                : 'text-slate-600',
+                                                                ? "text-purple-300"
+                                                                : "text-slate-600",
                                                         )}
                                                     >
                                                         {badge.desc}
@@ -1575,7 +1575,7 @@ function SocialCardsImpl({
                                     </div>
                                 )}
 
-                                {activeCard === 'system_dump' && (
+                                {activeCard === "system_dump" && (
                                     <div className="flex-1 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-6 relative z-10">
                                         <div className="space-y-0 md:space-y-1">
                                             <h3 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-display font-black text-white drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]">
@@ -1590,37 +1590,37 @@ function SocialCardsImpl({
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 pt-2 md:pt-4 border-t border-red-500/20">
                                             {[
                                                 {
-                                                    label: 'MAX RANK',
+                                                    label: "MAX RANK",
                                                     val: (
-                                                        user.maxRank || 'N/A'
+                                                        user.maxRank || "N/A"
                                                     ).toUpperCase(),
                                                 },
                                                 {
-                                                    label: 'CONTRIBUTION',
+                                                    label: "CONTRIBUTION",
                                                     val: `+${user.contribution}`,
                                                 },
                                                 {
-                                                    label: 'FAV LANG',
+                                                    label: "FAV LANG",
                                                     val: detailedStats.favLang,
                                                 },
                                                 {
-                                                    label: 'TOP TAG',
+                                                    label: "TOP TAG",
                                                     val: detailedStats.favTag.toUpperCase(),
                                                 },
                                                 {
-                                                    label: 'AVG DIFF',
+                                                    label: "AVG DIFF",
                                                     val: detailedStats.avgDifficulty,
                                                 },
                                                 {
-                                                    label: 'ACCURACY',
+                                                    label: "ACCURACY",
                                                     val: `${detailedStats.successRate}%`,
                                                 },
                                                 {
-                                                    label: 'TOTAL SUBS',
+                                                    label: "TOTAL SUBS",
                                                     val: submissions.length,
                                                 },
                                                 {
-                                                    label: 'FRIENDS OF',
+                                                    label: "FRIENDS OF",
                                                     val: user.friendOfCount,
                                                 },
                                             ].map((stat, idx) => (
@@ -1640,7 +1640,7 @@ function SocialCardsImpl({
                                     </div>
                                 )}
 
-                                {activeCard === 'head_to_head' && (
+                                {activeCard === "head_to_head" && (
                                     <div className="flex-1 flex flex-col justify-center relative z-10 w-full h-full min-h-0">
                                         {!opponentUser ? (
                                             <div className="flex flex-col items-center justify-center space-y-4 max-w-sm mx-auto w-full h-full">
@@ -1696,7 +1696,7 @@ function SocialCardsImpl({
                                                         <p className="text-[10px] text-red-500 text-center font-mono flex items-center justify-center gap-1">
                                                             <AlertCircle
                                                                 size={10}
-                                                            />{' '}
+                                                            />{" "}
                                                             {opponentError}
                                                         </p>
                                                     )}
@@ -1727,7 +1727,7 @@ function SocialCardsImpl({
                                                         </p>
                                                         <p className="text-[5px] sm:text-[6px] md:text-[8px] text-cyan-200/70 uppercase font-mono leading-tight">
                                                             {user.maxRank ||
-                                                                'N/A'}
+                                                                "N/A"}
                                                         </p>
                                                     </div>
 
@@ -1735,7 +1735,7 @@ function SocialCardsImpl({
                                                     <div className="flex-1 flex flex-col justify-start min-w-0 px-1 overflow-hidden">
                                                         {[
                                                             {
-                                                                label: 'RATING',
+                                                                label: "RATING",
                                                                 left:
                                                                     user.rating ||
                                                                     0,
@@ -1744,51 +1744,51 @@ function SocialCardsImpl({
                                                                     0,
                                                             },
                                                             {
-                                                                label: 'MAX RTG',
+                                                                label: "MAX RTG",
                                                                 left:
                                                                     user.maxRating ||
-                                                                    'N/A',
+                                                                    "N/A",
                                                                 right:
                                                                     opponentUser.maxRating ||
-                                                                    'N/A',
+                                                                    "N/A",
                                                             },
                                                             {
-                                                                label: 'SOLVED',
+                                                                label: "SOLVED",
                                                                 left: detailedStats.totalSolved,
                                                                 right: opponentDetailedStats.totalSolved,
                                                             },
                                                             {
-                                                                label: 'ACCURACY',
+                                                                label: "ACCURACY",
                                                                 left: `${detailedStats.successRate}%`,
                                                                 right: `${opponentDetailedStats.successRate}%`,
                                                             },
                                                             {
-                                                                label: 'WEAPON',
+                                                                label: "WEAPON",
                                                                 left: detailedStats.favLang,
                                                                 right: opponentDetailedStats.favLang,
                                                             },
                                                             {
-                                                                label: 'DOMAIN',
+                                                                label: "DOMAIN",
                                                                 left: detailedStats.favTag,
                                                                 right: opponentDetailedStats.favTag,
                                                             },
                                                             {
-                                                                label: 'ORG',
+                                                                label: "ORG",
                                                                 left:
                                                                     user.organization ||
-                                                                    'INDIE',
+                                                                    "INDIE",
                                                                 right:
                                                                     opponentUser.organization ||
-                                                                    'INDIE',
+                                                                    "INDIE",
                                                             },
                                                             {
-                                                                label: 'LOC',
+                                                                label: "LOC",
                                                                 left:
                                                                     user.country ||
-                                                                    'EARTH',
+                                                                    "EARTH",
                                                                 right:
                                                                     opponentUser.country ||
-                                                                    'EARTH',
+                                                                    "EARTH",
                                                                 leftFlag:
                                                                     user.country,
                                                                 rightFlag:
@@ -1798,10 +1798,10 @@ function SocialCardsImpl({
                                                             <div
                                                                 key={i}
                                                                 className={cn(
-                                                                    'flex items-center border-b border-slate-700/40 py-0.5 sm:py-0.75 min-h-0',
+                                                                    "flex items-center border-b border-slate-700/40 py-0.5 sm:py-0.75 min-h-0",
                                                                     i % 2 === 0
-                                                                        ? 'bg-cyan-500/5'
-                                                                        : 'bg-orange-500/5',
+                                                                        ? "bg-cyan-500/5"
+                                                                        : "bg-orange-500/5",
                                                                 )}
                                                             >
                                                                 <div className="w-[38%] flex items-center justify-end pr-1">
@@ -1819,10 +1819,10 @@ function SocialCardsImpl({
                                                                                 row as any
                                                                             )
                                                                                 .leftFlag,
-                                                                            'en',
+                                                                            "en",
                                                                         ) && (
                                                                             <img
-                                                                                src={`https://flagcdn.com/w20/${countries.getAlpha2Code((row as any).leftFlag, 'en')?.toLowerCase()}.png`}
+                                                                                src={`https://flagcdn.com/w20/${countries.getAlpha2Code((row as any).leftFlag, "en")?.toLowerCase()}.png`}
                                                                                 alt="flag"
                                                                                 className="w-2 h-1.5 sm:w-3 sm:h-2 rounded-sm object-cover ml-1 shrink-0"
                                                                                 crossOrigin="anonymous"
@@ -1842,10 +1842,10 @@ function SocialCardsImpl({
                                                                                 row as any
                                                                             )
                                                                                 .rightFlag,
-                                                                            'en',
+                                                                            "en",
                                                                         ) && (
                                                                             <img
-                                                                                src={`https://flagcdn.com/w20/${countries.getAlpha2Code((row as any).rightFlag, 'en')?.toLowerCase()}.png`}
+                                                                                src={`https://flagcdn.com/w20/${countries.getAlpha2Code((row as any).rightFlag, "en")?.toLowerCase()}.png`}
                                                                                 alt="flag"
                                                                                 className="w-2 h-1.5 sm:w-3 sm:h-2 rounded-sm object-cover mr-1 shrink-0"
                                                                                 crossOrigin="anonymous"
@@ -1878,7 +1878,7 @@ function SocialCardsImpl({
                                                         </p>
                                                         <p className="text-[5px] sm:text-[6px] md:text-[8px] text-orange-200/70 uppercase font-mono leading-tight">
                                                             {opponentUser.maxRank ||
-                                                                'N/A'}
+                                                                "N/A"}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1891,19 +1891,19 @@ function SocialCardsImpl({
                                 <div className="flex justify-between items-center text-[6px] sm:text-[8px] md:text-[10px] font-bold tracking-widest relative z-10 pt-2 md:pt-4 border-t border-slate-800">
                                     <span
                                         className={cn(
-                                            activeCard === 'snapshot'
-                                                ? 'text-cyan-500 drop-shadow-[0_0_3px_rgba(6,182,212,0.8)]'
-                                                : activeCard === 'streak'
-                                                  ? 'text-orange-500 drop-shadow-[0_0_3px_rgba(249,115,22,0.8)]'
-                                                  : activeCard === 'review'
-                                                    ? 'text-emerald-500 drop-shadow-[0_0_3px_rgba(16,185,129,0.8)]'
+                                            activeCard === "snapshot"
+                                                ? "text-cyan-500 drop-shadow-[0_0_3px_rgba(6,182,212,0.8)]"
+                                                : activeCard === "streak"
+                                                  ? "text-orange-500 drop-shadow-[0_0_3px_rgba(249,115,22,0.8)]"
+                                                  : activeCard === "review"
+                                                    ? "text-emerald-500 drop-shadow-[0_0_3px_rgba(16,185,129,0.8)]"
                                                     : activeCard ===
-                                                        'system_dump'
-                                                      ? 'text-red-500 drop-shadow-[0_0_3px_rgba(239,68,68,0.8)]'
+                                                        "system_dump"
+                                                      ? "text-red-500 drop-shadow-[0_0_3px_rgba(239,68,68,0.8)]"
                                                       : activeCard ===
-                                                          'head_to_head'
-                                                        ? 'text-rose-500 drop-shadow-[0_0_3px_rgba(244,63,94,0.8)]'
-                                                        : 'text-purple-500 drop-shadow-[0_0_3px_rgba(188,19,254,0.8)]',
+                                                          "head_to_head"
+                                                        ? "text-rose-500 drop-shadow-[0_0_3px_rgba(244,63,94,0.8)]"
+                                                        : "text-purple-500 drop-shadow-[0_0_3px_rgba(188,19,254,0.8)]",
                                         )}
                                     >
                                         CF VISUALIZER // TERMINAL

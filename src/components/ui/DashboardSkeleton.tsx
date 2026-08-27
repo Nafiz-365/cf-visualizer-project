@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
 /** Skeleton block — animated shimmer placeholder */
-function Bone({ className = '' }: { className?: string }) {
+function Bone({ className = "" }: { className?: string }) {
     return <div className={`skeleton ${className}`} />;
 }
 
@@ -10,12 +10,10 @@ export function DashboardSkeleton({ handle }: { handle?: string }) {
     return (
         <div
             className="min-h-screen bg-bg-app text-text-app"
-            style={{ background: 'var(--bg-app)' }}
+            style={{ background: "var(--bg-app)" }}
         >
             {/* Skeleton sidebar (matching real sidebar fixed layout) */}
-            <aside
-                className="hidden md:flex w-20 lg:w-64 border-r border-white/10 glass fixed left-0 top-0 h-screen flex-col z-50 pt-8 backdrop-blur-3xl px-3 space-y-2"
-            >
+            <aside className="hidden md:flex w-20 lg:w-64 border-r border-white/10 glass fixed left-0 top-0 h-screen flex-col z-50 pt-8 backdrop-blur-3xl px-3 space-y-2">
                 <div className="px-4 pb-5 border-b border-white/10 mb-5 flex justify-center lg:justify-start">
                     <div className="flex items-center gap-0 lg:gap-3">
                         <Bone className="w-10 h-10 rounded-3xl shrink-0" />
@@ -40,13 +38,11 @@ export function DashboardSkeleton({ handle }: { handle?: string }) {
             {/* Main Content Area */}
             <main className="flex-1 ml-0 mt-0 md:mt-0 md:ml-20 lg:ml-64 overflow-y-auto custom-scrollbar relative">
                 {/* Skeleton header */}
-                <header
-                    className="sticky top-0 z-40 bg-bg-app/80 backdrop-blur-xl border-b border-white/5 px-3 sm:px-4 md:px-8 py-3 md:py-4"
-                >
+                <header className="sticky top-0 z-40 bg-bg-app/80 backdrop-blur-xl border-b border-white/5 px-3 sm:px-4 md:px-8 py-3 md:py-4">
                     <div className="flex items-center justify-between gap-2 sm:gap-3 max-w-7xl mx-auto">
                         <div className="flex items-center gap-3 md:gap-5">
                             <Bone className="w-8 h-8 md:hidden rounded-lg shrink-0" />
-                            
+
                             <div className="flex items-center gap-2 sm:gap-3 rounded-full bg-white/5 border border-white/10 px-1.5 py-1.5 pr-4">
                                 <Bone className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shrink-0" />
                                 <div className="space-y-1.5 w-24">
@@ -70,8 +66,8 @@ export function DashboardSkeleton({ handle }: { handle?: string }) {
                         <div
                             className="xl:col-span-8 p-4 md:p-10 rounded-[1.75rem] space-y-4"
                             style={{
-                                background: 'var(--bg-card)',
-                                border: '1px solid var(--glass-border)',
+                                background: "var(--bg-card)",
+                                border: "1px solid var(--glass-border)",
                             }}
                         >
                             <Bone className="h-4 w-32 rounded-full mb-8" />
@@ -89,8 +85,8 @@ export function DashboardSkeleton({ handle }: { handle?: string }) {
                                     key={i}
                                     className="rounded-[1.75rem] p-6 space-y-3"
                                     style={{
-                                        background: 'var(--bg-card)',
-                                        border: '1px solid var(--glass-border)',
+                                        background: "var(--bg-card)",
+                                        border: "1px solid var(--glass-border)",
                                     }}
                                 >
                                     <Bone className="h-3 w-24 rounded-full" />
@@ -108,8 +104,8 @@ export function DashboardSkeleton({ handle }: { handle?: string }) {
                                 key={i}
                                 className="rounded-[1.75rem] p-4 md:p-5 space-y-3 min-h-24 md:min-h-32 flex flex-col"
                                 style={{
-                                    background: 'var(--bg-card)',
-                                    border: '1px solid var(--glass-border)',
+                                    background: "var(--bg-card)",
+                                    border: "1px solid var(--glass-border)",
                                 }}
                             >
                                 <div className="flex items-start justify-between">
@@ -129,14 +125,14 @@ export function DashboardSkeleton({ handle }: { handle?: string }) {
                         </div>
                         <p
                             className="text-sm font-display font-medium animate-pulse"
-                            style={{ color: 'var(--text-main)' }}
+                            style={{ color: "var(--text-main)" }}
                         >
-                            Analyzing{handle ? ` ${handle}'s` : ''} profile
+                            Analyzing{handle ? ` ${handle}'s` : ""} profile
                             intelligence…
                         </p>
                         <p
                             className="text-[10px] font-mono uppercase tracking-[0.2em]"
-                            style={{ color: 'var(--text-muted)' }}
+                            style={{ color: "var(--text-muted)" }}
                         >
                             Fetching from Codeforces API
                         </p>

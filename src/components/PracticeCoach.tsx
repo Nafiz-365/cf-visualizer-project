@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { Card } from './ui/Card';
-import { User, RatingChange, Submission } from '../types';
-import { motion } from 'motion/react';
+import React, { useState, useMemo } from "react";
+import { Card } from "./ui/Card";
+import { User, RatingChange, Submission } from "../types";
+import { motion } from "motion/react";
 import {
     Sparkles,
     TrendingUp,
@@ -12,8 +12,8 @@ import {
     ArrowUpRight,
     Play,
     CheckCircle2,
-} from 'lucide-react';
-import { cn } from '../lib/utils';
+} from "lucide-react";
+import { cn } from "../lib/utils";
 import {
     ResponsiveContainer,
     AreaChart,
@@ -22,7 +22,7 @@ import {
     YAxis,
     Tooltip,
     CartesianGrid,
-} from 'recharts';
+} from "recharts";
 
 interface PracticeCoachProps {
     user: User;
@@ -49,8 +49,8 @@ function PracticeCoachImpl({
             return {
                 isStagnated: false,
                 message:
-                    'Keep participating in rated rounds to calibrate stagnation diagnostics!',
-                level: 'normal' as const,
+                    "Keep participating in rated rounds to calibrate stagnation diagnostics!",
+                level: "normal" as const,
             };
         }
 
@@ -70,16 +70,16 @@ function PracticeCoachImpl({
             return {
                 isStagnated: true,
                 message:
-                    'Plateau Detected: Your rating has fluctuated by less than 40 points over your last 3 rounds. Time to adjust your preparation!',
-                level: 'warning' as const,
+                    "Plateau Detected: Your rating has fluctuated by less than 40 points over your last 3 rounds. Time to adjust your preparation!",
+                level: "warning" as const,
             };
         }
 
         return {
             isStagnated: false,
             message:
-                'Optimal Progression: Your active ratings trajectory is healthy and responding to training cycles.',
-            level: 'healthy' as const,
+                "Optimal Progression: Your active ratings trajectory is healthy and responding to training cycles.",
+            level: "healthy" as const,
         };
     }, [ratingHistory, user]);
 
@@ -88,7 +88,7 @@ function PracticeCoachImpl({
         const baseRating = user.rating || 1200;
 
         // Solve rate (problems per week)
-        const recentSubmissions = submissions.filter((s) => s.verdict === 'OK');
+        const recentSubmissions = submissions.filter((s) => s.verdict === "OK");
         const weeklySolveCount = Math.min(
             25,
             Math.max(1, Math.round(recentSubmissions.length / 4)),
@@ -101,31 +101,31 @@ function PracticeCoachImpl({
 
         return [
             {
-                day: 'Day 0',
+                day: "Day 0",
                 pessimistic: baseRating,
                 base: baseRating,
                 optimistic: baseRating,
             },
             {
-                day: 'Day 15',
+                day: "Day 15",
                 pessimistic: Math.round(baseRating + conservativeFactor * 1.5),
                 base: Math.round(baseRating + baseFactor * 1.5),
                 optimistic: Math.round(baseRating + optimisticFactor * 1.5),
             },
             {
-                day: 'Day 30',
+                day: "Day 30",
                 pessimistic: Math.round(baseRating + conservativeFactor * 3.0),
                 base: Math.round(baseRating + baseFactor * 3.0),
                 optimistic: Math.round(baseRating + optimisticFactor * 3.0),
             },
             {
-                day: 'Day 60',
+                day: "Day 60",
                 pessimistic: Math.round(baseRating + conservativeFactor * 6.0),
                 base: Math.round(baseRating + baseFactor * 6.0),
                 optimistic: Math.round(baseRating + optimisticFactor * 6.0),
             },
             {
-                day: 'Day 90',
+                day: "Day 90",
                 pessimistic: Math.round(baseRating + conservativeFactor * 9.0),
                 base: Math.round(baseRating + baseFactor * 9.0),
                 optimistic: Math.round(baseRating + optimisticFactor * 9.0),
@@ -139,64 +139,64 @@ function PracticeCoachImpl({
 
         if (rating < 1400) {
             return {
-                title: 'Phase I: Constructive Core & Greedy Algorithms',
+                title: "Phase I: Constructive Core & Greedy Algorithms",
                 tasks: [
                     {
-                        id: 't1',
-                        label: 'Solve 3 Constructive Algorithms rated 1100-1300',
-                        desc: 'Solidifies logical edge-case handling.',
+                        id: "t1",
+                        label: "Solve 3 Constructive Algorithms rated 1100-1300",
+                        desc: "Solidifies logical edge-case handling.",
                     },
                     {
-                        id: 't2',
-                        label: 'Complete 2 Greedy challenges under 30 minutes',
-                        desc: 'Focuses on speed calibration and greedy invariants.',
+                        id: "t2",
+                        label: "Complete 2 Greedy challenges under 30 minutes",
+                        desc: "Focuses on speed calibration and greedy invariants.",
                     },
                     {
-                        id: 't3',
-                        label: 'Analyze a past contest editorial',
-                        desc: 'Expands pattern-matching lexicon.',
+                        id: "t3",
+                        label: "Analyze a past contest editorial",
+                        desc: "Expands pattern-matching lexicon.",
                     },
                 ],
             };
         } else if (rating < 1800) {
             return {
-                title: 'Phase II: Dynamic Programming & Math Invariants',
+                title: "Phase II: Dynamic Programming & Math Invariants",
                 tasks: [
                     {
-                        id: 't1',
-                        label: 'Solve 4 Dynamic Programming problems rated 1500-1700',
-                        desc: 'Establishes state transition intuition.',
+                        id: "t1",
+                        label: "Solve 4 Dynamic Programming problems rated 1500-1700",
+                        desc: "Establishes state transition intuition.",
                     },
                     {
-                        id: 't2',
-                        label: 'Implement 2 Graph/DFS traversal applications',
-                        desc: 'Strengthens topological and shortest path concepts.',
+                        id: "t2",
+                        label: "Implement 2 Graph/DFS traversal applications",
+                        desc: "Strengthens topological and shortest path concepts.",
                     },
                     {
-                        id: 't3',
-                        label: 'Upsolve problem C/D from last participated round',
-                        desc: 'Pushes beyond current comfort zone.',
+                        id: "t3",
+                        label: "Upsolve problem C/D from last participated round",
+                        desc: "Pushes beyond current comfort zone.",
                     },
                 ],
             };
         } else {
             return {
-                title: 'Phase III: Advanced Structures & Segment Trees',
+                title: "Phase III: Advanced Structures & Segment Trees",
                 tasks: [
                     {
-                        id: 't1',
-                        label: 'Practice 3 Data Structures / Segment Tree problems > 1900',
-                        desc: 'Master range queries and lazy propagation.',
+                        id: "t1",
+                        label: "Practice 3 Data Structures / Segment Tree problems > 1900",
+                        desc: "Master range queries and lazy propagation.",
                     },
                     {
-                        id: 't2',
-                        label: 'Solve 2 Combinatorics & Number Theory challenges',
-                        desc: 'Refines high-rating analytical math proofs.',
+                        id: "t2",
+                        label: "Solve 2 Combinatorics & Number Theory challenges",
+                        desc: "Refines high-rating analytical math proofs.",
                     },
                     {
-                        id: 't3',
-                        label: 'Complete 1 virtual contest with friend comparison',
-                        desc: 'Simulates real-world round pacing and stress.',
+                        id: "t3",
+                        label: "Complete 1 virtual contest with friend comparison",
+                        desc: "Simulates real-world round pacing and stress.",
                     },
                 ],
             };
@@ -279,25 +279,25 @@ function PracticeCoachImpl({
                                 tickLine={false}
                             />
                             <YAxis
-                                domain={['dataMin - 100', 'dataMax + 100']}
+                                domain={["dataMin - 100", "dataMax + 100"]}
                                 stroke="#64748b"
                                 fontSize={10}
                                 tickLine={false}
                             />
                             <Tooltip
                                 contentStyle={{
-                                    backgroundColor: '#0f172a',
-                                    borderColor: 'rgba(255,255,255,0.08)',
-                                    borderRadius: '12px',
+                                    backgroundColor: "#0f172a",
+                                    borderColor: "rgba(255,255,255,0.08)",
+                                    borderRadius: "12px",
                                 }}
                                 labelStyle={{
-                                    color: '#94a3b8',
-                                    fontSize: '10px',
-                                    fontWeight: 'bold',
+                                    color: "#94a3b8",
+                                    fontSize: "10px",
+                                    fontWeight: "bold",
                                 }}
                                 itemStyle={{
-                                    fontSize: '12px',
-                                    fontWeight: 'bold',
+                                    fontSize: "12px",
+                                    fontWeight: "bold",
                                 }}
                             />
                             <CartesianGrid
@@ -346,10 +346,10 @@ function PracticeCoachImpl({
                 {/* Stagnation Panel */}
                 <Card
                     className={cn(
-                        'p-5 border transition-all duration-300 relative overflow-hidden',
+                        "p-5 border transition-all duration-300 relative overflow-hidden",
                         stagnationAnalysis.isStagnated
-                            ? 'bg-red-500/5 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.15)]'
-                            : 'bg-emerald-500/5 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]',
+                            ? "bg-red-500/5 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.15)]"
+                            : "bg-emerald-500/5 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]",
                     )}
                 >
                     <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
@@ -357,10 +357,10 @@ function PracticeCoachImpl({
                         <AlertTriangle
                             size={18}
                             className={cn(
-                                'mt-0.5 shrink-0',
+                                "mt-0.5 shrink-0",
                                 stagnationAnalysis.isStagnated
-                                    ? 'text-red-400'
-                                    : 'text-emerald-400',
+                                    ? "text-red-400"
+                                    : "text-emerald-400",
                             )}
                         />
                         <div className="space-y-1">
@@ -422,19 +422,19 @@ function PracticeCoachImpl({
                                         key={task.id}
                                         onClick={() => toggleTask(task.id)}
                                         className={cn(
-                                            'p-3 rounded-xl border transition-all cursor-pointer select-none',
+                                            "p-3 rounded-xl border transition-all cursor-pointer select-none",
                                             isDone
-                                                ? 'bg-brand-primary/10 border-brand-primary/30 text-brand-primary/60'
-                                                : 'bg-white/2 border-white/10 text-text-app hover:bg-white/5 hover:border-brand-primary/30 hover:shadow-[0_0_15px_rgba(79,142,247,0.15)]',
+                                                ? "bg-brand-primary/10 border-brand-primary/30 text-brand-primary/60"
+                                                : "bg-white/2 border-white/10 text-text-app hover:bg-white/5 hover:border-brand-primary/30 hover:shadow-[0_0_15px_rgba(79,142,247,0.15)]",
                                         )}
                                     >
                                         <div className="flex items-start gap-3">
                                             <div
                                                 className={cn(
-                                                    'w-4 h-4 rounded-md border flex items-center justify-center mt-0.5 shrink-0 transition-colors',
+                                                    "w-4 h-4 rounded-md border flex items-center justify-center mt-0.5 shrink-0 transition-colors",
                                                     isDone
-                                                        ? 'bg-brand-primary border-brand-primary text-white'
-                                                        : 'border-white/20',
+                                                        ? "bg-brand-primary border-brand-primary text-white"
+                                                        : "border-white/20",
                                                 )}
                                             >
                                                 {isDone && (
@@ -444,9 +444,9 @@ function PracticeCoachImpl({
                                             <div>
                                                 <p
                                                     className={cn(
-                                                        'text-xs font-bold',
+                                                        "text-xs font-bold",
                                                         isDone &&
-                                                            'line-through',
+                                                            "line-through",
                                                     )}
                                                 >
                                                     {task.label}

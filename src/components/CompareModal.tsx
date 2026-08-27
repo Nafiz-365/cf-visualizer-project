@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
     X,
     Trophy,
@@ -9,11 +9,11 @@ import {
     Shield,
     ArrowUp,
     ArrowDown,
-} from 'lucide-react';
-import { User } from '../types';
-import { CodeforcesService } from '../services/codeforces';
-import { cn, getRankColor, getRankBg } from '../lib/utils';
-import { Card } from './ui/Card';
+} from "lucide-react";
+import { User } from "../types";
+import { CodeforcesService } from "../services/codeforces";
+import { cn, getRankColor, getRankBg } from "../lib/utils";
+import { Card } from "./ui/Card";
 
 interface CompareModalProps {
     isOpen: boolean;
@@ -31,12 +31,12 @@ export function CompareModal({
     const [myUser, setMyUser] = useState<User | null>(null);
     const [friendUser, setFriendUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (!isOpen) return;
         setLoading(true);
-        setError('');
+        setError("");
 
         Promise.all([
             CodeforcesService.getUserInfo(myHandle),
@@ -47,9 +47,9 @@ export function CompareModal({
                 setFriendUser(friend);
             })
             .catch((err) => {
-                console.error('Compare fetch error', err);
+                console.error("Compare fetch error", err);
                 setError(
-                    'Failed to fetch data for comparison. One of the handles might be invalid or the Codeforces API is down.',
+                    "Failed to fetch data for comparison. One of the handles might be invalid or the Codeforces API is down.",
                 );
             })
             .finally(() => setLoading(false));
@@ -57,8 +57,8 @@ export function CompareModal({
 
     if (!isOpen) return null;
 
-    const myRank = myUser?.rank ?? 'unrated';
-    const friendRank = friendUser?.rank ?? 'unrated';
+    const myRank = myUser?.rank ?? "unrated";
+    const friendRank = friendUser?.rank ?? "unrated";
 
     return (
         <AnimatePresence>
@@ -123,7 +123,7 @@ export function CompareModal({
                                         <div className="text-center">
                                             <div
                                                 className={cn(
-                                                    'w-20 h-20 mx-auto rounded-full mb-4 border-4',
+                                                    "w-20 h-20 mx-auto rounded-full mb-4 border-4",
                                                     getRankBg(myRank),
                                                 )}
                                             >
@@ -135,7 +135,7 @@ export function CompareModal({
                                             </div>
                                             <h3
                                                 className={cn(
-                                                    'text-xl font-bold',
+                                                    "text-xl font-bold",
                                                     getRankColor(myRank),
                                                 )}
                                             >
@@ -154,7 +154,7 @@ export function CompareModal({
                                         <div className="text-center">
                                             <div
                                                 className={cn(
-                                                    'w-20 h-20 mx-auto rounded-full mb-4 border-4',
+                                                    "w-20 h-20 mx-auto rounded-full mb-4 border-4",
                                                     getRankBg(friendRank),
                                                 )}
                                             >
@@ -167,7 +167,7 @@ export function CompareModal({
 
                                             <h3
                                                 className={cn(
-                                                    'text-xl font-bold',
+                                                    "text-xl font-bold",
                                                     getRankColor(friendRank),
                                                 )}
                                             >
@@ -237,15 +237,15 @@ function ComparisonRow({
         <div className="grid grid-cols-[1fr_1.5fr_1fr] items-center bg-white/5 border border-white/5 rounded-xl p-4">
             <div
                 className={cn(
-                    'text-center font-mono font-bold text-lg',
+                    "text-center font-mono font-bold text-lg",
                     isVal1Better
-                        ? 'text-green-400'
+                        ? "text-green-400"
                         : isTie
-                          ? 'text-text-app'
-                          : 'text-muted-app',
+                          ? "text-text-app"
+                          : "text-muted-app",
                 )}
             >
-                {format(val1)}{' '}
+                {format(val1)}{" "}
                 {isVal1Better && <ArrowUp size={16} className="inline ml-1" />}
             </div>
             <div className="text-center text-sm font-bold uppercase tracking-wider text-muted-app">
@@ -253,15 +253,15 @@ function ComparisonRow({
             </div>
             <div
                 className={cn(
-                    'text-center font-mono font-bold text-lg',
+                    "text-center font-mono font-bold text-lg",
                     isVal2Better
-                        ? 'text-green-400'
+                        ? "text-green-400"
                         : isTie
-                          ? 'text-text-app'
-                          : 'text-muted-app',
+                          ? "text-text-app"
+                          : "text-muted-app",
                 )}
             >
-                {isVal2Better && <ArrowUp size={16} className="inline mr-1" />}{' '}
+                {isVal2Better && <ArrowUp size={16} className="inline mr-1" />}{" "}
                 {format(val2)}
             </div>
         </div>

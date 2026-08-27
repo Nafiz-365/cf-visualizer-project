@@ -1,6 +1,6 @@
-import React from 'react';
-import { User, RatingChange, Submission } from '../types';
-import { Card } from './ui/Card';
+import React from "react";
+import { User, RatingChange, Submission } from "../types";
+import { Card } from "./ui/Card";
 import {
     Milestone,
     Flag,
@@ -8,9 +8,9 @@ import {
     Award,
     Calendar,
     History,
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { motion } from 'motion/react';
+} from "lucide-react";
+import { format } from "date-fns";
+import { motion } from "motion/react";
 
 interface TimelineProps {
     user: User;
@@ -22,10 +22,10 @@ export function Timeline({ user, ratingHistory, submissions }: TimelineProps) {
     const events = [
         {
             date: user.registrationTimeSeconds * 1000,
-            title: 'Joined Codeforces',
-            desc: 'The beginning of a competitive journey.',
+            title: "Joined Codeforces",
+            desc: "The beginning of a competitive journey.",
             icon: Calendar,
-            color: 'bg-blue-500',
+            color: "bg-blue-500",
         },
     ];
 
@@ -37,23 +37,23 @@ export function Timeline({ user, ratingHistory, submissions }: TimelineProps) {
         const firstContest = sortedRatingHistory[0];
         events.push({
             date: firstContest.ratingUpdateTimeSeconds * 1000,
-            title: 'First Official Contest',
+            title: "First Official Contest",
             desc: `Participated in ${firstContest.contestName}.`,
             icon: Flag,
-            color: 'bg-emerald-500',
+            color: "bg-emerald-500",
         });
 
         // Detect rank changes
         const rankThresholds = [
-            { rating: 1200, name: 'Pupil' },
-            { rating: 1400, name: 'Specialist' },
-            { rating: 1600, name: 'Expert' },
-            { rating: 1900, name: 'Candidate Master' },
-            { rating: 2100, name: 'Master' },
-            { rating: 2300, name: 'International Master' },
-            { rating: 2400, name: 'Grandmaster' },
-            { rating: 2600, name: 'International Grandmaster' },
-            { rating: 3000, name: 'Legendary Grandmaster' },
+            { rating: 1200, name: "Pupil" },
+            { rating: 1400, name: "Specialist" },
+            { rating: 1600, name: "Expert" },
+            { rating: 1900, name: "Candidate Master" },
+            { rating: 2100, name: "Master" },
+            { rating: 2300, name: "International Master" },
+            { rating: 2400, name: "Grandmaster" },
+            { rating: 2600, name: "International Grandmaster" },
+            { rating: 3000, name: "Legendary Grandmaster" },
         ];
 
         let currentThresholdIdx = -1;
@@ -70,7 +70,7 @@ export function Timeline({ user, ratingHistory, submissions }: TimelineProps) {
                     title: `Promoted to ${threshold.name}`,
                     desc: `Reached ${change.newRating} rating in ${change.contestName}.`,
                     icon: Award,
-                    color: 'bg-purple-500',
+                    color: "bg-purple-500",
                 });
             }
         });
@@ -81,10 +81,10 @@ export function Timeline({ user, ratingHistory, submissions }: TimelineProps) {
         );
         events.push({
             date: peak.ratingUpdateTimeSeconds * 1000,
-            title: 'Lifetime Peak Rating',
+            title: "Lifetime Peak Rating",
             desc: `Reached historical high of ${peak.newRating}.`,
             icon: TrendingUp,
-            color: 'bg-orange-500',
+            color: "bg-orange-500",
         });
 
         // Best Rank
@@ -96,10 +96,10 @@ export function Timeline({ user, ratingHistory, submissions }: TimelineProps) {
         if (bestRank.rank > 0) {
             events.push({
                 date: bestRank.ratingUpdateTimeSeconds * 1000,
-                title: 'Best Global Rank',
+                title: "Best Global Rank",
                 desc: `Ranked #${bestRank.rank} in ${bestRank.contestName}.`,
                 icon: Milestone,
-                color: 'bg-pink-500',
+                color: "bg-pink-500",
             });
         }
     }
@@ -150,7 +150,7 @@ export function Timeline({ user, ratingHistory, submissions }: TimelineProps) {
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                                 <span className="text-[9px] md:text-[10px] font-black text-muted-app uppercase tracking-widest block mb-1">
-                                    {format(event.date, 'MMMM dd, yyyy')}
+                                    {format(event.date, "MMMM dd, yyyy")}
                                 </span>
                                 <h4 className="text-base md:text-lg font-display font-bold text-text-app leading-tight">
                                     {event.title}

@@ -1,8 +1,8 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { Submission } from '../types';
-import { AlertCircle, ArrowRight, ExternalLink, Bookmark } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { BookmarkNoteModal } from './BookmarkNoteModal';
+import React, { useMemo, useState, useEffect } from "react";
+import { Submission } from "../types";
+import { AlertCircle, ArrowRight, ExternalLink, Bookmark } from "lucide-react";
+import { cn } from "../lib/utils";
+import { BookmarkNoteModal } from "./BookmarkNoteModal";
 
 interface UnsolvedProblemsProps {
     submissions: Submission[];
@@ -16,7 +16,7 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
     } | null>(null);
 
     useEffect(() => {
-        fetch('/api/bookmarks')
+        fetch("/api/bookmarks")
             .then((r) => r.json())
             .then((data) => {
                 if (data.success) {
@@ -33,9 +33,9 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
         e.preventDefault();
         e.stopPropagation();
         try {
-            await fetch('/api/bookmarks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            await fetch("/api/bookmarks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     problemId: `${problem.contestId}${problem.index}`,
                     problemName: problem.name,
@@ -48,7 +48,7 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                 id: `${problem.contestId}${problem.index}`,
                 name: problem.name,
             });
-            window.dispatchEvent(new Event('bookmarksUpdated'));
+            window.dispatchEvent(new Event("bookmarksUpdated"));
         } catch (e) {
             console.error(e);
         }
@@ -57,15 +57,15 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
     const handleSaveNote = async (note: string) => {
         if (!activeBookmark) return;
         try {
-            await fetch('/api/notes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            await fetch("/api/notes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     problemId: activeBookmark.id,
                     note: note,
                 }),
             });
-            window.dispatchEvent(new Event('bookmarksUpdated'));
+            window.dispatchEvent(new Event("bookmarksUpdated"));
         } catch (e) {
             console.error(e);
         }
@@ -78,7 +78,7 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
     const unsolved = useMemo(() => {
         const solvedIds = new Set(
             submissions
-                .filter((s) => s.verdict === 'OK')
+                .filter((s) => s.verdict === "OK")
                 .map((s) => `${s.problem.contestId}-${s.problem.index}`),
         );
 
@@ -145,12 +145,12 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                                 </div>
                                 <div className="flex flex-wrap items-center gap-3">
                                     <span className="text-[9px] font-medium text-muted-app/60 font-mono">
-                                        {problem.rating || 'UNRATED'} RATING
+                                        {problem.rating || "UNRATED"} RATING
                                     </span>
                                     <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20">
                                         {count > 1
-                                            ? 'Repeated miss'
-                                            : 'Single miss'}
+                                            ? "Repeated miss"
+                                            : "Single miss"}
                                     </span>
                                 </div>
                             </div>
@@ -158,12 +158,12 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                                 <button
                                     onClick={(e) => handleBookmark(e, problem)}
                                     className={cn(
-                                        'p-1.5 transition-colors group-hover:scale-110',
+                                        "p-1.5 transition-colors group-hover:scale-110",
                                         bookmarked.has(
                                             `${problem.contestId}${problem.index}`,
                                         )
-                                            ? 'text-brand-primary'
-                                            : 'text-muted-app/50 hover:text-brand-secondary',
+                                            ? "text-brand-primary"
+                                            : "text-muted-app/50 hover:text-brand-secondary",
                                     )}
                                     title="Bookmark problem"
                                 >
@@ -173,8 +173,8 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                                             bookmarked.has(
                                                 `${problem.contestId}${problem.index}`,
                                             )
-                                                ? 'currentColor'
-                                                : 'none'
+                                                ? "currentColor"
+                                                : "none"
                                         }
                                     />
                                 </button>
@@ -202,7 +202,7 @@ export function UnsolvedProblems({ submissions }: UnsolvedProblemsProps) {
                 onClose={handleSkipNote}
                 onSave={handleSaveNote}
                 onSkip={handleSkipNote}
-                problemName={activeBookmark?.name || ''}
+                problemName={activeBookmark?.name || ""}
             />
         </div>
     );
