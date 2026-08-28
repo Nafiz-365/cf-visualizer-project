@@ -110,7 +110,8 @@ export class CodeforcesService {
         count: number = 200,
         country?: string,
     ): Promise<User[]> {
-        const url = `${BASE_URL}/user.ratedList?activeOnly=true`;
+        // Use the internal proxy because Codeforces drops CORS headers for user.ratedList
+        const url = `/api/codeforces/user.ratedList?activeOnly=true`;
         const allUsers = await this.fetch<User[]>(url);
         let filtered = allUsers;
         if (country) {
