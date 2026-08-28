@@ -1,7 +1,7 @@
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import { defineConfig } from 'vite';
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { defineConfig } from "vite";
 
 export default defineConfig(() => {
     return {
@@ -9,64 +9,64 @@ export default defineConfig(() => {
 
         resolve: {
             alias: {
-                '@': path.resolve(__dirname, '.'),
+                "@": path.resolve(__dirname, "."),
             },
         },
 
         server: {
             // HMR is disabled in AI Studio via DISABLE_HMR env var.
             // Do not modify—file watching is disabled to prevent flickering during agent edits.
-            hmr: process.env.DISABLE_HMR !== 'true',
+            hmr: process.env.DISABLE_HMR !== "true",
             proxy: {
-                '/api': {
-                    target: 'http://localhost:3000',
+                "/api": {
+                    target: "http://localhost:3000",
                     changeOrigin: true,
                 },
             },
         },
 
         build: {
-            target: 'esnext',
+            target: "esnext",
 
-            minify: 'esbuild' as const,
+            minify: "esbuild" as const,
 
             rollupOptions: {
                 output: {
                     manualChunks: {
                         // React core — smallest, most cached chunk
-                        'vendor-react': [
-                            'react',
-                            'react-dom',
-                            'react-router-dom',
+                        "vendor-react": [
+                            "react",
+                            "react-dom",
+                            "react-router-dom",
                         ],
                         // Animation library
-                        'vendor-motion': ['motion'],
+                        "vendor-motion": ["motion"],
 
                         // Charting library (largest vendor)
-                        'vendor-recharts': ['recharts'],
+                        "vendor-recharts": ["recharts"],
 
                         // 3D engine — only used by MagicRings on landing page
-                        'vendor-three': ['three'],
+                        "vendor-three": ["three"],
 
                         // Markdown rendering — only used by AI chat
-                        'vendor-markdown': [
-                            'react-markdown',
-                            'remark-gfm',
-                            'rehype-highlight',
+                        "vendor-markdown": [
+                            "react-markdown",
+                            "remark-gfm",
+                            "rehype-highlight",
                         ],
 
                         // Icon library — tree-shaken per component, still worth isolating
-                        'vendor-lucide': ['lucide-react'],
+                        "vendor-lucide": ["lucide-react"],
 
                         // Utility libs
-                        'vendor-utils': ['clsx', 'tailwind-merge', 'date-fns'],
+                        "vendor-utils": ["clsx", "tailwind-merge", "date-fns"],
                     },
                 },
             },
         },
         // Pre-bundle heavy deps for faster dev server cold start
         optimizeDeps: {
-            include: ['react', 'react-dom', 'motion', 'recharts', 'date-fns'],
+            include: ["react", "react-dom", "motion", "recharts", "date-fns"],
         },
     };
 });

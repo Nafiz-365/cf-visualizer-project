@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
     ResponsiveContainer,
     Radar,
@@ -7,8 +7,8 @@ import {
     PolarAngleAxis,
     PolarRadiusAxis,
     Tooltip,
-} from 'recharts';
-import { Submission } from '../types';
+} from "recharts";
+import { Submission } from "../types";
 
 interface RadarStrengthProps {
     submissions: Submission[];
@@ -16,7 +16,7 @@ interface RadarStrengthProps {
 
 function RadarStrengthImpl({ submissions }: RadarStrengthProps) {
     const tagStats = submissions
-        .filter((s) => s.verdict === 'OK')
+        .filter((s) => s.verdict === "OK")
         .reduce(
             (acc, sub) => {
                 sub.problem.tags.forEach((tag) => {
@@ -47,10 +47,10 @@ function RadarStrengthImpl({ submissions }: RadarStrengthProps) {
                     <PolarAngleAxis
                         dataKey="subject"
                         tick={{
-                            fill: '#64748b',
+                            fill: "#64748b",
                             fontSize: 8,
                             fontWeight: 900,
-                            letterSpacing: '0.1em',
+                            letterSpacing: "0.1em",
                         }}
                     />
                     <Tooltip
@@ -73,13 +73,13 @@ function RadarStrengthImpl({ submissions }: RadarStrengthProps) {
                                         ? coordinate.y < 80
                                         : false;
 
-                                const translateX = isRight ? '-100%' : '0%';
-                                const translateY = isTop ? '15px' : '-115%';
+                                const translateX = isRight ? "-100%" : "0%";
+                                const translateY = isTop ? "15px" : "-115%";
 
                                 const tooltipStyle = {
                                     transform: `translate(${translateX}, ${translateY})`,
                                     transition:
-                                        'transform 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+                                        "transform 150ms cubic-bezier(0.16, 1, 0.3, 1)",
                                 };
 
                                 return (
@@ -114,8 +114,8 @@ function RadarStrengthImpl({ submissions }: RadarStrengthProps) {
                         animationDuration={2000}
                         activeDot={{
                             r: 4,
-                            fill: '#3b82f6',
-                            stroke: '#fff',
+                            fill: "#3b82f6",
+                            stroke: "#fff",
                             strokeWidth: 2,
                         }}
                     />

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
-import { CodeforcesService } from '../services/codeforces';
-import { RatingChange, User } from '../types';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from "react";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
+import { CodeforcesService } from "../services/codeforces";
+import { RatingChange, User } from "../types";
+import { motion, AnimatePresence } from "motion/react";
 import {
     TrendingUp,
     Users,
@@ -13,8 +13,8 @@ import {
     HelpCircle,
     ArrowRight,
     Check,
-} from 'lucide-react';
-import { cn } from '../lib/utils';
+} from "lucide-react";
+import { cn } from "../lib/utils";
 
 interface RatingPredictorProps {
     currentUser: User;
@@ -25,15 +25,15 @@ function RatingPredictorImpl({
     currentUser,
     ratingHistory,
 }: RatingPredictorProps) {
-    const [contestId, setContestId] = useState<string>('');
-    const [rank, setRank] = useState<string>('');
+    const [contestId, setContestId] = useState<string>("");
+    const [rank, setRank] = useState<string>("");
     const [selectedHistoryContest, setSelectedHistoryContest] =
-        useState<string>('');
+        useState<string>("");
 
     // Friend compare
-    const [friendHandle, setFriendHandle] = useState<string>('');
+    const [friendHandle, setFriendHandle] = useState<string>("");
     const [friendUser, setFriendUser] = useState<User | null>(null);
-    const [friendRank, setFriendRank] = useState<string>('');
+    const [friendRank, setFriendRank] = useState<string>("");
 
     // States
     const [loading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ function RatingPredictorImpl({
             newRating: number;
             delta: number;
             rank: number;
-            status: 'positive' | 'negative' | 'neutral';
+            status: "positive" | "negative" | "neutral";
         };
         friend?: {
             handle: string;
@@ -55,7 +55,7 @@ function RatingPredictorImpl({
             newRating: number;
             delta: number;
             rank: number;
-            status: 'positive' | 'negative' | 'neutral';
+            status: "positive" | "negative" | "neutral";
         };
     } | null>(null);
 
@@ -75,7 +75,7 @@ function RatingPredictorImpl({
     const handlePredict = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!contestId || !rank) {
-            setError('Please enter a contest ID and rank.');
+            setError("Please enter a contest ID and rank.");
             return;
         }
 
@@ -87,11 +87,11 @@ function RatingPredictorImpl({
             const parsedRank = parseInt(rank);
 
             if (isNaN(parsedContestId) || isNaN(parsedRank)) {
-                throw new Error('Contest ID and Rank must be valid numbers.');
+                throw new Error("Contest ID and Rank must be valid numbers.");
             }
 
             // Fetch contest details/standings to make prediction highly realistic
-            let contestName = 'Codeforces Round';
+            let contestName = "Codeforces Round";
             let totalParticipants = 8500;
 
             try {
@@ -105,7 +105,7 @@ function RatingPredictorImpl({
                 totalParticipants = standings.contest.id > 1500 ? 12000 : 8000;
             } catch (err) {
                 console.warn(
-                    'Could not fetch exact standings, using estimation',
+                    "Could not fetch exact standings, using estimation",
                     err,
                 );
             }
@@ -168,14 +168,14 @@ function RatingPredictorImpl({
                         rank: fRank,
                         status:
                             fDelta > 0
-                                ? ('positive' as const)
+                                ? ("positive" as const)
                                 : fDelta < 0
-                                  ? ('negative' as const)
-                                  : ('neutral' as const),
+                                  ? ("negative" as const)
+                                  : ("neutral" as const),
                     };
                 } catch (friendErr) {
                     console.warn(
-                        'Could not fetch friend user, ignoring friend details',
+                        "Could not fetch friend user, ignoring friend details",
                         friendErr,
                     );
                 }
@@ -192,15 +192,15 @@ function RatingPredictorImpl({
                     rank: parsedRank,
                     status:
                         userDelta > 0
-                            ? 'positive'
+                            ? "positive"
                             : userDelta < 0
-                              ? 'negative'
-                              : 'neutral',
+                              ? "negative"
+                              : "neutral",
                 },
                 friend: friendResult,
             });
         } catch (err: any) {
-            setError(err.message || 'Failed to calculate rating prediction.');
+            setError(err.message || "Failed to calculate rating prediction.");
         } finally {
             setLoading(false);
         }
@@ -393,8 +393,8 @@ function RatingPredictorImpl({
                                             {predictionResult.contestName}
                                         </h3>
                                         <p className="text-[10px] text-muted-app font-mono uppercase">
-                                            Estimated Pool:{' '}
-                                            {predictionResult.totalParticipants}{' '}
+                                            Estimated Pool:{" "}
+                                            {predictionResult.totalParticipants}{" "}
                                             contestants
                                         </p>
                                     </div>
@@ -409,7 +409,7 @@ function RatingPredictorImpl({
                                                         {
                                                             predictionResult
                                                                 .user.handle
-                                                        }{' '}
+                                                        }{" "}
                                                         (You)
                                                     </span>
                                                     <span className="text-[9px] bg-brand-primary/10 text-brand-primary font-mono px-2 py-0.5 rounded-md font-bold">
@@ -424,8 +424,8 @@ function RatingPredictorImpl({
                                                     <span className="text-3xl font-display font-black text-text-app">
                                                         {predictionResult.user
                                                             .delta > 0
-                                                            ? '+'
-                                                            : ''}
+                                                            ? "+"
+                                                            : ""}
                                                         {
                                                             predictionResult
                                                                 .user.delta
@@ -445,11 +445,11 @@ function RatingPredictorImpl({
                                                         {
                                                             predictionResult
                                                                 .user.oldRating
-                                                        }{' '}
+                                                        }{" "}
                                                         <ArrowRight
                                                             size={10}
                                                             className="inline mx-1 text-muted-app"
-                                                        />{' '}
+                                                        />{" "}
                                                         {
                                                             predictionResult
                                                                 .user.newRating
@@ -458,17 +458,17 @@ function RatingPredictorImpl({
                                                 </div>
                                                 <span
                                                     className={cn(
-                                                        'text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider',
+                                                        "text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider",
                                                         predictionResult.user
                                                             .delta > 0
-                                                            ? 'bg-emerald-500/10 text-emerald-400'
-                                                            : 'bg-red-500/10 text-red-400',
+                                                            ? "bg-emerald-500/10 text-emerald-400"
+                                                            : "bg-red-500/10 text-red-400",
                                                     )}
                                                 >
                                                     {predictionResult.user
                                                         .delta > 0
-                                                        ? 'Rising'
-                                                        : 'Falling'}
+                                                        ? "Rising"
+                                                        : "Falling"}
                                                 </span>
                                             </div>
                                         </div>
@@ -498,8 +498,8 @@ function RatingPredictorImpl({
                                                             {predictionResult
                                                                 .friend.delta >
                                                             0
-                                                                ? '+'
-                                                                : ''}
+                                                                ? "+"
+                                                                : ""}
                                                             {
                                                                 predictionResult
                                                                     .friend
@@ -521,11 +521,11 @@ function RatingPredictorImpl({
                                                                 predictionResult
                                                                     .friend
                                                                     .oldRating
-                                                            }{' '}
+                                                            }{" "}
                                                             <ArrowRight
                                                                 size={10}
                                                                 className="inline mx-1 text-muted-app"
-                                                            />{' '}
+                                                            />{" "}
                                                             {
                                                                 predictionResult
                                                                     .friend
@@ -535,18 +535,18 @@ function RatingPredictorImpl({
                                                     </div>
                                                     <span
                                                         className={cn(
-                                                            'text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider',
+                                                            "text-[9px] font-black uppercase px-2 py-0.5 rounded-sm tracking-wider",
                                                             predictionResult
                                                                 .friend.delta >
                                                                 0
-                                                                ? 'bg-emerald-500/10 text-emerald-400'
-                                                                : 'bg-red-500/10 text-red-400',
+                                                                ? "bg-emerald-500/10 text-emerald-400"
+                                                                : "bg-red-500/10 text-red-400",
                                                         )}
                                                     >
                                                         {predictionResult.friend
                                                             .delta > 0
-                                                            ? 'Rising'
-                                                            : 'Falling'}
+                                                            ? "Rising"
+                                                            : "Falling"}
                                                     </span>
                                                 </div>
                                             </div>
@@ -588,22 +588,22 @@ function RatingPredictorImpl({
                                                         <span>
                                                             Excellent
                                                             performance! You
-                                                            outperformed{' '}
+                                                            outperformed{" "}
                                                             <strong>
                                                                 {
                                                                     predictionResult
                                                                         .friend
                                                                         .handle
                                                                 }
-                                                            </strong>{' '}
-                                                            by{' '}
+                                                            </strong>{" "}
+                                                            by{" "}
                                                             {predictionResult
                                                                 .friend.rank -
                                                                 predictionResult
                                                                     .user
-                                                                    .rank}{' '}
+                                                                    .rank}{" "}
                                                             positions. This
-                                                            results in a{' '}
+                                                            results in a{" "}
                                                             {predictionResult
                                                                 .user.delta -
                                                                 predictionResult
@@ -616,7 +616,7 @@ function RatingPredictorImpl({
                                                                       .delta -
                                                                   predictionResult
                                                                       .friend
-                                                                      .delta}{' '}
+                                                                      .delta}{" "}
                                                             higher rating
                                                             change.
                                                         </span>
@@ -628,13 +628,13 @@ function RatingPredictorImpl({
                                                                         .friend
                                                                         .handle
                                                                 }
-                                                            </strong>{' '}
-                                                            outperformed you by{' '}
+                                                            </strong>{" "}
+                                                            outperformed you by{" "}
                                                             {predictionResult
                                                                 .user.rank -
                                                                 predictionResult
                                                                     .friend
-                                                                    .rank}{' '}
+                                                                    .rank}{" "}
                                                             positions in this
                                                             contest. Grab the
                                                             editorial and

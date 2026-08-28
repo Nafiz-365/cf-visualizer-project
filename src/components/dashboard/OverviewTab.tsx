@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
     Trophy,
     TrendingUp,
@@ -10,12 +10,12 @@ import {
     Zap,
     Binary,
     Shield,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Card, StatCard } from '../ui/Card';
-import { RatingChart } from '../charts/RatingChart';
-import { ActivityHeatmap } from '../charts/ActivityHeatmap';
-import { UpcomingContests } from '../UpcomingContests';
+import { Card, StatCard } from "../ui/Card";
+import { RatingChart } from "../charts/RatingChart";
+import { ActivityHeatmap } from "../charts/ActivityHeatmap";
+import { UpcomingContests } from "../UpcomingContests";
 
 function OverviewTabImpl({
     user,
@@ -49,21 +49,21 @@ function OverviewTabImpl({
                             </div>
                         </div>
                         <h3 className="text-xl md:text-3xl lg:text-4xl font-display font-black text-text-app mb-3 md:mb-6 leading-tight tracking-tighter">
-                            Mastering{' '}
+                            Mastering{" "}
                             <span className="text-brand-primary">
                                 {analytics?.bestTag}
-                            </span>{' '}
-                            at{' '}
+                            </span>{" "}
+                            at{" "}
                             <span className="text-brand-secondary">
                                 {analytics?.avgDifficulty}
-                            </span>{' '}
+                            </span>{" "}
                             Level
                         </h3>
                         <p className="text-xs md:text-sm lg:text-base text-muted-app leading-relaxed max-w-2xl opacity-70 group-hover:opacity-100 transition-opacity">
-                            The data indicates reaching a threshold of{' '}
+                            The data indicates reaching a threshold of{" "}
                             <span className="text-text-app font-bold">
                                 {analytics?.totalSolved}
-                            </span>{' '}
+                            </span>{" "}
                             successful executions. Your focus on high-accuracy
                             problem solving shows structured growth toward the
                             next rating milestone.
@@ -124,7 +124,7 @@ function OverviewTabImpl({
                                     Peak {user.maxRating}
                                 </p>
                                 <p className="text-[9px] md:text-[11px] text-muted-app font-medium leading-normal">
-                                    Securing {user.maxRank || 'Expert'} status
+                                    Securing {user.maxRank || "Expert"} status
                                     records
                                 </p>
                             </div>
@@ -154,13 +154,13 @@ function OverviewTabImpl({
                                 </p>
                                 <p className="mt-1 text-sm font-bold text-text-app">
                                     {Number(analytics?.maxDelta ?? 0) > 0
-                                        ? 'Rising'
-                                        : 'Steady'}
+                                        ? "Rising"
+                                        : "Steady"}
                                 </p>
                                 <p className="mt-1 text-[10px] text-muted-app/70">
                                     {analytics?.maxDelta
                                         ? `Best gain +${analytics.maxDelta}`
-                                        : 'No sharp swings yet'}
+                                        : "No sharp swings yet"}
                                 </p>
                             </div>
                             <div className="rounded-[1.15rem] border border-white/10 bg-white/5 p-3">
@@ -190,7 +190,7 @@ function OverviewTabImpl({
                                     Peak Window
                                 </p>
                                 <p className="mt-1 text-sm font-bold text-text-app">
-                                    {analytics?.peakHour || '—'}
+                                    {analytics?.peakHour || "—"}
                                 </p>
                                 <p className="mt-1 text-[10px] text-muted-app/70">
                                     Best hour for serious practice
@@ -223,7 +223,7 @@ function OverviewTabImpl({
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-app/60">
                                         {(
                                             aiInsights[0]?.title ||
-                                            'Strategic Edge'
+                                            "Strategic Edge"
                                         ).toUpperCase()}
                                     </p>
                                     <p className="mt-2 text-sm font-semibold text-text-app leading-relaxed">
@@ -297,7 +297,7 @@ function OverviewTabImpl({
                             analytics?.maxDelta != null &&
                             analytics.maxDelta > 0
                                 ? `+${analytics.maxDelta}`
-                                : (analytics?.maxDelta ?? '-')
+                                : (analytics?.maxDelta ?? "-")
                         }
                         subValue="Highest Gain"
                         icon={TrendingUp}
@@ -330,7 +330,7 @@ function OverviewTabImpl({
                                 Competitive Trajectory
                             </h3>
                             <p className="text-[9px] md:text-[10px] font-mono text-muted-app uppercase tracking-[0.2em] mt-1.5 md:mt-2 opacity-40">
-                                Rating fluctuations across{' '}
+                                Rating fluctuations across{" "}
                                 {ratingHistory.length} contests
                             </p>
                         </div>
@@ -395,10 +395,10 @@ function OverviewTabImpl({
                                 onChange={(e) =>
                                     setHeatmapRange(
                                         e.target.value as
-                                            | '30'
-                                            | '90'
-                                            | '180'
-                                            | '365',
+                                            | "30"
+                                            | "90"
+                                            | "180"
+                                            | "365",
                                     )
                                 }
                                 className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-muted-app outline-none"

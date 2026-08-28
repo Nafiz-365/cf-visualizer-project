@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
     Bookmark,
     Edit3,
@@ -8,9 +8,9 @@ import {
     Search,
     Tag,
     X,
-} from 'lucide-react';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
+} from "lucide-react";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
 
 interface BookmarkType {
     id: number;
@@ -31,8 +31,8 @@ function BookmarksAndNotesImpl() {
     const [notes, setNotes] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [editingNote, setEditingNote] = useState<string | null>(null);
-    const [noteDraft, setNoteDraft] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [noteDraft, setNoteDraft] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
     const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
 
     useEffect(() => {
@@ -42,17 +42,17 @@ function BookmarksAndNotesImpl() {
             fetchData();
         };
 
-        window.addEventListener('bookmarksUpdated', handleUpdate);
+        window.addEventListener("bookmarksUpdated", handleUpdate);
         return () =>
-            window.removeEventListener('bookmarksUpdated', handleUpdate);
+            window.removeEventListener("bookmarksUpdated", handleUpdate);
     }, []);
 
     const fetchData = async () => {
         setLoading(true);
         try {
             const [bRes, nRes] = await Promise.all([
-                fetch('/api/bookmarks'),
-                fetch('/api/notes'),
+                fetch("/api/bookmarks"),
+                fetch("/api/notes"),
             ]);
 
             const bData = await bRes.json();
@@ -69,7 +69,7 @@ function BookmarksAndNotesImpl() {
                 setNotes(notesMap);
             }
         } catch (e) {
-            console.error('Failed to fetch bookmarks/notes', e);
+            console.error("Failed to fetch bookmarks/notes", e);
         } finally {
             setLoading(false);
         }
@@ -77,7 +77,7 @@ function BookmarksAndNotesImpl() {
 
     const handleRemoveBookmark = async (problemId: string) => {
         try {
-            await fetch(`/api/bookmarks/${problemId}`, { method: 'DELETE' });
+            await fetch(`/api/bookmarks/${problemId}`, { method: "DELETE" });
             setBookmarks((prev) =>
                 prev.filter((b) => b.problem_id !== problemId),
             );
@@ -88,9 +88,9 @@ function BookmarksAndNotesImpl() {
 
     const handleSaveNote = async (problemId: string) => {
         try {
-            await fetch('/api/notes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            await fetch("/api/notes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ problemId, note: noteDraft }),
             });
             setNotes((prev) => ({ ...prev, [problemId]: noteDraft }));
@@ -124,7 +124,7 @@ function BookmarksAndNotesImpl() {
         );
 
         return bookmarks.filter((b) => {
-            const note = notes[b.problem_id] || '';
+            const note = notes[b.problem_id] || "";
             const searchLower = searchQuery.toLowerCase();
 
             const matchesSearch =
@@ -158,7 +158,7 @@ function BookmarksAndNotesImpl() {
         if (!text) return null;
         const parts = text.split(/(#[\w-]+\b)/g);
         return parts.map((part, i) => {
-            if (part.startsWith('#')) {
+            if (part.startsWith("#")) {
                 return (
                     <span
                         key={i}
@@ -204,7 +204,7 @@ function BookmarksAndNotesImpl() {
                     />
                     {searchQuery && (
                         <button
-                            onClick={() => setSearchQuery('')}
+                            onClick={() => setSearchQuery("")}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-app hover:text-text-app"
                         >
                             <X size={14} />
@@ -224,8 +224,8 @@ function BookmarksAndNotesImpl() {
                             onClick={() => toggleTag(tag)}
                             className={`px-2.5 py-1 rounded text-[10px] font-black tracking-widest uppercase transition-colors ${
                                 activeTags.has(tag)
-                                    ? 'bg-brand-secondary text-black'
-                                    : 'bg-white/10 text-muted-app hover:bg-white/20 hover:text-text-app'
+                                    ? "bg-brand-secondary text-black"
+                                    : "bg-white/10 text-muted-app hover:bg-white/20 hover:text-text-app"
                             }`}
                         >
                             #{tag}
@@ -239,8 +239,8 @@ function BookmarksAndNotesImpl() {
                     <Bookmark size={48} className="mx-auto opacity-20 mb-4" />
                     <p>
                         {bookmarks.length === 0
-                            ? 'No problems saved yet.'
-                            : 'No bookmarks match your search or filters.'}
+                            ? "No problems saved yet."
+                            : "No bookmarks match your search or filters."}
                     </p>
                 </div>
             ) : (
@@ -260,7 +260,7 @@ function BookmarksAndNotesImpl() {
                                         {b.problem_id} - {b.problem_name}
                                     </h4>
                                     <p className="text-xs text-muted-app mt-1">
-                                        Saved on{' '}
+                                        Saved on{" "}
                                         {new Date(
                                             b.created_at,
                                         ).toLocaleDateString()}
@@ -268,7 +268,7 @@ function BookmarksAndNotesImpl() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <a
-                                        href={`https://codeforces.com/contest/${b.problem_id.replace(/\D/g, '')}/problem/${b.problem_id.replace(/[0-9]/g, '')}`}
+                                        href={`https://codeforces.com/contest/${b.problem_id.replace(/\D/g, "")}/problem/${b.problem_id.replace(/[0-9]/g, "")}`}
                                         target="_blank"
                                         className="p-2 text-brand-primary hover:bg-brand-primary/10 rounded-xl transition-colors"
                                     >
@@ -336,7 +336,7 @@ function BookmarksAndNotesImpl() {
                                             onClick={() => {
                                                 setEditingNote(b.problem_id);
                                                 setNoteDraft(
-                                                    notes[b.problem_id] || '',
+                                                    notes[b.problem_id] || "",
                                                 );
                                             }}
                                             className="absolute top-0 right-0 p-1.5 bg-white/10 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-brand-secondary hover:text-black"

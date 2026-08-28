@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
-import { RatingChange, Submission, Problem } from '../types';
-import { CodeforcesService } from '../services/codeforces';
-import { motion, AnimatePresence } from 'motion/react';
-import { AIContestDebrief } from './AIContestDebrief';
+import React, { useState, useMemo } from "react";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
+import { RatingChange, Submission, Problem } from "../types";
+import { CodeforcesService } from "../services/codeforces";
+import { motion, AnimatePresence } from "motion/react";
+import { AIContestDebrief } from "./AIContestDebrief";
 import {
     Trophy,
     Calendar,
@@ -18,8 +18,8 @@ import {
     Award,
     Flame,
     BarChart3,
-} from 'lucide-react';
-import { cn } from '../lib/utils';
+} from "lucide-react";
+import { cn } from "../lib/utils";
 import {
     ResponsiveContainer,
     LineChart,
@@ -28,7 +28,7 @@ import {
     YAxis,
     Tooltip,
     CartesianGrid,
-} from 'recharts';
+} from "recharts";
 
 interface ContestAnalyzerProps {
     ratingHistory: RatingChange[];
@@ -45,7 +45,7 @@ function ContestAnalyzerImpl({
     userRating,
     userHandle,
 }: ContestAnalyzerProps) {
-    const [selectedContestId, setSelectedContestId] = useState<string>('');
+    const [selectedContestId, setSelectedContestId] = useState<string>("");
 
     // Pre-select first contest if available
     React.useEffect(() => {
@@ -73,9 +73,9 @@ function ContestAnalyzerImpl({
             .filter(
                 (s) =>
                     s.problem.contestId?.toString() === selectedContestId &&
-                    (s.author.participantType === 'CONTESTANT' ||
-                     s.author.participantType === 'OUT_OF_COMPETITION' ||
-                     s.author.participantType === 'VIRTUAL'),
+                    (s.author.participantType === "CONTESTANT" ||
+                        s.author.participantType === "OUT_OF_COMPETITION" ||
+                        s.author.participantType === "VIRTUAL"),
             )
             .sort((a, b) => a.creationTimeSeconds - b.creationTimeSeconds);
     }, [selectedContestId, submissions]);
@@ -97,15 +97,22 @@ function ContestAnalyzerImpl({
             }
 
             const current = solvedMap.get(index)!;
-            if (sub.verdict === 'OK') {
+            if (sub.verdict === "OK") {
                 if (!current.ok) {
                     current.ok = true;
                     // Use relativeTimeSeconds if available, else fallback to creation time delta
-                    if (sub.relativeTimeSeconds !== undefined && sub.relativeTimeSeconds >= 0) {
+                    if (
+                        sub.relativeTimeSeconds !== undefined &&
+                        sub.relativeTimeSeconds >= 0
+                    ) {
                         current.time = Math.floor(sub.relativeTimeSeconds / 60);
                     } else {
-                        const baseTime = subs[0]?.creationTimeSeconds || sub.creationTimeSeconds;
-                        current.time = Math.round((sub.creationTimeSeconds - baseTime) / 60);
+                        const baseTime =
+                            subs[0]?.creationTimeSeconds ||
+                            sub.creationTimeSeconds;
+                        current.time = Math.round(
+                            (sub.creationTimeSeconds - baseTime) / 60,
+                        );
                     }
                 }
             } else {
@@ -125,7 +132,7 @@ function ContestAnalyzerImpl({
         );
 
         const solvedIndices = new Set(
-            subs.filter((s) => s.verdict === 'OK').map((s) => s.problem.index),
+            subs.filter((s) => s.verdict === "OK").map((s) => s.problem.index),
         );
 
         return {
@@ -133,7 +140,7 @@ function ContestAnalyzerImpl({
             solvedIndices,
             totalSubmissions: subs.length,
             acceptedCount: solvedIndices.size,
-            wrongCount: subs.filter((s) => s.verdict !== 'OK').length,
+            wrongCount: subs.filter((s) => s.verdict !== "OK").length,
         };
     }, [activeContest, contestSubmissions]);
 
@@ -142,7 +149,7 @@ function ContestAnalyzerImpl({
         const solved = new Set<string>();
         submissions.forEach((s) => {
             if (
-                s.verdict === 'OK' &&
+                s.verdict === "OK" &&
                 s.problem.contestId?.toString() === selectedContestId
             ) {
                 solved.add(s.problem.index);
@@ -206,7 +213,7 @@ function ContestAnalyzerImpl({
                                     value={c.contestId}
                                     className="bg-bg-app"
                                 >
-                                    #{c.contestId} -{' '}
+                                    #{c.contestId} -{" "}
                                     {c.contestName.substring(0, 36)}...
                                 </option>
                             ))}
@@ -250,19 +257,19 @@ function ContestAnalyzerImpl({
                                             </span>
                                             <span
                                                 className={cn(
-                                                    'text-xs font-mono font-black',
+                                                    "text-xs font-mono font-black",
                                                     activeContest.newRating -
                                                         activeContest.oldRating >
                                                         0
-                                                        ? 'text-emerald-400'
-                                                        : 'text-red-400',
+                                                        ? "text-emerald-400"
+                                                        : "text-red-400",
                                                 )}
                                             >
                                                 {activeContest.newRating -
                                                     activeContest.oldRating >
                                                 0
-                                                    ? '+'
-                                                    : ''}
+                                                    ? "+"
+                                                    : ""}
                                                 {activeContest.newRating -
                                                     activeContest.oldRating}
                                             </span>
@@ -272,10 +279,10 @@ function ContestAnalyzerImpl({
                                                 Performance Shift
                                             </span>
                                             <span className="text-[11px] font-mono font-bold text-muted-app">
-                                                {activeContest.oldRating}{' '}
+                                                {activeContest.oldRating}{" "}
                                                 <span className="text-[10px] opacity-40 mx-1">
                                                     →
-                                                </span>{' '}
+                                                </span>{" "}
                                                 {activeContest.newRating}
                                             </span>
                                         </div>
@@ -354,10 +361,10 @@ function ContestAnalyzerImpl({
                                         <div
                                             key={item.problem}
                                             className={cn(
-                                                'p-4 rounded-2xl border transition-all duration-300 relative overflow-hidden flex flex-col justify-between',
+                                                "p-4 rounded-2xl border transition-all duration-300 relative overflow-hidden flex flex-col justify-between",
                                                 item.solved
-                                                    ? 'bg-emerald-500/5 border-emerald-500/10 hover:border-emerald-500/20'
-                                                    : 'bg-red-500/5 border-red-500/10 hover:border-red-500/20',
+                                                    ? "bg-emerald-500/5 border-emerald-500/10 hover:border-emerald-500/20"
+                                                    : "bg-red-500/5 border-red-500/10 hover:border-red-500/20",
                                             )}
                                         >
                                             <div className="flex items-center justify-between mb-3">
@@ -398,7 +405,7 @@ function ContestAnalyzerImpl({
                                                     </div>
                                                 )}
                                                 <div className="text-[10px] text-muted-app font-medium">
-                                                    Attempts:{' '}
+                                                    Attempts:{" "}
                                                     <strong className="text-text-app">
                                                         {item.attempts}
                                                     </strong>
@@ -425,15 +432,15 @@ function ContestAnalyzerImpl({
                                                     </span>
                                                     <div className="min-w-0">
                                                         <p className="text-xs font-bold text-text-app truncate">
-                                                            Problem{' '}
-                                                            {sub.problem.index}{' '}
+                                                            Problem{" "}
+                                                            {sub.problem.index}{" "}
                                                             - {sub.problem.name}
                                                         </p>
                                                         <p className="text-[9px] font-mono text-muted-app truncate">
                                                             {
                                                                 sub.programmingLanguage
-                                                            }{' '}
-                                                            |{' '}
+                                                            }{" "}
+                                                            |{" "}
                                                             {
                                                                 sub.timeConsumedMillis
                                                             }
@@ -444,23 +451,23 @@ function ContestAnalyzerImpl({
                                                 <div className="flex items-center gap-1.5 shrink-0">
                                                     <div
                                                         className={cn(
-                                                            'w-1.5 h-1.5 rounded-full',
-                                                            sub.verdict === 'OK'
-                                                                ? 'bg-emerald-500'
-                                                                : 'bg-red-500',
+                                                            "w-1.5 h-1.5 rounded-full",
+                                                            sub.verdict === "OK"
+                                                                ? "bg-emerald-500"
+                                                                : "bg-red-500",
                                                         )}
                                                     />
                                                     <span
                                                         className={cn(
-                                                            'text-[9px] font-black uppercase tracking-wider',
-                                                            sub.verdict === 'OK'
-                                                                ? 'text-emerald-400'
-                                                                : 'text-red-400',
+                                                            "text-[9px] font-black uppercase tracking-wider",
+                                                            sub.verdict === "OK"
+                                                                ? "text-emerald-400"
+                                                                : "text-red-400",
                                                         )}
                                                     >
-                                                        {sub.verdict === 'OK'
-                                                            ? 'Accepted'
-                                                            : 'Failed'}
+                                                        {sub.verdict === "OK"
+                                                            ? "Accepted"
+                                                            : "Failed"}
                                                     </span>
                                                 </div>
                                             </div>
@@ -504,7 +511,7 @@ function ContestAnalyzerImpl({
                                     #{activeContest.rank}
                                 </p>
                                 <p className="text-[10px] text-muted-app leading-normal">
-                                    Ranked in top{' '}
+                                    Ranked in top{" "}
                                     {Math.max(
                                         1,
                                         Math.round(
@@ -522,18 +529,18 @@ function ContestAnalyzerImpl({
                                     {activeContest.newRating -
                                         activeContest.oldRating >
                                     0
-                                        ? 'Optimal'
-                                        : 'Stable'}
+                                        ? "Optimal"
+                                        : "Stable"}
                                 </p>
                                 <p className="text-[10px] text-muted-app leading-normal">
-                                    Your rating changed by{' '}
+                                    Your rating changed by{" "}
                                     {activeContest.newRating -
                                         activeContest.oldRating >
                                     0
-                                        ? '+'
-                                        : ''}
+                                        ? "+"
+                                        : ""}
                                     {activeContest.newRating -
-                                        activeContest.oldRating}{' '}
+                                        activeContest.oldRating}{" "}
                                     points relative to pre-round level.
                                 </p>
                             </div>
@@ -545,7 +552,7 @@ function ContestAnalyzerImpl({
                                     {Math.abs(
                                         activeContest.newRating -
                                             activeContest.oldRating,
-                                    )}{' '}
+                                    )}{" "}
                                     RP
                                 </p>
                                 <p className="text-[10px] text-muted-app leading-normal">
@@ -587,7 +594,7 @@ function ContestAnalyzerImpl({
                                                         <span className="text-[9px] font-black text-brand-secondary uppercase tracking-widest">
                                                             {p.rating
                                                                 ? `${p.rating} RATED`
-                                                                : 'UNRATED'}
+                                                                : "UNRATED"}
                                                         </span>
                                                         <ArrowUpRight
                                                             size={12}
@@ -595,7 +602,7 @@ function ContestAnalyzerImpl({
                                                         />
                                                     </div>
                                                     <h4 className="text-xs font-bold text-text-app group-hover:text-brand-secondary transition-colors truncate">
-                                                        Problem {p.index} -{' '}
+                                                        Problem {p.index} -{" "}
                                                         {p.name}
                                                     </h4>
                                                 </div>

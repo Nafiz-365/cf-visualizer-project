@@ -1,6 +1,6 @@
-import React from 'react';
-import { cn } from '../../lib/utils';
-import { motion } from 'motion/react';
+import React from "react";
+import { cn } from "../../lib/utils";
+import { motion } from "motion/react";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
@@ -15,7 +15,7 @@ export function Card({
     glow = false,
     ...props
 }: CardProps) {
-    const Component = animate ? motion.div : 'div';
+    const Component = animate ? motion.div : "div";
 
     return (
         <Component
@@ -23,8 +23,8 @@ export function Card({
             animate={animate ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-                glow ? 'glass-glow' : 'glass-premium',
-                'rounded-[1.75rem] p-5 md:p-8',
+                glow ? "glass-glow" : "glass-premium",
+                "rounded-[1.75rem] p-5 md:p-8",
                 className,
             )}
             {...(props as any)}
@@ -49,31 +49,31 @@ export function StatCard({
     subValue?: string;
     icon?: React.ElementType;
     color?: string;
-    trend?: 'up' | 'down' | 'neutral';
+    trend?: "up" | "down" | "neutral";
 }) {
     /** Map a `text-*` color class to the equivalent `bg-*` + `shadow-*`. */
     const resolveColor = () => {
         if (!color)
             return {
-                bg: 'bg-brand-primary/10',
-                text: 'text-brand-primary',
-                fill: 'bg-[#4f8ef7]',
+                bg: "bg-brand-primary/10",
+                text: "text-brand-primary",
+                fill: "bg-[#4f8ef7]",
             };
         const textCls =
-            color.split(' ').find((c) => c.startsWith('text-')) ?? '';
+            color.split(" ").find((c) => c.startsWith("text-")) ?? "";
         return {
-            bg: textCls.replace('text-', 'bg-') + '/10',
+            bg: textCls.replace("text-", "bg-") + "/10",
             text: textCls,
-            fill: textCls.replace('text-', 'bg-'),
+            fill: textCls.replace("text-", "bg-"),
         };
     };
 
     const { bg, text, fill } = resolveColor();
 
     const trendColors: Record<string, string> = {
-        up: 'text-emerald-400',
-        down: 'text-rose-400',
-        neutral: 'text-[var(--text-muted)]',
+        up: "text-emerald-400",
+        down: "text-rose-400",
+        neutral: "text-[var(--text-muted)]",
     };
 
     return (
@@ -90,9 +90,9 @@ export function StatCard({
                     {Icon && (
                         <div
                             className={cn(
-                                'p-1.5 md:p-2 rounded-lg md:rounded-xl transition-all duration-400',
-                                'group-hover:scale-110 group-hover:rotate-3',
-                                'shadow-lg shrink-0',
+                                "p-1.5 md:p-2 rounded-lg md:rounded-xl transition-all duration-400",
+                                "group-hover:scale-110 group-hover:rotate-3",
+                                "shadow-lg shrink-0",
                                 bg,
                                 text,
                             )}
@@ -107,27 +107,27 @@ export function StatCard({
                     <div className="flex items-baseline gap-2 flex-wrap">
                         <span
                             className={cn(
-                                'font-display font-bold text-(--text-main) tracking-tight',
-                                'group-hover:gradient-text transition-all duration-400',
+                                "font-display font-bold text-(--text-main) tracking-tight",
+                                "group-hover:gradient-text transition-all duration-400",
                                 (value?.toString().length ?? 0 > 12)
-                                    ? 'text-sm md:text-xl'
-                                    : 'text-lg sm:text-xl md:text-3xl',
+                                    ? "text-sm md:text-xl"
+                                    : "text-lg sm:text-xl md:text-3xl",
                             )}
                         >
-                            {value ?? '---'}
+                            {value ?? "---"}
                         </span>
                         {trend && (
                             <span
                                 className={cn(
-                                    'text-[9px] font-black uppercase tracking-widest',
+                                    "text-[9px] font-black uppercase tracking-widest",
                                     trendColors[trend],
                                 )}
                             >
-                                {trend === 'up'
-                                    ? '▲'
-                                    : trend === 'down'
-                                      ? '▼'
-                                      : '—'}
+                                {trend === "up"
+                                    ? "▲"
+                                    : trend === "down"
+                                      ? "▼"
+                                      : "—"}
                             </span>
                         )}
                     </div>
@@ -144,14 +144,14 @@ export function StatCard({
                 <div className="progress-track">
                     <motion.div
                         initial={{ width: 0 }}
-                        whileInView={{ width: '70%' }}
+                        whileInView={{ width: "70%" }}
                         viewport={{ once: true }}
                         transition={{
                             duration: 1.4,
-                            ease: 'easeOut',
+                            ease: "easeOut",
                             delay: 0.15,
                         }}
-                        className={cn('progress-fill', fill)}
+                        className={cn("progress-fill", fill)}
                         style={{ background: undefined }}
                     />
                 </div>

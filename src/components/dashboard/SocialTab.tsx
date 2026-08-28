@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
     Activity,
     AlertTriangle,
@@ -10,14 +10,14 @@ import {
     Trash2,
     UserPlus,
     Users,
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { useAuth } from '../../contexts/AuthContext';
-import { cn } from '../../lib/utils';
-import { SocialCards } from '../SocialCards';
-import { CompareModal } from '../CompareModal';
+} from "lucide-react";
+import { format } from "date-fns";
+import { Card } from "../ui/Card";
+import { Button } from "../ui/Button";
+import { useAuth } from "../../contexts/AuthContext";
+import { cn } from "../../lib/utils";
+import { SocialCards } from "../SocialCards";
+import { CompareModal } from "../CompareModal";
 
 function SocialTabImpl({
     socialSubTab,
@@ -29,14 +29,14 @@ function SocialTabImpl({
 }: any) {
     const { userHandle } = useAuth();
     const [friends, setFriends] = useState<string[]>([]);
-    const [friendInput, setFriendInput] = useState('');
-    const [friendError, setFriendError] = useState('');
+    const [friendInput, setFriendInput] = useState("");
+    const [friendError, setFriendError] = useState("");
     const [isFriendsLoading, setIsFriendsLoading] = useState(false);
     const [compareFriend, setCompareFriend] = useState<string | null>(null);
 
     React.useEffect(() => {
         if (
-            socialSubTab === 'friends' &&
+            socialSubTab === "friends" &&
             userHandle &&
             userHandle.toLowerCase() === user.handle.toLowerCase()
         ) {
@@ -53,11 +53,11 @@ function SocialTabImpl({
     const handleAddFriend = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!friendInput.trim() || !userHandle) return;
-        setFriendError('');
+        setFriendError("");
         try {
             const res = await fetch(`/api/friends/${userHandle}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ friendHandle: friendInput.trim() }),
             });
             const data = await res.json();
@@ -65,13 +65,13 @@ function SocialTabImpl({
                 if (!friends.includes(friendInput.trim())) {
                     setFriends((prev) => [friendInput.trim(), ...prev]);
                 }
-                setFriendInput('');
+                setFriendInput("");
             } else {
-                setFriendError(data.error || 'Failed to add friend');
+                setFriendError(data.error || "Failed to add friend");
             }
         } catch (e) {
-            console.error('Failed to add friend', e);
-            setFriendError('Network error while adding friend');
+            console.error("Failed to add friend", e);
+            setFriendError("Network error while adding friend");
         }
     };
 
@@ -81,7 +81,7 @@ function SocialTabImpl({
             const res = await fetch(
                 `/api/friends/${userHandle}/${friendHandle}`,
                 {
-                    method: 'DELETE',
+                    method: "DELETE",
                 },
             );
             const data = await res.json();
@@ -89,7 +89,7 @@ function SocialTabImpl({
                 setFriends((prev) => prev.filter((f) => f !== friendHandle));
             }
         } catch (e) {
-            console.error('Failed to remove friend', e);
+            console.error("Failed to remove friend", e);
         }
     };
 
@@ -99,47 +99,47 @@ function SocialTabImpl({
                 {/* Inner sub-tabs selector */}
                 <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white/5 border border-white/10 w-fit">
                     <button
-                        onClick={() => setSocialSubTab('cards')}
+                        onClick={() => setSocialSubTab("cards")}
                         className={cn(
-                            'px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300',
-                            socialSubTab === 'cards'
-                                ? 'bg-brand-primary text-black shadow-md shadow-brand-primary/20'
-                                : 'text-muted-app hover:text-text-app hover:bg-white/5',
+                            "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300",
+                            socialSubTab === "cards"
+                                ? "bg-brand-primary text-black shadow-md shadow-brand-primary/20"
+                                : "text-muted-app hover:text-text-app hover:bg-white/5",
                         )}
                     >
                         Share Achievements
                     </button>
                     <button
-                        onClick={() => setSocialSubTab('stream')}
+                        onClick={() => setSocialSubTab("stream")}
                         className={cn(
-                            'px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300',
-                            socialSubTab === 'stream'
-                                ? 'bg-brand-primary text-black shadow-md shadow-brand-primary/20'
-                                : 'text-muted-app hover:text-text-app hover:bg-white/5',
+                            "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300",
+                            socialSubTab === "stream"
+                                ? "bg-brand-primary text-black shadow-md shadow-brand-primary/20"
+                                : "text-muted-app hover:text-text-app hover:bg-white/5",
                         )}
                     >
                         Community Stream & Stats
                     </button>
                     <button
-                        onClick={() => setSocialSubTab('friends')}
+                        onClick={() => setSocialSubTab("friends")}
                         className={cn(
-                            'px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2',
-                            socialSubTab === 'friends'
-                                ? 'bg-brand-primary text-black shadow-md shadow-brand-primary/20'
-                                : 'text-muted-app hover:text-text-app hover:bg-white/5',
+                            "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2",
+                            socialSubTab === "friends"
+                                ? "bg-brand-primary text-black shadow-md shadow-brand-primary/20"
+                                : "text-muted-app hover:text-text-app hover:bg-white/5",
                         )}
                     >
                         <Users size={14} /> My Network
                     </button>
                 </div>
 
-                {socialSubTab === 'cards' ? (
+                {socialSubTab === "cards" ? (
                     <SocialCards
                         user={user}
                         ratingHistory={ratingHistory}
                         submissions={submissions}
                     />
-                ) : socialSubTab === 'friends' ? (
+                ) : socialSubTab === "friends" ? (
                     userHandle &&
                     userHandle.toLowerCase() === user.handle.toLowerCase() ? (
                         <Card className="p-6 md:p-8">
@@ -255,59 +255,59 @@ function SocialTabImpl({
                         const friendsCount = (user as any).friendOfCount || 0;
 
                         let karmaBadge = {
-                            label: 'OBSERVER',
-                            color: 'text-slate-400',
-                            bg: 'bg-slate-400/10',
-                            border: 'border-slate-400/20',
+                            label: "OBSERVER",
+                            color: "text-slate-400",
+                            bg: "bg-slate-400/10",
+                            border: "border-slate-400/20",
                         };
                         if ((user.contribution || 0) >= 100)
                             karmaBadge = {
-                                label: 'COMMUNITY PILLAR',
-                                color: 'text-amber-400',
-                                bg: 'bg-amber-400/10',
-                                border: 'border-amber-400/20',
+                                label: "COMMUNITY PILLAR",
+                                color: "text-amber-400",
+                                bg: "bg-amber-400/10",
+                                border: "border-amber-400/20",
                             };
                         else if ((user.contribution || 0) > 0)
                             karmaBadge = {
-                                label: 'ACTIVE NODE',
-                                color: 'text-emerald-400',
-                                bg: 'bg-emerald-400/10',
-                                border: 'border-emerald-400/20',
+                                label: "ACTIVE NODE",
+                                color: "text-emerald-400",
+                                bg: "bg-emerald-400/10",
+                                border: "border-emerald-400/20",
                             };
                         else if ((user.contribution || 0) < 0)
                             karmaBadge = {
-                                label: 'ROGUE ELEMENT',
-                                color: 'text-red-400',
-                                bg: 'bg-red-400/10',
-                                border: 'border-red-400/20',
+                                label: "ROGUE ELEMENT",
+                                color: "text-red-400",
+                                bg: "bg-red-400/10",
+                                border: "border-red-400/20",
                             };
 
                         let fameBadge = {
-                            label: 'STANDARD NODE',
-                            color: 'text-slate-400',
-                            bg: 'bg-slate-400/10',
-                            border: 'border-slate-400/20',
+                            label: "STANDARD NODE",
+                            color: "text-slate-400",
+                            bg: "bg-slate-400/10",
+                            border: "border-slate-400/20",
                         };
                         if (friendsCount >= 1000)
                             fameBadge = {
-                                label: 'LEGENDARY ENTITY',
-                                color: 'text-purple-400',
-                                bg: 'bg-purple-400/10',
-                                border: 'border-purple-400/20',
+                                label: "LEGENDARY ENTITY",
+                                color: "text-purple-400",
+                                bg: "bg-purple-400/10",
+                                border: "border-purple-400/20",
                             };
                         else if (friendsCount >= 500)
                             fameBadge = {
-                                label: 'FAMOUS NODE',
-                                color: 'text-pink-400',
-                                bg: 'bg-pink-400/10',
-                                border: 'border-pink-400/20',
+                                label: "FAMOUS NODE",
+                                color: "text-pink-400",
+                                bg: "bg-pink-400/10",
+                                border: "border-pink-400/20",
                             };
                         else if (friendsCount >= 100)
                             fameBadge = {
-                                label: 'LOCAL HERO',
-                                color: 'text-cyan-400',
-                                bg: 'bg-cyan-400/10',
-                                border: 'border-cyan-400/20',
+                                label: "LOCAL HERO",
+                                color: "text-cyan-400",
+                                bg: "bg-cyan-400/10",
+                                border: "border-cyan-400/20",
                             };
 
                         return (
@@ -338,7 +338,7 @@ function SocialTabImpl({
                                                         onClick={() =>
                                                             window.open(
                                                                 `https://codeforces.com/blog/entry/${blog.id}`,
-                                                                '_blank',
+                                                                "_blank",
                                                             )
                                                         }
                                                     >
@@ -349,13 +349,13 @@ function SocialTabImpl({
                                                             <div className="flex items-center gap-2">
                                                                 <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
                                                                 <span className="text-[10px] font-mono font-bold text-brand-primary uppercase tracking-widest">
-                                                                    LOG //{' '}
+                                                                    LOG //{" "}
                                                                     {format(
                                                                         new Date(
                                                                             blog.creationTimeSeconds *
                                                                                 1000,
                                                                         ),
-                                                                        'yyyy.MM.dd',
+                                                                        "yyyy.MM.dd",
                                                                     )}
                                                                 </span>
                                                             </div>
@@ -368,10 +368,10 @@ function SocialTabImpl({
                                                         </div>
 
                                                         <h4 className="text-sm md:text-base font-bold text-text-app group-hover:text-brand-primary transition-colors break-words whitespace-normal mb-3 relative z-10 font-mono">
-                                                            &gt;{' '}
+                                                            &gt;{" "}
                                                             {blog.title.replace(
                                                                 /<\/?[^>]+(>|$)/g,
-                                                                '',
+                                                                "",
                                                             )}
                                                         </h4>
 
@@ -483,7 +483,7 @@ function SocialTabImpl({
                                                             <span className="text-[8px] px-1.5 py-0.5 rounded-sm border font-mono uppercase tracking-widest text-orange-400 bg-orange-400/10 border-orange-400/20">
                                                                 {
                                                                     totalBlogUpvotes
-                                                                }{' '}
+                                                                }{" "}
                                                                 UPVOTES
                                                             </span>
                                                         </div>
@@ -511,7 +511,7 @@ function SocialTabImpl({
                                                             user.lastOnlineTimeSeconds *
                                                                 1000,
                                                         ),
-                                                        'MMM dd, HH:mm',
+                                                        "MMM dd, HH:mm",
                                                     )}
                                                 </span>
                                             </div>
@@ -525,7 +525,7 @@ function SocialTabImpl({
                                                             user.registrationTimeSeconds *
                                                                 1000,
                                                         ),
-                                                        'MMM dd, yyyy',
+                                                        "MMM dd, yyyy",
                                                     )}
                                                 </span>
                                             </div>
@@ -541,7 +541,7 @@ function SocialTabImpl({
                 isOpen={!!compareFriend}
                 onClose={() => setCompareFriend(null)}
                 myHandle={userHandle || user.handle}
-                friendHandle={compareFriend || ''}
+                friendHandle={compareFriend || ""}
             />
         </>
     );

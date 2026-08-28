@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { RatingChange } from '../types';
-import { Button } from './ui/Button';
+import React, { useState } from "react";
+import { RatingChange } from "../types";
+import { Button } from "./ui/Button";
 import {
     Trophy,
     Loader2,
@@ -8,10 +8,10 @@ import {
     TrendingUp,
     TrendingDown,
     Minus,
-} from 'lucide-react';
-import { GeminiService } from '../services/geminiService';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '../lib/utils';
+} from "lucide-react";
+import { GeminiService } from "../services/geminiService";
+import { motion, AnimatePresence } from "motion/react";
+import { cn } from "../lib/utils";
 
 interface ContestDebriefProps {
     ratingHistory: RatingChange[];
@@ -22,22 +22,22 @@ interface ContestDebriefProps {
 }
 
 interface DebriefData {
-    trend: 'rising' | 'falling' | 'volatile' | 'stable';
+    trend: "rising" | "falling" | "volatile" | "stable";
     summary: string;
     topWin: string;
     keyLesson: string;
     nextAction: string;
 }
 
-function computeTrend(deltas: number[]): DebriefData['trend'] {
-    if (deltas.length < 2) return 'stable';
+function computeTrend(deltas: number[]): DebriefData["trend"] {
+    if (deltas.length < 2) return "stable";
     const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
     const volatility = Math.max(...deltas) - Math.min(...deltas);
 
-    if (volatility > 300) return 'volatile';
-    if (avg > 20) return 'rising';
-    if (avg < -20) return 'falling';
-    return 'stable';
+    if (volatility > 300) return "volatile";
+    if (avg > 20) return "rising";
+    if (avg < -20) return "falling";
+    return "stable";
 }
 
 function generateSingleContestFallback(
@@ -46,23 +46,23 @@ function generateSingleContestFallback(
     handle: string,
 ): DebriefData {
     const delta = activeContest.newRating - activeContest.oldRating;
-    const trend = delta > 0 ? 'rising' : delta < 0 ? 'falling' : 'stable';
+    const trend = delta > 0 ? "rising" : delta < 0 ? "falling" : "stable";
 
-    const solved = submissions.filter((s) => s.verdict === 'OK');
+    const solved = submissions.filter((s) => s.verdict === "OK");
     const solvedIndices = Array.from(
         new Set(solved.map((s) => s.problem.index)),
-    ).join(', ');
+    ).join(", ");
 
     return {
         trend,
-        summary: `Contest performance debrief for ${activeContest.contestName}. You achieved rank #${activeContest.rank} with a rating change of ${delta > 0 ? '+' : ''}${delta}.`,
+        summary: `Contest performance debrief for ${activeContest.contestName}. You achieved rank #${activeContest.rank} with a rating change of ${delta > 0 ? "+" : ""}${delta}.`,
         topWin: solvedIndices
             ? `You successfully solved problem(s): ${solvedIndices} during the round.`
             : `You competed in this round, making ${submissions.length} total submission(s).`,
         keyLesson:
-            'Tactical focus should be on reducing wrong submissions and improving speed on early problems.',
+            "Tactical focus should be on reducing wrong submissions and improving speed on early problems.",
         nextAction:
-            'Upsolve the next unsolved problem from this contest set to reinforce your skills.',
+            "Upsolve the next unsolved problem from this contest set to reinforce your skills.",
     };
 }
 
@@ -80,30 +80,30 @@ function generateFallbackDebrief(
         deltas.reduce((a, b) => a + b, 0) / deltas.length,
     );
 
-    const trendMessages: Record<DebriefData['trend'], string> = {
+    const trendMessages: Record<DebriefData["trend"], string> = {
         rising: `${handle}'s last ${recent.length} contests show a positive trend (+${avgDelta} avg). Keep the momentum going.`,
         falling: `${handle}'s last ${recent.length} contests trend downward (${avgDelta} avg). A recalibration is needed.`,
         volatile: `${handle}'s performance is highly volatile — swinging between ${Math.min(...deltas)} and +${Math.max(...deltas)}. Consistency is the missing piece.`,
         stable: `${handle}'s rating has been stable across the last ${recent.length} contests (${avgDelta} avg delta). Time to push harder.`,
     };
 
-    const topWinMessages: Record<DebriefData['trend'], string> = {
-        rising: `Best result: +${best} in ${bestContest?.contestName ?? 'a recent contest'} — you clearly performed well under pressure.`,
+    const topWinMessages: Record<DebriefData["trend"], string> = {
+        rising: `Best result: +${best} in ${bestContest?.contestName ?? "a recent contest"} — you clearly performed well under pressure.`,
         falling: `Your best recent result was +${Math.max(...deltas, 0)} — that performance shows you're capable of improvement.`,
         volatile: `Your peak was +${best} — you have the skill. Channel that into more consistent execution.`,
         stable: `You've maintained your rating well. Now it's time to be aggressive and target harder problems.`,
     };
 
-    const lessonMessages: Record<DebriefData['trend'], string> = {
-        rising: 'Your upsolving habits are paying off. Don\u2019t break the streak.',
+    const lessonMessages: Record<DebriefData["trend"], string> = {
+        rising: "Your upsolving habits are paying off. Don\u2019t break the streak.",
         falling:
-            'Review your last 3 failed contests \u2014 are you spending too long on one problem early?',
+            "Review your last 3 failed contests \u2014 are you spending too long on one problem early?",
         volatile:
-            'Time management during contests is your biggest lever. Practice under strict time limits.',
-        stable: 'Break out of the comfort zone \u2014 register for Div 2 contests and target problems B/C.',
+            "Time management during contests is your biggest lever. Practice under strict time limits.",
+        stable: "Break out of the comfort zone \u2014 register for Div 2 contests and target problems B/C.",
     };
 
-    const actionMessages: Record<DebriefData['trend'], string> = {
+    const actionMessages: Record<DebriefData["trend"], string> = {
         rising: `Aim for ${currentRating + 100} in the next 2 contests by solving one harder problem each round.`,
         falling: `Stabilize first: target problems at ${currentRating - 100}–${currentRating + 50} to rebuild confidence.`,
         volatile: `In your next 3 contests, stop working on C if A+B aren't solved cleanly within 30 minutes.`,
@@ -151,7 +151,7 @@ function AIContestDebriefImpl({
     const generate = async () => {
         setLoading(true);
         try {
-            let prompt = '';
+            let prompt = "";
             if (isSingleMode && activeContest) {
                 const subsSummary = (contestSubmissions || [])
                     .map(
@@ -159,17 +159,17 @@ function AIContestDebriefImpl({
                             `${s.problem.index} - ${s.problem.name}: ${s.verdict} (attempted ${Math.round(s.creationTimeSeconds / 60)}m into contest)`,
                     )
                     .slice(0, 20)
-                    .join('\n');
+                    .join("\n");
 
                 prompt = `
 You are an expert competitive programming coach. Analyze this Codeforces user's performance in a single specific contest and provide a tactical debrief.
 
 User: ${handle}
-Rating change in this contest: ${activeContest.oldRating} → ${activeContest.newRating} (delta: ${activeContest.newRating - activeContest.oldRating > 0 ? '+' : ''}${activeContest.newRating - activeContest.oldRating}, rank: #${activeContest.rank})
+Rating change in this contest: ${activeContest.oldRating} → ${activeContest.newRating} (delta: ${activeContest.newRating - activeContest.oldRating > 0 ? "+" : ""}${activeContest.newRating - activeContest.oldRating}, rank: #${activeContest.rank})
 Contest: ${activeContest.contestName}
 
 Submissions during the contest:
-${subsSummary || 'No submissions recorded during this contest.'}
+${subsSummary || "No submissions recorded during this contest."}
 
 Return ONLY a JSON object with these fields:
 - "trend": one of ["rising", "falling", "volatile", "stable"] (reflecting this specific contest's performance and rating delta)
@@ -182,9 +182,9 @@ Return ONLY a JSON object with these fields:
                 const contestSummary = recentContests
                     .map(
                         (r, i) =>
-                            `${i + 1}. ${r.contestName}: ${r.oldRating} → ${r.newRating} (${r.newRating - r.oldRating > 0 ? '+' : ''}${r.newRating - r.oldRating}, rank #${r.rank})`,
+                            `${i + 1}. ${r.contestName}: ${r.oldRating} → ${r.newRating} (${r.newRating - r.oldRating > 0 ? "+" : ""}${r.newRating - r.oldRating}, rank #${r.rank})`,
                     )
-                    .join('\n');
+                    .join("\n");
 
                 prompt = `
 You are a competitive programming coach. Analyze this Codeforces user's last ${recentContests.length} contests and provide a brief debrief.
@@ -211,7 +211,7 @@ Return ONLY a JSON object with these fields:
                 setDebrief(result[0]);
             } else if (
                 result &&
-                typeof result === 'object' &&
+                typeof result === "object" &&
                 !Array.isArray(result)
             ) {
                 setDebrief(result as DebriefData);
@@ -262,27 +262,27 @@ Return ONLY a JSON object with these fields:
     const trendConfig = {
         rising: {
             icon: TrendingUp,
-            color: 'text-emerald-400',
-            bg: 'bg-emerald-500/10 border-emerald-500/20',
-            label: 'Rising',
+            color: "text-emerald-400",
+            bg: "bg-emerald-500/10 border-emerald-500/20",
+            label: "Rising",
         },
         falling: {
             icon: TrendingDown,
-            color: 'text-red-400',
-            bg: 'bg-red-500/10 border-red-500/20',
-            label: 'Falling',
+            color: "text-red-400",
+            bg: "bg-red-500/10 border-red-500/20",
+            label: "Falling",
         },
         volatile: {
             icon: TrendingUp,
-            color: 'text-orange-400',
-            bg: 'bg-orange-500/10 border-orange-500/20',
-            label: 'Volatile',
+            color: "text-orange-400",
+            bg: "bg-orange-500/10 border-orange-500/20",
+            label: "Volatile",
         },
         stable: {
             icon: Minus,
-            color: 'text-blue-400',
-            bg: 'bg-blue-500/10 border-blue-500/20',
-            label: 'Stable',
+            color: "text-blue-400",
+            bg: "bg-blue-500/10 border-blue-500/20",
+            label: "Stable",
         },
     };
 
@@ -308,7 +308,7 @@ Return ONLY a JSON object with these fields:
                         ) : (
                             <Sparkles size={12} />
                         )}
-                        {loading ? 'Analyzing...' : 'Generate'}
+                        {loading ? "Analyzing..." : "Generate"}
                     </Button>
                 )}
                 {debrief && (
@@ -327,16 +327,16 @@ Return ONLY a JSON object with these fields:
                     <div
                         key={i}
                         className={cn(
-                            'text-center rounded-xl px-3 py-1.5 text-xs font-black border transition-colors flex-1 sm:flex-initial min-w-12.5',
+                            "text-center rounded-xl px-3 py-1.5 text-xs font-black border transition-colors flex-1 sm:flex-initial min-w-12.5",
                             d > 0
-                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
                                 : d < 0
-                                  ? 'bg-red-500/10 border-red-500/20 text-red-400'
-                                  : 'bg-white/5 border-white/10 text-muted-app/50',
+                                  ? "bg-red-500/10 border-red-500/20 text-red-400"
+                                  : "bg-white/5 border-white/10 text-muted-app/50",
                         )}
                         title={recentContests[i]?.contestName}
                     >
-                        {d > 0 ? '+' : ''}
+                        {d > 0 ? "+" : ""}
                         {d}
                     </div>
                 ))}
@@ -372,14 +372,14 @@ Return ONLY a JSON object with these fields:
                             return (
                                 <div
                                     className={cn(
-                                        'flex items-center gap-2 rounded-xl px-3 py-2.5 border',
+                                        "flex items-center gap-2 rounded-xl px-3 py-2.5 border",
                                         cfg.bg,
                                     )}
                                 >
                                     <Icon size={14} className={cfg.color} />
                                     <span
                                         className={cn(
-                                            'text-xs font-bold uppercase tracking-wider',
+                                            "text-xs font-bold uppercase tracking-wider",
                                             cfg.color,
                                         )}
                                     >
@@ -391,14 +391,14 @@ Return ONLY a JSON object with these fields:
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-4 space-y-0">
                             {[
-                                { label: 'Overview', text: debrief.summary },
-                                { label: 'Best Signal', text: debrief.topWin },
+                                { label: "Overview", text: debrief.summary },
+                                { label: "Best Signal", text: debrief.topWin },
                                 {
-                                    label: 'Key Lesson',
+                                    label: "Key Lesson",
                                     text: debrief.keyLesson,
                                 },
                                 {
-                                    label: 'Next Action',
+                                    label: "Next Action",
                                     text: debrief.nextAction,
                                 },
                             ].map((item, i) => (

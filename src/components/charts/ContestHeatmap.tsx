@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useRef } from 'react';
-import { RatingChange } from '../../types';
+import React, { useMemo, useState, useRef } from "react";
+import { RatingChange } from "../../types";
 import {
     format,
     subDays,
@@ -7,8 +7,8 @@ import {
     eachDayOfInterval,
     startOfWeek,
     isSameMonth,
-} from 'date-fns';
-import { cn } from '../../lib/utils';
+} from "date-fns";
+import { cn } from "../../lib/utils";
 
 interface ContestHeatmapProps {
     history: RatingChange[];
@@ -28,7 +28,7 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
         history.forEach((c) => {
             const date = format(
                 new Date(c.ratingUpdateTimeSeconds * 1000),
-                'yyyy-MM-dd',
+                "yyyy-MM-dd",
             );
             counts[date] = (counts[date] || 0) + 1;
         });
@@ -46,7 +46,7 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
         let currentWeek: { date: Date; count: number }[] = [];
 
         days.forEach((day) => {
-            const dateStr = format(day, 'yyyy-MM-dd');
+            const dateStr = format(day, "yyyy-MM-dd");
             currentWeek.push({
                 date: day,
                 count: counts[dateStr] || 0,
@@ -67,7 +67,7 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
         weeksArray.forEach((week, i) => {
             const firstDay = week[0].date;
             if (i === 0 || !isSameMonth(firstDay, weeksArray[i - 1][0].date)) {
-                labels.push({ label: format(firstDay, 'MMM'), index: i });
+                labels.push({ label: format(firstDay, "MMM"), index: i });
             }
         });
 
@@ -75,12 +75,12 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
     }, [history]);
 
     const getColor = (count: number) => {
-        if (count === 0) return 'bg-white/5';
+        if (count === 0) return "bg-white/5";
         if (count === 1)
-            return 'bg-brand-secondary/40 shadow-sm shadow-brand-secondary/5';
+            return "bg-brand-secondary/40 shadow-sm shadow-brand-secondary/5";
         if (count === 2)
-            return 'bg-brand-secondary/70 shadow-md shadow-brand-secondary/10';
-        return 'bg-brand-secondary shadow-xl shadow-brand-secondary/40 brightness-110';
+            return "bg-brand-secondary/70 shadow-md shadow-brand-secondary/10";
+        return "bg-brand-secondary shadow-xl shadow-brand-secondary/40 brightness-110";
     };
 
     const handleMouseEnter = (
@@ -125,7 +125,7 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
         return {
             left: `${leftPos}px`,
             top: `${hovered.y - 8}px`, // compact offset
-            transform: 'translate(0, -100%)', // align perfectly
+            transform: "translate(0, -100%)", // align perfectly
         };
     };
 
@@ -195,7 +195,7 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
                                         }
                                         onMouseLeave={() => setHovered(null)}
                                         className={cn(
-                                            'w-2.5 h-2.5 rounded-xs cursor-pointer relative transition-all duration-75 hover:brightness-125 hover:ring-1 hover:ring-brand-secondary/80 hover:z-10',
+                                            "w-2.5 h-2.5 rounded-xs cursor-pointer relative transition-all duration-75 hover:brightness-125 hover:ring-1 hover:ring-brand-secondary/80 hover:z-10",
                                             getColor(day.count),
                                         )}
                                     />
@@ -214,11 +214,11 @@ function ContestHeatmapImpl({ history }: ContestHeatmapProps) {
                 >
                     <div className="bg-card-app/95 backdrop-blur-xl p-1.5 px-2 rounded-lg border border-white/10 shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-100">
                         <p className="text-[7px] font-black text-text-app">
-                            {format(hovered.date, 'MMM d, yyyy')}
+                            {format(hovered.date, "MMM d, yyyy")}
                         </p>
                         <p className="text-[8px] font-bold text-brand-secondary uppercase mt-0.5">
                             {hovered.count} Contest
-                            {hovered.count !== 1 ? 's' : ''}
+                            {hovered.count !== 1 ? "s" : ""}
                         </p>
                     </div>
                 </div>

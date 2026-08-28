@@ -1,7 +1,7 @@
 export interface AIInsight {
     title: string;
     desc: string;
-    type: 'tactical' | 'growth' | 'flow';
+    type: "tactical" | "growth" | "flow";
 }
 
 export class GeminiService {
@@ -13,7 +13,7 @@ export class GeminiService {
                 if (expiry > Date.now()) return data;
             }
         } catch (e) {
-            console.error('Cache read error:', e);
+            console.error("Cache read error:", e);
         }
         return null;
     }
@@ -23,7 +23,7 @@ export class GeminiService {
             const keysToRemove = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key && key.startsWith('gemini_cache_')) {
+                if (key && key.startsWith("gemini_cache_")) {
                     const cached = localStorage.getItem(key);
                     if (cached) {
                         try {
@@ -37,7 +37,7 @@ export class GeminiService {
             }
             keysToRemove.forEach((key) => localStorage.removeItem(key));
         } catch (e) {
-            console.error('Cache cleanup error:', e);
+            console.error("Cache cleanup error:", e);
         }
     }
 
@@ -50,7 +50,7 @@ export class GeminiService {
                 JSON.stringify({ data, expiry }),
             );
         } catch (e) {
-            console.error('Cache write error:', e);
+            console.error("Cache write error:", e);
         }
     }
 
@@ -82,7 +82,7 @@ export class GeminiService {
       Latest 3 deltas: ${ratingHistory
           .slice(-3)
           .map((r: any) => r.newRating - r.oldRating)
-          .join(', ')}
+          .join(", ")}
 
       Return a JSON array of exactly 3 objects with properties:
       - "title": A punchy 2-3 word title.
@@ -93,15 +93,15 @@ export class GeminiService {
     `;
 
         try {
-            const response = await fetch('/api/ai/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("/api/ai/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt }),
             });
 
             if (!response.ok) {
                 if (response.status === 429) {
-                    throw new Error('QUOTA_EXCEEDED');
+                    throw new Error("QUOTA_EXCEEDED");
                 }
                 throw new Error(`Server returned ${response.status}`);
             }
@@ -110,24 +110,24 @@ export class GeminiService {
             this.setCache(cacheKey, data);
             return data;
         } catch (error: any) {
-            if (error.message !== 'QUOTA_EXCEEDED') {
-                console.error('Gemini Analysis Error:', error);
+            if (error.message !== "QUOTA_EXCEEDED") {
+                console.error("Gemini Analysis Error:", error);
             }
             return [
                 {
-                    title: 'Strategic Edge',
+                    title: "Strategic Edge",
                     desc: `Expertise in ${analytics.bestTag} is your primary competitive edge. Focus on maintaining high accuracy in this domain while gradually exploring adjacent topics.`,
-                    type: 'tactical',
+                    type: "tactical",
                 },
                 {
-                    title: 'Growth Window',
+                    title: "Growth Window",
                     desc: `With a current rating of ${userData.rating}, focus on problems in the ${Math.min(userData.rating + 200, 3500)} range to trigger significant improvement.`,
-                    type: 'growth',
+                    type: "growth",
                 },
                 {
-                    title: 'Peak Ritual',
+                    title: "Peak Ritual",
                     desc: `Your productivity peaks around ${analytics.peakHour}. Schedule your most demanding training sessions or contest participations within this window.`,
-                    type: 'flow',
+                    type: "flow",
                 },
             ];
         }
@@ -144,15 +144,15 @@ export class GeminiService {
         if (cached) return cached;
 
         try {
-            const response = await fetch('/api/ai/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("/api/ai/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt }),
             });
 
             if (!response.ok) {
                 if (response.status === 429) {
-                    throw new Error('QUOTA_EXCEEDED');
+                    throw new Error("QUOTA_EXCEEDED");
                 }
                 throw new Error(`Server returned ${response.status}`);
             }
@@ -161,10 +161,10 @@ export class GeminiService {
             this.setCache(cacheKey, data);
             return data;
         } catch (error: any) {
-            if (error.message === 'QUOTA_EXCEEDED') {
-                throw new Error('QUOTA_EXCEEDED');
+            if (error.message === "QUOTA_EXCEEDED") {
+                throw new Error("QUOTA_EXCEEDED");
             }
-            console.error('Gemini Custom Prompt Error:', error);
+            console.error("Gemini Custom Prompt Error:", error);
             return [];
         }
     }
@@ -172,14 +172,14 @@ export class GeminiService {
     static async getChatHistory(
         handle: string,
     ): Promise<
-        { role: 'user' | 'assistant'; content: string; created_at: string }[]
+        { role: "user" | "assistant"; content: string; created_at: string }[]
     > {
         try {
             const res = await fetch(`/api/chat/${handle}`);
             const data = await res.json();
             if (data.success) return data.messages;
         } catch (e) {
-            console.error('Failed to load chat history', e);
+            console.error("Failed to load chat history", e);
         }
         return [];
     }
@@ -191,20 +191,20 @@ export class GeminiService {
     ): Promise<void> {
         try {
             await fetch(`/api/chat/${handle}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ role, content }),
             });
         } catch (e) {
-            console.error('Failed to save chat message', e);
+            console.error("Failed to save chat message", e);
         }
     }
 
     static async clearChatHistory(handle: string): Promise<void> {
         try {
-            await fetch(`/api/chat/${handle}`, { method: 'DELETE' });
+            await fetch(`/api/chat/${handle}`, { method: "DELETE" });
         } catch (e) {
-            console.error('Failed to clear chat history', e);
+            console.error("Failed to clear chat history", e);
         }
     }
 }

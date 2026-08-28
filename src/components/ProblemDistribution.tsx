@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
     BarChart,
     Bar,
@@ -8,15 +8,15 @@ import {
     Tooltip,
     ResponsiveContainer,
     Cell,
-} from 'recharts';
-import { Submission } from '../types';
+} from "recharts";
+import { Submission } from "../types";
 
 interface ProblemDistributionProps {
     submissions: Submission[];
 }
 
 function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
-    const solved = submissions.filter((s) => s.verdict === 'OK');
+    const solved = submissions.filter((s) => s.verdict === "OK");
 
     const distribution = solved.reduce(
         (acc, s) => {
@@ -43,7 +43,7 @@ function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
     );
     const ratingRange = data.length
         ? `${data[0].rating} - ${data[data.length - 1].rating}`
-        : 'N/A';
+        : "N/A";
 
     return (
         <div className="group">
@@ -61,7 +61,7 @@ function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
                         Peak band
                     </p>
                     <p className="text-lg md:text-xl font-display font-bold text-text-app">
-                        {peakBucket.rating || 'N/A'}
+                        {peakBucket.rating || "N/A"}
                     </p>
                 </div>
                 <div className="rounded-3xl border border-white/10 bg-card-app/70 p-4">
@@ -90,7 +90,7 @@ function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
                             axisLine={false}
                             tickLine={false}
                             tick={{
-                                fill: '#94a3b8',
+                                fill: "#94a3b8",
                                 fontSize: 10,
                                 fontWeight: 700,
                             }}
@@ -101,7 +101,7 @@ function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
                             axisLine={false}
                             tickLine={false}
                             tick={{
-                                fill: '#94a3b8',
+                                fill: "#94a3b8",
                                 fontSize: 10,
                                 fontWeight: 700,
                             }}
@@ -109,7 +109,7 @@ function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
                         <Tooltip
                             allowEscapeViewBox={{ x: true, y: true }}
                             wrapperStyle={{ zIndex: 10000 }}
-                            cursor={{ fill: 'rgba(255,255,255,0.06)' }}
+                            cursor={{ fill: "rgba(255,255,255,0.06)" }}
                             content={({
                                 active,
                                 payload,
@@ -129,14 +129,14 @@ function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
                                             : false;
 
                                     const translateX = isRight
-                                        ? '-100%'
-                                        : '-50%';
-                                    const translateY = isTop ? '16px' : '-120%';
+                                        ? "-100%"
+                                        : "-50%";
+                                    const translateY = isTop ? "16px" : "-120%";
 
                                     const tooltipStyle = {
                                         transform: `translate(${translateX}, ${translateY})`,
                                         transition:
-                                            'transform 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+                                            "transform 150ms cubic-bezier(0.16, 1, 0.3, 1)",
                                     };
 
                                     return (
@@ -177,14 +177,14 @@ function ProblemDistributionImpl({ submissions }: ProblemDistributionProps) {
                             {data.map((entry, index) => {
                                 const color =
                                     entry.rating >= 2400
-                                        ? '#ef4444'
+                                        ? "#ef4444"
                                         : entry.rating >= 1900
-                                          ? '#a855f7'
+                                          ? "#a855f7"
                                           : entry.rating >= 1600
-                                            ? '#3b82f6'
+                                            ? "#3b82f6"
                                             : entry.rating >= 1200
-                                              ? '#10b981'
-                                              : '#64748b';
+                                              ? "#10b981"
+                                              : "#64748b";
                                 return (
                                     <Cell
                                         key={`cell-${index}`}

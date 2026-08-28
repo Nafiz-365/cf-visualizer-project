@@ -1,9 +1,9 @@
-import React from 'react';
-import { RatingChange } from '../types';
-import { Card } from './ui/Card';
-import { format } from 'date-fns';
-import { Trophy, ArrowUp, ArrowDown, Minus } from 'lucide-react';
-import { cn } from '../lib/utils';
+import React from "react";
+import { RatingChange } from "../types";
+import { Card } from "./ui/Card";
+import { format } from "date-fns";
+import { Trophy, ArrowUp, ArrowDown, Minus } from "lucide-react";
+import { cn } from "../lib/utils";
 
 interface ContestHistoryProps {
     ratingHistory: RatingChange[];
@@ -53,7 +53,7 @@ function ContestHistoryImpl({ ratingHistory }: ContestHistoryProps) {
                                                     contest.ratingUpdateTimeSeconds *
                                                         1000,
                                                 ),
-                                                'MMM dd, yyyy',
+                                                "MMM dd, yyyy",
                                             )}
                                         </span>
                                     </div>
@@ -65,8 +65,8 @@ function ContestHistoryImpl({ ratingHistory }: ContestHistoryProps) {
                                             size={10}
                                             className={cn(
                                                 contest.rank <= 100
-                                                    ? 'text-yellow-500'
-                                                    : 'text-muted-app/20',
+                                                    ? "text-yellow-500"
+                                                    : "text-muted-app/20",
                                             )}
                                         />
                                         <span className="text-[10px] md:text-xs font-mono font-bold text-text-app">
@@ -77,12 +77,12 @@ function ContestHistoryImpl({ ratingHistory }: ContestHistoryProps) {
                                 <td className="py-2.5 md:py-4 text-right">
                                     <div
                                         className={cn(
-                                            'flex items-center justify-end gap-0.5 md:gap-1 text-[9px] md:text-[10px] font-black',
+                                            "flex items-center justify-end gap-0.5 md:gap-1 text-[9px] md:text-[10px] font-black",
                                             delta > 0
-                                                ? 'text-emerald-500'
+                                                ? "text-emerald-500"
                                                 : delta < 0
-                                                  ? 'text-red-500'
-                                                  : 'text-muted-app',
+                                                  ? "text-red-500"
+                                                  : "text-muted-app",
                                         )}
                                     >
                                         {delta > 0 ? (

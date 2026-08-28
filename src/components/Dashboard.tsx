@@ -5,9 +5,9 @@ import React, {
     useDeferredValue,
     lazy,
     Suspense,
-} from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
+} from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
 import {
     Trophy,
     TrendingUp,
@@ -27,60 +27,60 @@ import {
     X,
     AlertTriangle,
     Activity,
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { CodeforcesService } from '../services/codeforces';
-import { Button } from './ui/Button';
-import { GeminiService, AIInsight } from '../services/geminiService';
-import { cn } from '../lib/utils';
-import { ErrorState } from './ErrorState';
-import { Milestone } from 'lucide-react';
+} from "lucide-react";
+import { format } from "date-fns";
+import { CodeforcesService } from "../services/codeforces";
+import { Button } from "./ui/Button";
+import { GeminiService, AIInsight } from "../services/geminiService";
+import { cn } from "../lib/utils";
+import { ErrorState } from "./ErrorState";
+import { Milestone } from "lucide-react";
 
-import { User, RatingChange, Submission, Problem, Contest } from '../types';
-import { getRankBg } from '../lib/utils';
+import { User, RatingChange, Submission, Problem, Contest } from "../types";
+import { getRankBg } from "../lib/utils";
 import {
     generateFallbackUser,
     generateFallbackRatingHistory,
     generateFallbackSubmissions,
-} from '../lib/fallbackData';
-import { DetailItem } from './DetailItem';
-import { DashboardSkeleton } from './ui/DashboardSkeleton';
+} from "../lib/fallbackData";
+import { DetailItem } from "./DetailItem";
+import { DashboardSkeleton } from "./ui/DashboardSkeleton";
 
 const OverviewTab = lazy(() =>
-    import('./dashboard/OverviewTab').then((m) => ({ default: m.OverviewTab })),
+    import("./dashboard/OverviewTab").then((m) => ({ default: m.OverviewTab })),
 );
 const AnalyticsTab = lazy(() =>
-    import('./dashboard/AnalyticsTab').then((m) => ({
+    import("./dashboard/AnalyticsTab").then((m) => ({
         default: m.AnalyticsTab,
     })),
 );
 const AiTab = lazy(() =>
-    import('./dashboard/AiTab').then((m) => ({ default: m.AiTab })),
+    import("./dashboard/AiTab").then((m) => ({ default: m.AiTab })),
 );
 const PrepTab = lazy(() =>
-    import('./dashboard/PrepTab').then((m) => ({ default: m.PrepTab })),
+    import("./dashboard/PrepTab").then((m) => ({ default: m.PrepTab })),
 );
 const SubmissionsTab = lazy(() =>
-    import('./dashboard/SubmissionsTab').then((m) => ({
+    import("./dashboard/SubmissionsTab").then((m) => ({
         default: m.SubmissionsTab,
     })),
 );
 const SocialTab = lazy(() =>
-    import('./dashboard/SocialTab').then((m) => ({ default: m.SocialTab })),
+    import("./dashboard/SocialTab").then((m) => ({ default: m.SocialTab })),
 );
 const BookmarksAndNotes = lazy(() =>
-    import('./BookmarksAndNotes').then((m) => ({
+    import("./BookmarksAndNotes").then((m) => ({
         default: m.BookmarksAndNotes,
     })),
 );
 const Timeline = lazy(() =>
-    import('./Timeline').then((m) => ({ default: m.Timeline })),
+    import("./Timeline").then((m) => ({ default: m.Timeline })),
 );
 const RatingPredictor = lazy(() =>
-    import('./RatingPredictor').then((m) => ({ default: m.RatingPredictor })),
+    import("./RatingPredictor").then((m) => ({ default: m.RatingPredictor })),
 );
 const ContestAnalyzer = lazy(() =>
-    import('./ContestAnalyzer').then((m) => ({ default: m.ContestAnalyzer })),
+    import("./ContestAnalyzer").then((m) => ({ default: m.ContestAnalyzer })),
 );
 
 export function Dashboard() {
@@ -103,13 +103,13 @@ export function Dashboard() {
     const [isOfflineMode, setIsOfflineMode] = useState(false);
 
     // Tablet/Desktop specific state
-    const [sortKey, setSortKey] = useState<string>('creationTimeSeconds');
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [sortKey, setSortKey] = useState<string>("creationTimeSeconds");
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+    const [searchQuery, setSearchQuery] = useState("");
     // Deferred value: the input stays instant, the heavy filter runs at lower priority
     const deferredSearch = useDeferredValue(searchQuery);
-    const [verdictFilter, setVerdictFilter] = useState('ALL');
-    const [languageFilter, setLanguageFilter] = useState('ALL');
+    const [verdictFilter, setVerdictFilter] = useState("ALL");
+    const [languageFilter, setLanguageFilter] = useState("ALL");
 
     useEffect(() => {
         if (handle) {
@@ -120,10 +120,10 @@ export function Dashboard() {
 
     const toggleSort = (key: string) => {
         if (sortKey === key) {
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
         } else {
             setSortKey(key);
-            setSortDirection('desc');
+            setSortDirection("desc");
         }
     };
 
@@ -134,11 +134,11 @@ export function Dashboard() {
         if (!dataToExport.length) return;
 
         const headers = [
-            'Problem Name',
-            'Verdict',
-            'Language',
-            'Time Consumed (ms)',
-            'Memory Consumed (MB)',
+            "Problem Name",
+            "Verdict",
+            "Language",
+            "Time Consumed (ms)",
+            "Memory Consumed (MB)",
         ];
         const rows = dataToExport.map((sub) => [
             `"${sub.problem.name.replace(/"/g, '""')}"`, // Handle quotes in names
@@ -149,22 +149,22 @@ export function Dashboard() {
         ]);
 
         const csvContent = [
-            headers.join(','),
-            ...rows.map((row) => row.join(',')),
-        ].join('\n');
+            headers.join(","),
+            ...rows.map((row) => row.join(",")),
+        ].join("\n");
 
         const blob = new Blob([csvContent], {
-            type: 'text/csv;charset=utf-8;',
+            type: "text/csv;charset=utf-8;",
         });
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
 
-        link.setAttribute('href', url);
+        link.setAttribute("href", url);
         link.setAttribute(
-            'download',
-            `cf_submissions_${handle}_${format(new Date(), 'yyyy-MM-dd')}.csv`,
+            "download",
+            `cf_submissions_${handle}_${format(new Date(), "yyyy-MM-dd")}.csv`,
         );
-        link.style.visibility = 'hidden';
+        link.style.visibility = "hidden";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -172,13 +172,13 @@ export function Dashboard() {
 
     const saveToRecent = (h: string) => {
         const recent = JSON.parse(
-            localStorage.getItem('recent_handles') || '[]',
+            localStorage.getItem("recent_handles") || "[]",
         );
         const updated = [
             h,
             ...recent.filter((item: string) => item !== h),
         ].slice(0, 5);
-        localStorage.setItem('recent_handles', JSON.stringify(updated));
+        localStorage.setItem("recent_handles", JSON.stringify(updated));
     };
 
     const loadData = async (h: string) => {
@@ -194,7 +194,7 @@ export function Dashboard() {
             try {
                 return await promise;
             } catch (e) {
-                console.warn('Non-critical fetch failed:', e);
+                console.warn("Non-critical fetch failed:", e);
                 return defaultValue;
             }
         };
@@ -220,17 +220,17 @@ export function Dashboard() {
         } catch (err: any) {
             const is404 =
                 err.response?.status === 404 ||
-                err.message?.toLowerCase().includes('not found') ||
+                err.message?.toLowerCase().includes("not found") ||
                 err.response?.data?.comment
                     ?.toLowerCase()
-                    .includes('not found');
+                    .includes("not found");
 
             if (is404) {
-                setError(err.message || 'Failed to fetch user data');
+                setError(err.message || "Failed to fetch user data");
                 setLoading(false);
             } else {
                 console.warn(
-                    'Critical fetch failed, falling back to simulated trace data:',
+                    "Critical fetch failed, falling back to simulated trace data:",
                     err,
                 );
                 setIsOfflineMode(true);
@@ -275,7 +275,7 @@ export function Dashboard() {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
-            console.error('Failed to copy: ', err);
+            console.error("Failed to copy: ", err);
         }
     };
 
@@ -294,7 +294,7 @@ export function Dashboard() {
             );
             setAiInsights(insights);
         } catch (err) {
-            console.error('AI Insight Error:', err);
+            console.error("AI Insight Error:", err);
         } finally {
             setLoadingInsights(false);
         }
@@ -304,7 +304,7 @@ export function Dashboard() {
         subs: Submission[],
         history: RatingChange[] = [],
     ) => {
-        const solved = subs.filter((s) => s.verdict === 'OK');
+        const solved = subs.filter((s) => s.verdict === "OK");
         const uniqueSolved = new Set(
             solved.map((s) => `${s.problem.contestId}-${s.problem.index}`),
         );
@@ -319,7 +319,7 @@ export function Dashboard() {
         });
 
         const bestTag =
-            Object.entries(tags).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+            Object.entries(tags).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
         const peakHour =
             Object.entries(hours).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 0;
 
@@ -368,12 +368,12 @@ export function Dashboard() {
     // Compute live session stats for the AI tab
     const liveSessionStats = useMemo(() => {
         if (!submissions.length)
-            return { streak: 0, intensity: 'Low', efficiency: '0%' };
+            return { streak: 0, intensity: "Low", efficiency: "0%" };
 
         // Streak: consecutive days with at least one accepted submission
         const solvedDays = new Set(
             submissions
-                .filter((s) => s.verdict === 'OK')
+                .filter((s) => s.verdict === "OK")
                 .map((s) =>
                     new Date(s.creationTimeSeconds * 1000).toDateString(),
                 ),
@@ -390,10 +390,10 @@ export function Dashboard() {
         // Intensity: based on solves in last 30 days
         const thirtyDaysAgo = Date.now() / 1000 - 30 * 86400;
         const recentSolves = submissions.filter(
-            (s) => s.verdict === 'OK' && s.creationTimeSeconds > thirtyDaysAgo,
+            (s) => s.verdict === "OK" && s.creationTimeSeconds > thirtyDaysAgo,
         ).length;
         const intensity =
-            recentSolves > 60 ? 'High' : recentSolves > 25 ? 'Medium' : 'Low';
+            recentSolves > 60 ? "High" : recentSolves > 25 ? "Medium" : "Low";
 
         // Efficiency = accuracy
         const acc = analytics?.accuracy ?? 0;
@@ -420,11 +420,11 @@ export function Dashboard() {
             );
         }
 
-        if (verdictFilter !== 'ALL') {
+        if (verdictFilter !== "ALL") {
             filtered = filtered.filter((s) => s.verdict === verdictFilter);
         }
 
-        if (languageFilter !== 'ALL') {
+        if (languageFilter !== "ALL") {
             filtered = filtered.filter(
                 (s) => s.programmingLanguage === languageFilter,
             );
@@ -433,27 +433,27 @@ export function Dashboard() {
         filtered.sort((a, b) => {
             let valA: any, valB: any;
             switch (sortKey) {
-                case 'problem':
+                case "problem":
                     valA = a.problem.name;
                     valB = b.problem.name;
                     break;
-                case 'verdict':
+                case "verdict":
                     valA = a.verdict;
                     valB = b.verdict;
                     break;
-                case 'lang':
+                case "lang":
                     valA = a.programmingLanguage;
                     valB = b.programmingLanguage;
                     break;
-                case 'time':
+                case "time":
                     valA = a.timeConsumedMillis;
                     valB = b.timeConsumedMillis;
                     break;
-                case 'memory':
+                case "memory":
                     valA = a.memoryConsumedBytes;
                     valB = b.memoryConsumedBytes;
                     break;
-                case 'when':
+                case "when":
                     valA = a.creationTimeSeconds;
                     valB = b.creationTimeSeconds;
                     break;
@@ -461,7 +461,7 @@ export function Dashboard() {
                     valA = a.creationTimeSeconds;
                     valB = b.creationTimeSeconds;
             }
-            return sortDirection === 'asc'
+            return sortDirection === "asc"
                 ? valA < valB
                     ? -1
                     : 1
@@ -481,49 +481,49 @@ export function Dashboard() {
     ]);
 
     const [activeTab, setActiveTab] = useState<
-        | 'overview'
-        | 'analytics'
-        | 'submissions'
-        | 'ai'
-        | 'prep'
-        | 'social'
-        | 'journey'
-        | 'predictor'
-        | 'contest-analyzer'
-        | 'bookmarks'
-    >('overview');
-    const [socialSubTab, setSocialSubTab] = useState<'cards' | 'stream'>(
-        'cards',
+        | "overview"
+        | "analytics"
+        | "submissions"
+        | "ai"
+        | "prep"
+        | "social"
+        | "journey"
+        | "predictor"
+        | "contest-analyzer"
+        | "bookmarks"
+    >("overview");
+    const [socialSubTab, setSocialSubTab] = useState<"cards" | "stream">(
+        "cards",
     );
     const [activeAiTool, setActiveAiTool] = useState<
-        'roadmap' | 'chat' | 'weakness'
-    >('chat');
+        "roadmap" | "chat" | "weakness"
+    >("chat");
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [heatmapRange, setHeatmapRange] = useState<
-        '30' | '90' | '180' | '365'
-    >('365');
+        "30" | "90" | "180" | "365"
+    >("365");
     const [heatmapAnchor, setHeatmapAnchor] = useState(() =>
-        format(new Date(), 'yyyy-MM-dd'),
+        format(new Date(), "yyyy-MM-dd"),
     );
 
-    const focusTopic = analytics?.bestTag || 'DP';
+    const focusTopic = analytics?.bestTag || "DP";
     const nextMilestone = Math.max(
         100 * Math.ceil(((user?.rating ?? 800) + 150) / 100),
         1000,
     );
 
     const TABS = [
-        { id: 'overview', label: 'Overview', icon: LayoutList },
-        { id: 'contest-analyzer', label: 'Contest Analyzer', icon: Trophy },
-        { id: 'predictor', label: 'Predictor', icon: TrendingUp },
-        { id: 'ai', label: 'AI Command Center', icon: Zap },
-        { id: 'prep', label: 'Preparation', icon: Target },
-        { id: 'bookmarks', label: 'Saved', icon: Bookmark },
-        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-        { id: 'journey', label: 'Journey', icon: Milestone },
-        { id: 'submissions', label: 'History', icon: Code2 },
-        { id: 'social', label: 'Social & Share', icon: Users },
+        { id: "overview", label: "Overview", icon: LayoutList },
+        { id: "contest-analyzer", label: "Contest Analyzer", icon: Trophy },
+        { id: "predictor", label: "Predictor", icon: TrendingUp },
+        { id: "ai", label: "AI Command Center", icon: Zap },
+        { id: "prep", label: "Preparation", icon: Target },
+        { id: "bookmarks", label: "Saved", icon: Bookmark },
+        { id: "analytics", label: "Analytics", icon: BarChart3 },
+        { id: "journey", label: "Journey", icon: Milestone },
+        { id: "submissions", label: "History", icon: Code2 },
+        { id: "social", label: "Social & Share", icon: Users },
     ] as const;
 
     if (loading) {
@@ -533,9 +533,9 @@ export function Dashboard() {
     if (error || !user) {
         return (
             <ErrorState
-                message={error || 'User not found'}
+                message={error || "User not found"}
                 onRetry={handle ? () => loadData(handle) : undefined}
-                onHome={() => navigate('/')}
+                onHome={() => navigate("/")}
             />
         );
     }
@@ -546,7 +546,7 @@ export function Dashboard() {
                 <div className="w-200 h-200 bg-brand-primary/10 -top-50 -left-50" />
                 <div
                     className="w-150 h-150 bg-brand-secondary/10 top-[20%] -right-32"
-                    style={{ animationDelay: '-5s' }}
+                    style={{ animationDelay: "-5s" }}
                 />
             </div>
 
@@ -564,11 +564,11 @@ export function Dashboard() {
                         />
                         {/* Drawer */}
                         <motion.aside
-                            initial={{ x: '-100%' }}
+                            initial={{ x: "-100%" }}
                             animate={{ x: 0 }}
-                            exit={{ x: '-100%' }}
+                            exit={{ x: "-100%" }}
                             transition={{
-                                type: 'spring',
+                                type: "spring",
                                 damping: 25,
                                 stiffness: 200,
                             }}
@@ -609,17 +609,17 @@ export function Dashboard() {
                                                 setIsMobileMenuOpen(false);
                                             }}
                                             className={cn(
-                                                'w-full flex items-center gap-3 px-4 py-3 rounded-[1.15rem] transition-all duration-300 group relative text-sm',
+                                                "w-full flex items-center gap-3 px-4 py-3 rounded-[1.15rem] transition-all duration-300 group relative text-sm",
                                                 isActive
-                                                    ? 'bg-brand-primary/10 text-brand-primary shadow-sm shadow-brand-primary/20 ring-1 ring-brand-primary/15'
-                                                    : 'text-muted-app hover:bg-white/10 hover:text-text-app',
+                                                    ? "bg-brand-primary/10 text-brand-primary shadow-sm shadow-brand-primary/20 ring-1 ring-brand-primary/15"
+                                                    : "text-muted-app hover:bg-white/10 hover:text-text-app",
                                             )}
                                         >
                                             <Icon
                                                 size={18}
                                                 className={cn(
-                                                    'shrink-0 transition-transform duration-500',
-                                                    isActive && 'scale-110',
+                                                    "shrink-0 transition-transform duration-500",
+                                                    isActive && "scale-110",
                                                 )}
                                             />
                                             <span className="text-[11px] font-bold uppercase tracking-widest">
@@ -680,17 +680,17 @@ export function Dashboard() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={cn(
-                                    'w-full flex items-center justify-center lg:justify-start gap-0 lg:gap-3 px-2 lg:px-4 py-3 rounded-3xl transition-all duration-300 group relative text-sm',
+                                    "w-full flex items-center justify-center lg:justify-start gap-0 lg:gap-3 px-2 lg:px-4 py-3 rounded-3xl transition-all duration-300 group relative text-sm",
                                     isActive
-                                        ? 'bg-brand-primary/10 text-brand-primary shadow-sm shadow-brand-primary/20 ring-1 ring-brand-primary/15'
-                                        : 'text-muted-app hover:bg-white/10 hover:text-text-app',
+                                        ? "bg-brand-primary/10 text-brand-primary shadow-sm shadow-brand-primary/20 ring-1 ring-brand-primary/15"
+                                        : "text-muted-app hover:bg-white/10 hover:text-text-app",
                                 )}
                             >
                                 <Icon
                                     size={20}
                                     className={cn(
-                                        'shrink-0 transition-transform duration-500',
-                                        isActive && 'scale-110',
+                                        "shrink-0 transition-transform duration-500",
+                                        isActive && "scale-110",
                                     )}
                                 />
                                 <span className="text-[11px] font-bold uppercase tracking-widest hidden lg:block">
@@ -751,7 +751,7 @@ export function Dashboard() {
                                         {user.handle}
                                     </p>
                                     <p className="text-[9px] font-mono uppercase tracking-widest text-muted-app">
-                                        {user.rank || 'Unranked'}
+                                        {user.rank || "Unranked"}
                                     </p>
                                 </div>
                             </button>
@@ -805,9 +805,9 @@ export function Dashboard() {
                                     <strong>
                                         Codeforces API is currently experiencing
                                         issues (Status 503/429).
-                                    </strong>{' '}
+                                    </strong>{" "}
                                     Showing simulated trace metrics and fallback
-                                    profile statistics for{' '}
+                                    profile statistics for{" "}
                                     <strong>{handle}</strong> to keep your
                                     dashboard interactive.
                                 </p>
@@ -842,7 +842,7 @@ export function Dashboard() {
                                     </div>
                                 }
                             >
-                                {activeTab === 'overview' && (
+                                {activeTab === "overview" && (
                                     <OverviewTab
                                         user={user}
                                         analytics={analytics}
@@ -862,7 +862,7 @@ export function Dashboard() {
                                     />
                                 )}
 
-                                {activeTab === 'journey' && (
+                                {activeTab === "journey" && (
                                     <div className="max-w-4xl mx-auto">
                                         <Timeline
                                             user={user}
@@ -872,7 +872,7 @@ export function Dashboard() {
                                     </div>
                                 )}
 
-                                {activeTab === 'analytics' && (
+                                {activeTab === "analytics" && (
                                     <AnalyticsTab
                                         analytics={analytics}
                                         focusTopic={focusTopic}
@@ -881,7 +881,7 @@ export function Dashboard() {
                                     />
                                 )}
 
-                                {activeTab === 'submissions' && (
+                                {activeTab === "submissions" && (
                                     <SubmissionsTab
                                         submissions={submissions}
                                         processedSubmissions={
@@ -905,7 +905,7 @@ export function Dashboard() {
                                     />
                                 )}
 
-                                {activeTab === 'ai' && (
+                                {activeTab === "ai" && (
                                     <AiTab
                                         user={user}
                                         ratingHistory={ratingHistory}
@@ -919,7 +919,7 @@ export function Dashboard() {
                                     />
                                 )}
 
-                                {activeTab === 'prep' && (
+                                {activeTab === "prep" && (
                                     <PrepTab
                                         user={user}
                                         problemset={problemset}
@@ -931,11 +931,11 @@ export function Dashboard() {
                                     />
                                 )}
 
-                                {activeTab === 'bookmarks' && (
+                                {activeTab === "bookmarks" && (
                                     <BookmarksAndNotes />
                                 )}
 
-                                {activeTab === 'social' && (
+                                {activeTab === "social" && (
                                     <SocialTab
                                         socialSubTab={socialSubTab}
                                         setSocialSubTab={setSocialSubTab}
@@ -946,20 +946,20 @@ export function Dashboard() {
                                     />
                                 )}
 
-                                {activeTab === 'predictor' && (
+                                {activeTab === "predictor" && (
                                     <RatingPredictor
                                         currentUser={user}
                                         ratingHistory={ratingHistory}
                                     />
                                 )}
 
-                                {activeTab === 'contest-analyzer' && (
+                                {activeTab === "contest-analyzer" && (
                                     <ContestAnalyzer
                                         ratingHistory={ratingHistory}
                                         submissions={submissions}
                                         problemset={problemset}
                                         userRating={user?.rating ?? 800}
-                                        userHandle={user?.handle ?? ''}
+                                        userHandle={user?.handle ?? ""}
                                     />
                                 )}
                             </Suspense>
@@ -973,7 +973,7 @@ export function Dashboard() {
                 {isProfileModalOpen && (
                     <div
                         className="fixed inset-0 z-200 flex items-center justify-center p-4 sm:p-6 backdrop-blur-xl"
-                        style={{ background: 'var(--overlay-bg)' }}
+                        style={{ background: "var(--overlay-bg)" }}
                         onClick={() => setIsProfileModalOpen(false)}
                     >
                         <motion.div
@@ -982,8 +982,8 @@ export function Dashboard() {
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="w-full max-w-2xl rounded-3xl sm:rounded-[40px] overflow-hidden shadow-3xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
                             style={{
-                                background: 'var(--bg-app)',
-                                border: '1px solid var(--glass-border)',
+                                background: "var(--bg-app)",
+                                border: "1px solid var(--glass-border)",
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -991,8 +991,8 @@ export function Dashboard() {
                             <div className="relative h-36 sm:h-48 shrink-0">
                                 <div
                                     className={cn(
-                                        'absolute inset-0 opacity-20',
-                                        getRankBg(user.rank || ''),
+                                        "absolute inset-0 opacity-20",
+                                        getRankBg(user.rank || ""),
                                     )}
                                 />
                                 <div className="absolute inset-0 bg-linear-to-t from-bg-app via-bg-app/50 to-transparent" />
@@ -1000,7 +1000,7 @@ export function Dashboard() {
                                 <button
                                     onClick={() => setIsProfileModalOpen(false)}
                                     className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full transition-colors z-10 backdrop-blur-md"
-                                    style={{ background: 'var(--glass-bg)' }}
+                                    style={{ background: "var(--glass-bg)" }}
                                 >
                                     <XCircle
                                         size={20}
@@ -1012,8 +1012,8 @@ export function Dashboard() {
                                     <div className="relative group shrink-0">
                                         <div
                                             className={cn(
-                                                'absolute -inset-1 rounded-3xl sm:rounded-4xl blur-lg opacity-40',
-                                                getRankBg(user.rank || ''),
+                                                "absolute -inset-1 rounded-3xl sm:rounded-4xl blur-lg opacity-40",
+                                                getRankBg(user.rank || ""),
                                             )}
                                         />
                                         <img
@@ -1029,13 +1029,13 @@ export function Dashboard() {
                                         <div className="flex items-center justify-center sm:justify-start gap-2">
                                             <span
                                                 className={cn(
-                                                    'text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-white/10',
+                                                    "text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-white/10",
                                                     getRankBg(
-                                                        user.rank || '',
-                                                    ).split(' ')[1],
+                                                        user.rank || "",
+                                                    ).split(" ")[1],
                                                 )}
                                             >
-                                                {user.rank || 'Unranked'}
+                                                {user.rank || "Unranked"}
                                             </span>
                                             <span className="text-[10px] font-mono font-bold text-muted-app opacity-60 uppercase">
                                                 Max {user.maxRank}
@@ -1051,37 +1051,37 @@ export function Dashboard() {
                                     <DetailItem
                                         label="Full Intelligence Name"
                                         value={
-                                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                                            'Classified'
+                                            `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+                                            "Classified"
                                         }
                                         outerClassName="bg-[var(--bg-card)] border border-[var(--glass-border)]"
                                     />
                                     <DetailItem
                                         label="Current Rating"
-                                        value={user.rating || 'N/A'}
+                                        value={user.rating || "N/A"}
                                         isMono
                                         outerClassName="bg-[var(--bg-card)] border border-[var(--glass-border)]"
                                     />
                                     <DetailItem
                                         label="Peak Rating"
-                                        value={user.maxRating || 'N/A'}
+                                        value={user.maxRating || "N/A"}
                                         isMono
                                         outerClassName="bg-[var(--bg-card)] border border-[var(--glass-border)]"
                                     />
                                     <DetailItem
                                         label="Origin (Country)"
-                                        value={user.country || 'Global'}
+                                        value={user.country || "Global"}
                                         outerClassName="bg-[var(--bg-card)] border border-[var(--glass-border)]"
                                     />
                                     <DetailItem
                                         label="Field Base (City)"
-                                        value={user.city || 'Undisclosed'}
+                                        value={user.city || "Undisclosed"}
                                         outerClassName="bg-[var(--bg-card)] border border-[var(--glass-border)]"
                                     />
                                     <DetailItem
                                         label="Organization"
                                         value={
-                                            user.organization || 'Independent'
+                                            user.organization || "Independent"
                                         }
                                         outerClassName="bg-[var(--bg-card)] border border-[var(--glass-border)]"
                                     />
@@ -1104,7 +1104,7 @@ export function Dashboard() {
                                                 user.registrationTimeSeconds *
                                                     1000,
                                             ),
-                                            'MMM dd, yyyy',
+                                            "MMM dd, yyyy",
                                         )}
                                         outerClassName="bg-[var(--bg-card)] border border-[var(--glass-border)]"
                                     />
@@ -1118,8 +1118,8 @@ export function Dashboard() {
                                         <div
                                             className="p-5 sm:p-6 rounded-[20px] sm:rounded-3xl"
                                             style={{
-                                                background: 'var(--bg-card)',
-                                                border: '1px solid var(--glass-border)',
+                                                background: "var(--bg-card)",
+                                                border: "1px solid var(--glass-border)",
                                             }}
                                         >
                                             <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-2">
@@ -1132,8 +1132,8 @@ export function Dashboard() {
                                         <div
                                             className="p-5 sm:p-6 rounded-[20px] sm:rounded-3xl"
                                             style={{
-                                                background: 'var(--bg-card)',
-                                                border: '1px solid var(--glass-border)',
+                                                background: "var(--bg-card)",
+                                                border: "1px solid var(--glass-border)",
                                             }}
                                         >
                                             <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-2">
@@ -1170,7 +1170,7 @@ export function Dashboard() {
                 {selectedSubmission && (
                     <div
                         className="fixed inset-0 z-200 flex items-center justify-center p-6 backdrop-blur-md"
-                        style={{ background: 'var(--overlay-bg)' }}
+                        style={{ background: "var(--overlay-bg)" }}
                         onClick={() => setSelectedSubmission(null)}
                     >
                         <motion.div
@@ -1259,7 +1259,7 @@ export function Dashboard() {
                                                 selectedSubmission.creationTimeSeconds *
                                                     1000,
                                             ),
-                                            'MMM dd, HH:mm:ss',
+                                            "MMM dd, HH:mm:ss",
                                         )}
                                         isMono
                                     />

@@ -1,9 +1,9 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { Problem, Submission } from '../types';
-import { Card } from './ui/Card';
-import { ExternalLink, Target, Sparkles, Bookmark } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { BookmarkNoteModal } from './BookmarkNoteModal';
+import React, { useMemo, useState, useEffect } from "react";
+import { Problem, Submission } from "../types";
+import { Card } from "./ui/Card";
+import { ExternalLink, Target, Sparkles, Bookmark } from "lucide-react";
+import { cn } from "../lib/utils";
+import { BookmarkNoteModal } from "./BookmarkNoteModal";
 
 interface RecommendationsProps {
     submissions: Submission[];
@@ -23,7 +23,7 @@ function RecommendationsImpl({
     } | null>(null);
 
     useEffect(() => {
-        fetch('/api/bookmarks')
+        fetch("/api/bookmarks")
             .then((r) => r.json())
             .then((data) => {
                 if (data.success) {
@@ -40,9 +40,9 @@ function RecommendationsImpl({
         e.preventDefault();
         e.stopPropagation();
         try {
-            await fetch('/api/bookmarks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            await fetch("/api/bookmarks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     problemId: `${problem.contestId}${problem.index}`,
                     problemName: problem.name,
@@ -55,7 +55,7 @@ function RecommendationsImpl({
                 id: `${problem.contestId}${problem.index}`,
                 name: problem.name,
             });
-            window.dispatchEvent(new Event('bookmarksUpdated'));
+            window.dispatchEvent(new Event("bookmarksUpdated"));
         } catch (e) {
             console.error(e);
         }
@@ -64,15 +64,15 @@ function RecommendationsImpl({
     const handleSaveNote = async (note: string) => {
         if (!activeBookmark) return;
         try {
-            await fetch('/api/notes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            await fetch("/api/notes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     problemId: activeBookmark.id,
                     note: note,
                 }),
             });
-            window.dispatchEvent(new Event('bookmarksUpdated'));
+            window.dispatchEvent(new Event("bookmarksUpdated"));
         } catch (e) {
             console.error(e);
         }
@@ -88,7 +88,7 @@ function RecommendationsImpl({
 
         const solvedIds = new Set(
             submissions
-                .filter((s) => s.verdict === 'OK')
+                .filter((s) => s.verdict === "OK")
                 .map((s) => `${s.problem.contestId}-${s.problem.index}`),
         );
 
@@ -106,7 +106,7 @@ function RecommendationsImpl({
                 ...p,
                 priorityScore:
                     Math.abs((p.rating || 800) - targetMid) +
-                    (p.tags.includes('dp') ? -30 : 0),
+                    (p.tags.includes("dp") ? -30 : 0),
             }))
             .sort((a, b) => a.priorityScore - b.priorityScore)
             .slice(0, 5);
@@ -144,10 +144,10 @@ function RecommendationsImpl({
                                 </span>
                                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-app/60">
                                     {i === 0
-                                        ? 'Best pick'
+                                        ? "Best pick"
                                         : i === 1
-                                          ? 'Strong next'
-                                          : 'Worth it'}
+                                          ? "Strong next"
+                                          : "Worth it"}
                                 </span>
                             </div>
                             <h4 className="text-xs font-bold text-text-app group-hover:text-brand-secondary transition-colors wrap-break-word whitespace-normal">
@@ -167,12 +167,12 @@ function RecommendationsImpl({
                                 <button
                                     onClick={(e) => handleBookmark(e, p)}
                                     className={cn(
-                                        'p-1.5 rounded-lg transition-colors group-hover:opacity-100 opacity-60',
+                                        "p-1.5 rounded-lg transition-colors group-hover:opacity-100 opacity-60",
                                         bookmarked.has(
                                             `${p.contestId}${p.index}`,
                                         )
-                                            ? 'text-brand-primary'
-                                            : 'text-muted-app hover:text-brand-secondary hover:bg-brand-secondary/10',
+                                            ? "text-brand-primary"
+                                            : "text-muted-app hover:text-brand-secondary hover:bg-brand-secondary/10",
                                     )}
                                     title="Bookmark problem"
                                 >
@@ -182,8 +182,8 @@ function RecommendationsImpl({
                                             bookmarked.has(
                                                 `${p.contestId}${p.index}`,
                                             )
-                                                ? 'currentColor'
-                                                : 'none'
+                                                ? "currentColor"
+                                                : "none"
                                         }
                                     />
                                 </button>
@@ -198,7 +198,7 @@ function RecommendationsImpl({
                 onClose={handleSkipNote}
                 onSave={handleSaveNote}
                 onSkip={handleSkipNote}
-                problemName={activeBookmark?.name || ''}
+                problemName={activeBookmark?.name || ""}
             />
 
             <div className="pt-2">

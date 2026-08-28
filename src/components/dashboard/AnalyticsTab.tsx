@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
     Trophy,
     TrendingUp,
@@ -8,15 +8,15 @@ import {
     BarChart3,
     Binary,
     History as HistoryIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Card, StatCard } from '../ui/Card';
-import { ContestHeatmap } from '../charts/ContestHeatmap';
-import { SolvedByRating } from '../charts/SolvedByRating';
-import { ProblemLevelStats } from '../charts/ProblemLevelStats';
-import { ContestHistory } from '../ContestHistory';
-import { RadarStrength } from '../RadarStrength';
-import { ProblemDistribution } from '../ProblemDistribution';
+import { Card, StatCard } from "../ui/Card";
+import { ContestHeatmap } from "../charts/ContestHeatmap";
+import { SolvedByRating } from "../charts/SolvedByRating";
+import { ProblemLevelStats } from "../charts/ProblemLevelStats";
+import { ContestHistory } from "../ContestHistory";
+import { RadarStrength } from "../RadarStrength";
+import { ProblemDistribution } from "../ProblemDistribution";
 
 function AnalyticsTabImpl({
     analytics,
@@ -49,7 +49,7 @@ function AnalyticsTabImpl({
                                     Best Tag
                                 </p>
                                 <p className="text-lg md:text-xl font-display font-bold text-text-app">
-                                    {analytics?.bestTag || 'N/A'}
+                                    {analytics?.bestTag || "N/A"}
                                 </p>
                             </div>
                             <div className="rounded-3xl border border-white/10 bg-card-app/70 p-4">
@@ -57,7 +57,7 @@ function AnalyticsTabImpl({
                                     Peak Hour
                                 </p>
                                 <p className="text-lg md:text-xl font-display font-bold text-text-app">
-                                    {analytics?.peakHour || 'N/A'}
+                                    {analytics?.peakHour || "N/A"}
                                 </p>
                             </div>
                             <div className="rounded-3xl border border-white/10 bg-card-app/70 p-4">
@@ -67,7 +67,7 @@ function AnalyticsTabImpl({
                                 <p className="text-lg md:text-xl font-display font-bold text-text-app">
                                     {analytics?.deltaSuccessRate != null
                                         ? `${analytics.deltaSuccessRate}%`
-                                        : '0%'}
+                                        : "0%"}
                                 </p>
                             </div>
                         </div>
@@ -112,7 +112,7 @@ function AnalyticsTabImpl({
                             value={
                                 analytics?.maxDelta != null
                                     ? `+${analytics.maxDelta}`
-                                    : '-'
+                                    : "-"
                             }
                             subValue="Peak rating gain"
                             icon={TrendingUp}

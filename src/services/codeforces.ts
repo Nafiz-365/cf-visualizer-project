@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { User, RatingChange, Submission, Problem, Contest } from '../types';
+import axios from "axios";
+import { User, RatingChange, Submission, Problem, Contest } from "../types";
 
-const BASE_URL = '/api/codeforces';
+const BASE_URL = "/api/codeforces";
 
 export class CodeforcesService {
     private static cache = new Map<string, { data: any; expiry: number }>();
@@ -41,9 +41,9 @@ export class CodeforcesService {
     private static async fetchRaw<T>(url: string, retries = 2): Promise<T> {
         try {
             const response = await axios.get(url, { timeout: 12000 });
-            if (response.data.status !== 'OK') {
+            if (response.data.status !== "OK") {
                 throw new Error(
-                    response.data.comment || 'Codeforces API Error',
+                    response.data.comment || "Codeforces API Error",
                 );
             }
             const data = response.data.result;
@@ -137,17 +137,17 @@ export class CodeforcesService {
     }
 
     static getRankColor(rank: string | undefined): string {
-        if (!rank) return '#94a3b8';
+        if (!rank) return "#94a3b8";
         rank = rank.toLowerCase();
-        if (rank.includes('legendary')) return '#ff0000';
-        if (rank.includes('international grandmaster')) return '#ff0000';
-        if (rank.includes('grandmaster')) return '#ff0000';
-        if (rank.includes('international master')) return '#ff8c00';
-        if (rank.includes('master')) return '#ff8c00';
-        if (rank.includes('candidate master')) return '#aa00aa';
-        if (rank.includes('expert')) return '#0000ff';
-        if (rank.includes('specialist')) return '#03a89e';
-        if (rank.includes('pupil')) return '#008000';
-        return '#808080'; // newbie
+        if (rank.includes("legendary")) return "#ff0000";
+        if (rank.includes("international grandmaster")) return "#ff0000";
+        if (rank.includes("grandmaster")) return "#ff0000";
+        if (rank.includes("international master")) return "#ff8c00";
+        if (rank.includes("master")) return "#ff8c00";
+        if (rank.includes("candidate master")) return "#aa00aa";
+        if (rank.includes("expert")) return "#0000ff";
+        if (rank.includes("specialist")) return "#03a89e";
+        if (rank.includes("pupil")) return "#008000";
+        return "#808080"; // newbie
     }
 }

@@ -1,5 +1,5 @@
-import React, { Component, type ReactNode } from 'react';
-import { RefreshCcw, AlertTriangle } from 'lucide-react';
+import React, { Component, type ReactNode } from "react";
+import { RefreshCcw, AlertTriangle } from "lucide-react";
 
 interface Props {
     children: ReactNode;
@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, info: React.ErrorInfo) {
-        console.error('[ErrorBoundary]', error, info.componentStack);
+        console.error("[ErrorBoundary]", error, info.componentStack);
     }
 
     handleRetry = () => {
@@ -38,8 +38,8 @@ export class ErrorBoundary extends Component<Props, State> {
                     <div
                         className="max-w-md w-full text-center p-10 rounded-3xl"
                         style={{
-                            background: 'var(--bg-card)',
-                            border: '1px solid var(--glass-border)',
+                            background: "var(--bg-card)",
+                            border: "1px solid var(--glass-border)",
                         }}
                     >
                         <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-6">
@@ -50,16 +50,16 @@ export class ErrorBoundary extends Component<Props, State> {
                         </div>
                         <h3
                             className="text-xl font-bold mb-2"
-                            style={{ color: 'var(--text-main)' }}
+                            style={{ color: "var(--text-main)" }}
                         >
                             Something went wrong
                         </h3>
                         <p
                             className="text-sm mb-6 leading-relaxed"
-                            style={{ color: 'var(--text-muted)' }}
+                            style={{ color: "var(--text-muted)" }}
                         >
                             {this.props.fallbackMessage ||
-                                'A component encountered an error. Try again or reload the page.'}
+                                "A component encountered an error. Try again or reload the page."}
                         </p>
                         <div className="flex gap-3 justify-center">
                             <button

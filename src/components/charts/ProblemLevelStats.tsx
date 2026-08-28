@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Submission } from '../../types';
+import React, { useMemo } from "react";
+import { Submission } from "../../types";
 import {
     BarChart,
     Bar,
@@ -8,7 +8,7 @@ import {
     Tooltip,
     ResponsiveContainer,
     Cell,
-} from 'recharts';
+} from "recharts";
 
 interface ProblemLevelStatsProps {
     submissions: Submission[];
@@ -17,7 +17,7 @@ interface ProblemLevelStatsProps {
 function ProblemLevelStatsImpl({ submissions }: ProblemLevelStatsProps) {
     const levelData = useMemo(() => {
         const counts: Record<string, number> = {};
-        const solved = submissions.filter((s) => s.verdict === 'OK');
+        const solved = submissions.filter((s) => s.verdict === "OK");
         const uniqueSolved = new Map();
 
         solved.forEach((s) => {
@@ -46,16 +46,16 @@ function ProblemLevelStatsImpl({ submissions }: ProblemLevelStatsProps) {
                         axisLine={false}
                         tickLine={false}
                         tick={{
-                            fill: '#94a3b8',
+                            fill: "#94a3b8",
                             fontSize: 10,
-                            fontWeight: 'bold',
+                            fontWeight: "bold",
                         }}
                     />
                     <YAxis hide />
                     <Tooltip
                         allowEscapeViewBox={{ x: true, y: true }}
                         wrapperStyle={{ zIndex: 10000 }}
-                        cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                        cursor={{ fill: "rgba(255,255,255,0.03)" }}
                         content={({
                             active,
                             payload,
@@ -63,20 +63,20 @@ function ProblemLevelStatsImpl({ submissions }: ProblemLevelStatsProps) {
                             viewBox,
                         }: any) => {
                             if (active && payload && payload.length) {
-                                let translateX = '-50%';
+                                let translateX = "-50%";
                                 if (coordinate && viewBox) {
                                     const ratio = coordinate.x / viewBox.width;
                                     if (ratio < 0.2) {
-                                        translateX = '-15%';
+                                        translateX = "-15%";
                                     } else if (ratio > 0.8) {
-                                        translateX = '-85%';
+                                        translateX = "-85%";
                                     }
                                 }
 
                                 const tooltipStyle = {
                                     transform: `translate(${translateX}, -120%)`,
                                     transition:
-                                        'transform 100ms cubic-bezier(0.16, 1, 0.3, 1)',
+                                        "transform 100ms cubic-bezier(0.16, 1, 0.3, 1)",
                                 };
 
                                 return (
@@ -102,8 +102,8 @@ function ProblemLevelStatsImpl({ submissions }: ProblemLevelStatsProps) {
                                 key={`cell-${index}`}
                                 fill={
                                     index < 3
-                                        ? 'var(--color-brand-primary)'
-                                        : 'var(--color-brand-secondary)'
+                                        ? "var(--color-brand-primary)"
+                                        : "var(--color-brand-secondary)"
                                 }
                                 opacity={0.8}
                             />

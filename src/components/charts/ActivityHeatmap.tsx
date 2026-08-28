@@ -4,9 +4,9 @@ import React, {
     useRef,
     useCallback,
     useEffect,
-} from 'react';
-import { createPortal } from 'react-dom';
-import { Submission } from '../../types';
+} from "react";
+import { createPortal } from "react-dom";
+import { Submission } from "../../types";
 import {
     format,
     subDays,
@@ -14,8 +14,8 @@ import {
     eachDayOfInterval,
     startOfWeek,
     isSameMonth,
-} from 'date-fns';
-import { cn } from '../../lib/utils';
+} from "date-fns";
+import { cn } from "../../lib/utils";
 
 interface HeatmapProps {
     submissions: Submission[];
@@ -31,53 +31,53 @@ interface TooltipState {
     vy: number;
 }
 
-const CELL_SIZE = 'w-3.5 h-3.5'; // 14px — consistent column + cell
-const CELL_GAP = 'gap-1'; // 4px
+const CELL_SIZE = "w-3.5 h-3.5"; // 14px — consistent column + cell
+const CELL_GAP = "gap-1"; // 4px
 
 /** Maps submission count → Tailwind classes with premium hover states. */
 function getCellClass(count: number): string {
     const base =
-        'rounded-[3px] cursor-pointer transition-all duration-300 ease-out';
+        "rounded-[3px] cursor-pointer transition-all duration-300 ease-out";
     const hover =
-        'hover:scale-125 hover:z-50 hover:ring-2 hover:ring-white/40 hover:-translate-y-0.5';
+        "hover:scale-125 hover:z-50 hover:ring-2 hover:ring-white/40 hover:-translate-y-0.5";
 
     if (count === 0)
         return cn(
             base,
             hover,
-            'bg-white/8 border border-white/10 hover:border-white/20 hover:bg-white/15',
+            "bg-white/8 border border-white/10 hover:border-white/20 hover:bg-white/15",
         );
 
     if (count < 3)
         return cn(
             base,
             hover,
-            'bg-brand-primary/30 border border-brand-primary/20 shadow-sm hover:shadow-[0_0_12px_rgba(79,142,247,0.4)]',
+            "bg-brand-primary/30 border border-brand-primary/20 shadow-sm hover:shadow-[0_0_12px_rgba(79,142,247,0.4)]",
         );
 
     if (count < 6)
         return cn(
             base,
             hover,
-            'bg-brand-primary/55 border border-brand-primary/30 shadow-md hover:shadow-[0_0_16px_rgba(79,142,247,0.6)] hover:brightness-110',
+            "bg-brand-primary/55 border border-brand-primary/30 shadow-md hover:shadow-[0_0_16px_rgba(79,142,247,0.6)] hover:brightness-110",
         );
 
     if (count < 10)
         return cn(
             base,
             hover,
-            'bg-brand-primary/80 border border-brand-primary/40 shadow-lg hover:shadow-[0_0_20px_rgba(79,142,247,0.8)] hover:brightness-125',
+            "bg-brand-primary/80 border border-brand-primary/40 shadow-lg hover:shadow-[0_0_20px_rgba(79,142,247,0.8)] hover:brightness-125",
         );
 
     // Peak activity
     return cn(
         base,
         hover,
-        'bg-brand-primary border border-brand-primary/60 shadow-xl shadow-brand-primary/35 brightness-110 hover:shadow-[0_0_25px_rgba(79,142,247,1)] hover:brightness-150',
+        "bg-brand-primary border border-brand-primary/60 shadow-xl shadow-brand-primary/35 brightness-110 hover:shadow-[0_0_25px_rgba(79,142,247,1)] hover:brightness-150",
     );
 }
 
-const DAY_LABELS: Record<number, string> = { 1: 'M', 3: 'W', 5: 'F' }; // 0=Sun
+const DAY_LABELS: Record<number, string> = { 1: "M", 3: "W", 5: "F" }; // 0=Sun
 
 function ActivityHeatmapImpl({
     submissions,
@@ -93,7 +93,7 @@ function ActivityHeatmapImpl({
         for (const s of submissions) {
             const d = format(
                 new Date(s.creationTimeSeconds * 1000),
-                'yyyy-MM-dd',
+                "yyyy-MM-dd",
             );
             counts[d] = (counts[d] ?? 0) + 1;
         }
@@ -114,7 +114,7 @@ function ActivityHeatmapImpl({
         for (const day of days) {
             cur.push({
                 date: day,
-                count: counts[format(day, 'yyyy-MM-dd')] ?? 0,
+                count: counts[format(day, "yyyy-MM-dd")] ?? 0,
             });
             if (cur.length === 7) {
                 weeksArray.push(cur);
@@ -127,7 +127,7 @@ function ActivityHeatmapImpl({
         weeksArray.forEach((week, i) => {
             const first = week[0].date;
             if (i === 0 || !isSameMonth(first, weeksArray[i - 1][0].date)) {
-                labels.push({ label: format(first, 'MMM'), index: i });
+                labels.push({ label: format(first, "MMM"), index: i });
             }
         });
 
@@ -176,7 +176,7 @@ function ActivityHeatmapImpl({
             return (
                 <div
                     key={weekIdx}
-                    className={cn('flex flex-col shrink-0', CELL_GAP)}
+                    className={cn("flex flex-col shrink-0", CELL_GAP)}
                 >
                     {/* Month label header */}
                     <div className="h-4.5 relative pointer-events-none select-none">
@@ -194,7 +194,7 @@ function ActivityHeatmapImpl({
                             onMouseEnter={(e) => handleMouseEnter(day, e)}
                             onMouseLeave={handleMouseLeave}
                             className={cn(CELL_SIZE, getCellClass(day.count))}
-                            aria-label={`${format(day.date, 'MMM d, yyyy')}: ${day.count} submissions`}
+                            aria-label={`${format(day.date, "MMM d, yyyy")}: ${day.count} submissions`}
                             role="gridcell"
                         />
                     ))}
@@ -213,12 +213,12 @@ function ActivityHeatmapImpl({
                     </p>
                     <p className="text-[9px] text-muted-app opacity-40 mt-0.5 uppercase font-bold">
                         {rangeDays === 30
-                            ? 'Recent pulse'
+                            ? "Recent pulse"
                             : rangeDays === 90
-                              ? 'Rolling quarter'
+                              ? "Rolling quarter"
                               : rangeDays === 180
-                                ? 'Half-year rhythm'
-                                : 'Annual activity distribution'}
+                                ? "Half-year rhythm"
+                                : "Annual activity distribution"}
                     </p>
                 </div>
 
@@ -229,15 +229,15 @@ function ActivityHeatmapImpl({
                     </span>
                     <div className="flex gap-1.5 items-center">
                         {[
-                            'bg-white/8',
-                            'bg-brand-primary/25',
-                            'bg-brand-primary/50',
-                            'bg-brand-primary/80',
-                            'bg-brand-primary brightness-110 shadow-[0_0_8px_rgba(79,142,247,0.6)]',
+                            "bg-white/8",
+                            "bg-brand-primary/25",
+                            "bg-brand-primary/50",
+                            "bg-brand-primary/80",
+                            "bg-brand-primary brightness-110 shadow-[0_0_8px_rgba(79,142,247,0.6)]",
                         ].map((cls, i) => (
                             <div
                                 key={i}
-                                className={cn('w-2.5 h-2.5 rounded-xs', cls)}
+                                className={cn("w-2.5 h-2.5 rounded-xs", cls)}
                             />
                         ))}
                     </div>
@@ -250,17 +250,17 @@ function ActivityHeatmapImpl({
             {/* ── Grid ───────────────────────────────────────────── */}
             <div className="flex gap-1 relative z-10">
                 {/* Day-of-week labels (Sun–Sat) */}
-                <div className={cn('flex flex-col pt-5.5 shrink-0', CELL_GAP)}>
+                <div className={cn("flex flex-col pt-5.5 shrink-0", CELL_GAP)}>
                     {Array.from({ length: 7 }, (_, i) => (
                         <div
                             key={i}
                             className={cn(
                                 CELL_SIZE,
-                                'flex items-center justify-end pr-1',
-                                'text-[8px] font-mono font-bold text-muted-app opacity-40 leading-none',
+                                "flex items-center justify-end pr-1",
+                                "text-[8px] font-mono font-bold text-muted-app opacity-40 leading-none",
                             )}
                         >
-                            {DAY_LABELS[i] ?? ''}
+                            {DAY_LABELS[i] ?? ""}
                         </div>
                     ))}
                 </div>
@@ -269,7 +269,7 @@ function ActivityHeatmapImpl({
                 <div
                     ref={scrollRef}
                     className={cn(
-                        'flex overflow-x-auto pb-3 pt-0 px-1 custom-scrollbar scroll-smooth',
+                        "flex overflow-x-auto pb-3 pt-0 px-1 custom-scrollbar scroll-smooth",
                         CELL_GAP,
                     )}
                 >
@@ -307,28 +307,28 @@ function TooltipPortal({ tooltip }: { tooltip: TooltipState }) {
     );
     const top = tooltip.vy - TOOLTIP_H - 12;
 
-    if (typeof document === 'undefined') return null;
+    if (typeof document === "undefined") return null;
 
     return createPortal(
         <div
             style={{
-                position: 'fixed',
+                position: "fixed",
                 left,
                 top,
                 zIndex: 99999,
-                pointerEvents: 'none',
+                pointerEvents: "none",
             }}
             className="animate-in fade-in zoom-in-95 duration-200 ease-out"
         >
             <div className="bg-card-app/95 backdrop-blur-xl px-3 py-2 rounded-xl border border-brand-primary/20 shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_16px_rgba(79,142,247,0.15)] whitespace-nowrap">
                 <p className="text-[9px] font-black text-text-app opacity-80">
-                    {format(tooltip.date, 'MMM d, yyyy')}
+                    {format(tooltip.date, "MMM d, yyyy")}
                 </p>
                 <div className="flex items-center gap-1.5 mt-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-brand-primary shadow-[0_0_4px_#4f8ef7]" />
                     <p className="text-[10px] font-bold text-brand-primary uppercase tracking-wide">
-                        {tooltip.count}{' '}
-                        {tooltip.count === 1 ? 'Solution' : 'Solutions'}
+                        {tooltip.count}{" "}
+                        {tooltip.count === 1 ? "Solution" : "Solutions"}
                     </p>
                 </div>
             </div>

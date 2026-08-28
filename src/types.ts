@@ -58,11 +58,11 @@ export interface Contest {
     name: string;
     type: string;
     phase:
-        | 'BEFORE'
-        | 'CODING'
-        | 'PENDING_SYSTEM_TEST'
-        | 'SYSTEM_TEST'
-        | 'FINISHED';
+        | "BEFORE"
+        | "CODING"
+        | "PENDING_SYSTEM_TEST"
+        | "SYSTEM_TEST"
+        | "FINISHED";
     frozen: boolean;
     durationSeconds: number;
     startTimeSeconds?: number;

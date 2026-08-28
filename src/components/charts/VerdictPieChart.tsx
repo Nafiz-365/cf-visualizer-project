@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 import {
     PieChart,
     Pie,
@@ -6,22 +6,22 @@ import {
     Tooltip,
     ResponsiveContainer,
     Legend,
-} from 'recharts';
-import { Submission } from '../../types';
+} from "recharts";
+import { Submission } from "../../types";
 
 interface VerdictPieChartProps {
     submissions: Submission[];
 }
 
 const COLORS = {
-    OK: '#10b981', // emerald-500
-    WRONG_ANSWER: '#ef4444', // red-500
-    TIME_LIMIT_EXCEEDED: '#f97316', // orange-500
-    MEMORY_LIMIT_EXCEEDED: '#a855f7', // purple-500
-    RUNTIME_ERROR: '#e11d48', // rose-600
-    COMPILATION_ERROR: '#64748b', // slate-500
-    SKIPPED: '#4b5563', // gray-600
-    OTHER: '#334155', // slate-700
+    OK: "#10b981", // emerald-500
+    WRONG_ANSWER: "#ef4444", // red-500
+    TIME_LIMIT_EXCEEDED: "#f97316", // orange-500
+    MEMORY_LIMIT_EXCEEDED: "#a855f7", // purple-500
+    RUNTIME_ERROR: "#e11d48", // rose-600
+    COMPILATION_ERROR: "#64748b", // slate-500
+    SKIPPED: "#4b5563", // gray-600
+    OTHER: "#334155", // slate-700
 };
 
 function VerdictPieChartImpl({ submissions }: VerdictPieChartProps) {
@@ -34,7 +34,7 @@ function VerdictPieChartImpl({ submissions }: VerdictPieChartProps) {
 
         return Object.entries(counts)
             .map(([name, value]) => ({
-                name: name.replace(/_/g, ' '),
+                name: name.replace(/_/g, " "),
                 rawName: name,
                 value,
             }))
@@ -102,20 +102,20 @@ function VerdictPieChartImpl({ submissions }: VerdictPieChartProps) {
                                     100
                                 ).toFixed(1);
 
-                                let translateX = '-50%';
+                                let translateX = "-50%";
                                 if (coordinate && viewBox) {
                                     const ratio = coordinate.x / viewBox.width;
                                     if (ratio < 0.2) {
-                                        translateX = '-15%';
+                                        translateX = "-15%";
                                     } else if (ratio > 0.8) {
-                                        translateX = '-85%';
+                                        translateX = "-85%";
                                     }
                                 }
 
                                 const tooltipStyle = {
                                     transform: `translate(${translateX}, -120%)`,
                                     transition:
-                                        'transform 100ms cubic-bezier(0.16, 1, 0.3, 1)',
+                                        "transform 100ms cubic-bezier(0.16, 1, 0.3, 1)",
                                 };
 
                                 return (
@@ -156,7 +156,7 @@ function VerdictPieChartImpl({ submissions }: VerdictPieChartProps) {
                         align="center"
                         iconType="circle"
                         iconSize={8}
-                        wrapperStyle={{ paddingTop: '18px', fontSize: 10 }}
+                        wrapperStyle={{ paddingTop: "18px", fontSize: 10 }}
                         formatter={(value) => (
                             <span className="text-[9px] font-bold text-muted-app uppercase tracking-widest ml-1">
                                 {value}

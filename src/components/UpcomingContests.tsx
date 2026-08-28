@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Contest } from '../types';
-import { CodeforcesService } from '../services/codeforces';
-import { Calendar, Clock, ExternalLink } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
-import { cn } from '../lib/utils';
+import React, { useEffect, useState } from "react";
+import { Contest } from "../types";
+import { CodeforcesService } from "../services/codeforces";
+import { Calendar, Clock, ExternalLink } from "lucide-react";
+import { format, formatDistanceToNow } from "date-fns";
+import { cn } from "../lib/utils";
 
 export function UpcomingContests() {
     const [contests, setContests] = useState<Contest[]>([]);
@@ -14,7 +14,7 @@ export function UpcomingContests() {
             try {
                 const allContests = await CodeforcesService.getContests();
                 const upcoming = allContests
-                    .filter((c) => c.phase === 'BEFORE' || c.phase === 'CODING')
+                    .filter((c) => c.phase === "BEFORE" || c.phase === "CODING")
                     .sort(
                         (a, b) =>
                             (a.startTimeSeconds || 0) -
@@ -23,7 +23,7 @@ export function UpcomingContests() {
                     .slice(0, 8);
                 setContests(upcoming);
             } catch (err) {
-                console.error('Failed to fetch contests:', err);
+                console.error("Failed to fetch contests:", err);
             } finally {
                 setLoading(false);
             }
@@ -69,15 +69,15 @@ export function UpcomingContests() {
                             <div className="flex items-start justify-between mb-2">
                                 <span
                                     className={cn(
-                                        'text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border',
-                                        contest.phase === 'CODING'
-                                            ? 'bg-red-500/10 text-red-500 border-red-500/30 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.2)]'
-                                            : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+                                        "text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border",
+                                        contest.phase === "CODING"
+                                            ? "bg-red-500/10 text-red-500 border-red-500/30 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.2)]"
+                                            : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
                                     )}
                                 >
-                                    {contest.phase === 'CODING'
-                                        ? 'LIVE NOW'
-                                        : 'SCHEDULED'}
+                                    {contest.phase === "CODING"
+                                        ? "LIVE NOW"
+                                        : "SCHEDULED"}
                                 </span>
                                 <ExternalLink
                                     size={12}
@@ -106,14 +106,14 @@ export function UpcomingContests() {
                             </div>
                             <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[9px] text-muted-app/70">
                                 <span>
-                                    {contest.phase === 'CODING'
-                                        ? 'Live now — jump in'
-                                        : 'Good prep window'}
+                                    {contest.phase === "CODING"
+                                        ? "Live now — jump in"
+                                        : "Good prep window"}
                                 </span>
                                 <span className="font-semibold text-cyan-400">
-                                    {contest.phase === 'CODING'
-                                        ? 'INFILTRATE'
-                                        : 'PREPARE'}
+                                    {contest.phase === "CODING"
+                                        ? "INFILTRATE"
+                                        : "PREPARE"}
                                 </span>
                             </div>
                         </div>

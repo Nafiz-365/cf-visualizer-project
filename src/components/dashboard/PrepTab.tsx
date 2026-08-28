@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { Card } from '../ui/Card';
-import { Recommendations } from '../Recommendations';
-import { UnsolvedProblems } from '../UnsolvedProblems';
-import { PracticeCoach } from '../PracticeCoach';
+import React from "react";
+import { motion } from "motion/react";
+import { Card } from "../ui/Card";
+import { Recommendations } from "../Recommendations";
+import { UnsolvedProblems } from "../UnsolvedProblems";
+import { PracticeCoach } from "../PracticeCoach";
 
 function PrepTabImpl({
     user,
