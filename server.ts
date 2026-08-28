@@ -11,7 +11,7 @@ import {
     extractAIText,
     getAIModel,
     getGeminiApiKeyError,
-} from "./src/lib/geminiConfig";
+} from "./src/lib/geminiConfig.js";
 
 const JWT_SECRET =
     process.env.JWT_SECRET || "super-secret-codeforces-key-12345";
