@@ -1,7 +1,7 @@
 import axios from "axios";
 import { User, RatingChange, Submission, Problem, Contest } from "../types";
 
-const BASE_URL = "https://codeforces.com/api";
+const BASE_URL = "/api/codeforces";
 
 export class CodeforcesService {
     private static cache = new Map<string, { data: any; expiry: number }>();
