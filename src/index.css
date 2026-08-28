@@ -1,4 +1,10 @@
-/* Google Fonts removed — using local @fontsource fonts instead (faster, no network round-trip) */
+/* Tailwind v4 — must be the first import */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Local fonts — no Google Fonts network request needed */
+@import "@fontsource-variable/geist";
 @import "@fontsource/inter/300.css";
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
@@ -14,10 +20,6 @@
 @import "@fontsource/outfit/700.css";
 @import "@fontsource/outfit/800.css";
 @import "@fontsource/outfit/900.css";
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
 
 /* Tailwind CSS v4 directive. */
 /* stylelint-disable at-rule-no-unknown */
