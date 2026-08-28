@@ -110,15 +110,39 @@ function evictCache(cache: Map<string, any>) {
 
 app.get("/api/codeforces/:method", async (req, res) => {
     const { method } = req.params;
-    const cacheKey = `${method}:${JSON.stringify(req.query)}`;
-    let ttl = 1000 * 60 * 2;
-    if (method === "problemset.problems") ttl = 1000 * 60 * 60 * 6;
-    if (method === "contest.list") ttl = 1000 * 60 * 30;
-    if (method === "user.info") ttl = 1000 * 60 * 10;
-    if (method === "user.ratedList") ttl = 1000 * 60 * 15;
+
+    // For user.ratedList we filter + slice server-side so the browser
+    // only receives ≤200 users instead of the full ~44k (~30 MB) payload.
+    const isRatedList = method === "user.ratedList";
+    const maxUsers = isRatedList ? Number(req.query.max) || 200 : undefined;
+    const countryFilter = isRatedList && req.query.country ? String(req.query.country).toLowerCase() : undefined;
+
+    // Build cache key WITHOUT max/country so the raw list is cached once and
+    // re-filtered per-request (avoids duplicating 30 MB in memory).
+    const cacheKey = isRatedList ? "user.ratedList:raw" : `${method}:${JSON.stringify(req.query)}`;
+
+    let ttl = 1000 * 60 * 2;          // default 2 min
+    if (method === "problemset.problems") ttl = 1000 * 60 * 60 * 6; // 6 h
+    if (method === "contest.list")        ttl = 1000 * 60 * 30;      // 30 min
+    if (method === "user.info")           ttl = 1000 * 60 * 10;      // 10 min
+    if (isRatedList)                      ttl = 1000 * 60 * 20;      // 20 min
+
+    // HTTP cache header (tells browser/CDN how long to cache)
+    const httpMaxAge = Math.floor(ttl / 1000);
+    res.setHeader("Cache-Control", `public, max-age=${httpMaxAge}, stale-while-revalidate=${httpMaxAge * 2}`);
 
     const cached = cfCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < cached.ttl) return res.json(cached.data);
+
+    // Serve from cache (raw list → filter → slice for ratedList)
+    if (cached && Date.now() - cached.timestamp < cached.ttl) {
+        if (isRatedList) {
+            let result: any[] = cached.data.result ?? [];
+            if (countryFilter) result = result.filter((u: any) => u.country?.toLowerCase() === countryFilter);
+            result = result.slice(0, maxUsers);
+            return res.json({ status: "OK", result });
+        }
+        return res.json(cached.data);
+    }
 
     const now = Date.now();
     const waitTime = Math.max(0, lastCfRequestTime + MIN_CF_INTERVAL - now);
@@ -126,17 +150,29 @@ app.get("/api/codeforces/:method", async (req, res) => {
     if (waitTime > 0) await new Promise(r => setTimeout(r, waitTime));
 
     try {
+        // For ratedList, strip max/country — we'll filter ourselves
+        const params = isRatedList ? { activeOnly: true } : req.query;
         const response = await axios.get(`https://codeforces.com/api/${method}`, {
-            params: req.query, timeout: 60000,
+            params, timeout: 60000,
         });
+
         if (response.data.status === "OK") {
             cfCache.set(cacheKey, { data: response.data, timestamp: Date.now(), ttl });
             evictCache(cfCache);
         }
+
+        if (isRatedList && response.data.status === "OK") {
+            let result: any[] = response.data.result ?? [];
+            if (countryFilter) result = result.filter((u: any) => u.country?.toLowerCase() === countryFilter);
+            result = result.slice(0, maxUsers);
+            return res.json({ status: "OK", result });
+        }
+
         res.json(response.data);
     } catch (error: any) {
         if (error.response?.status === 429) {
-            if (cached) return res.json(cached.data);
+            const stale = cfCache.get(cacheKey);
+            if (stale) return res.json(stale.data);
             return res.status(429).json({ status: "FAILED", comment: "Rate limited. Please wait and retry." });
         }
         res.status(error.response?.status || 500).json({

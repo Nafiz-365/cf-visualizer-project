@@ -153,8 +153,11 @@ function App() {
                             <ErrorBoundary>
                                 <Suspense
                                     fallback={
-                                        <div className="min-h-screen flex items-center justify-center text-sm text-(--text-muted)">
-                                            Loading...
+                                        <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+                                            <div className="w-8 h-8 rounded-full border-2 border-transparent animate-spin"
+                                                style={{ borderTopColor: "var(--brand-primary)", borderRightColor: "var(--brand-primary)" }} />
+                                            <p className="text-xs font-mono tracking-widest uppercase opacity-40"
+                                                style={{ color: "var(--text-muted)" }}>Loading...</p>
                                         </div>
                                     }
                                 >

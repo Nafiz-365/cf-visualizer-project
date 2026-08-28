@@ -110,14 +110,11 @@ export class CodeforcesService {
         count: number = 200,
         country?: string,
     ): Promise<User[]> {
-        // Use the internal proxy because Codeforces drops CORS headers for user.ratedList
-        const url = `/api/codeforces/user.ratedList?activeOnly=true`;
-        const allUsers = await this.fetch<User[]>(url);
-        let filtered = allUsers;
-        if (country) {
-            filtered = filtered.filter(u => u.country?.toLowerCase() === country.toLowerCase());
-        }
-        return filtered.slice(0, count) as any;
+        // Pass max + country to the proxy so the server filters before sending
+        // (avoids downloading the full ~44k user list in the browser)
+        let url = `/api/codeforces/user.ratedList?activeOnly=true&max=${count}`;
+        if (country) url += `&country=${encodeURIComponent(country)}`;
+        return this.fetch<User[]>(url);
     }
 
     static async getContestStandings(
