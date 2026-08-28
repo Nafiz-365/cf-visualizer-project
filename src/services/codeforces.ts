@@ -40,7 +40,7 @@ export class CodeforcesService {
 
     private static async fetchRaw<T>(url: string, retries = 2): Promise<T> {
         try {
-            const response = await axios.get(url, { timeout: 12000 });
+            const response = await axios.get(url, { timeout: 60000 });
             if (response.data.status !== "OK") {
                 throw new Error(
                     response.data.comment || "Codeforces API Error",
@@ -110,10 +110,13 @@ export class CodeforcesService {
         count: number = 200,
         country?: string,
     ): Promise<User[]> {
-        const url = country
-            ? `${BASE_URL}/user.ratedList?activeOnly=true&max=${count}&country=${country}`
-            : `${BASE_URL}/user.ratedList?activeOnly=true&max=${count}`;
-        return this.fetch<User[]>(url);
+        const url = `${BASE_URL}/user.ratedList?activeOnly=true`;
+        const allUsers = await this.fetch<User[]>(url);
+        let filtered = allUsers;
+        if (country) {
+            filtered = filtered.filter(u => u.country?.toLowerCase() === country.toLowerCase());
+        }
+        return filtered.slice(0, count) as any;
     }
 
     static async getContestStandings(
