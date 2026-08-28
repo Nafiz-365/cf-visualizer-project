@@ -58,16 +58,21 @@ const app = express();
     app.use(cookieParser());
 
     // Initialize SQLite Database (Turso / libSQL)
-    const dbClient = createClient({
-        url: process.env.TURSO_DATABASE_URL || "file:database.sqlite",
-        authToken: process.env.TURSO_AUTH_TOKEN,
-    });
+    let dbClient: any = null;
+    try {
+        dbClient = createClient({
+            url: process.env.TURSO_DATABASE_URL || "file:database.sqlite",
+            authToken: process.env.TURSO_AUTH_TOKEN,
+        });
+    } catch (e) {
+        console.warn("Failed to create Turso client, proceeding without DB:", e);
+    }
 
     const db = {
-        exec: async (sql: string) => dbClient.executeMultiple(sql),
-        run: async (sql: string, params: any[] = []) => dbClient.execute({ sql, args: params }),
-        get: async (sql: string, params: any[] = []) => (await dbClient.execute({ sql, args: params })).rows[0] || null,
-        all: async (sql: string, params: any[] = []) => (await dbClient.execute({ sql, args: params })).rows
+        exec: async (sql: string) => dbClient ? dbClient.executeMultiple(sql) : null,
+        run: async (sql: string, params: any[] = []) => dbClient ? dbClient.execute({ sql, args: params }) : null,
+        get: async (sql: string, params: any[] = []) => dbClient ? (await dbClient.execute({ sql, args: params })).rows[0] || null : null,
+        all: async (sql: string, params: any[] = []) => dbClient ? (await dbClient.execute({ sql, args: params })).rows : []
     };
 
     (async () => {
