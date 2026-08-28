@@ -2,24 +2,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-
-/* Local fonts — no Google Fonts network request needed */
-@import "@fontsource-variable/geist";
-@import "@fontsource/inter/300.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
-@import "@fontsource/inter/700.css";
-@import "@fontsource/inter/800.css";
-@import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/500.css";
-@import "@fontsource/jetbrains-mono/600.css";
-@import "@fontsource/outfit/400.css";
-@import "@fontsource/outfit/500.css";
-@import "@fontsource/outfit/600.css";
-@import "@fontsource/outfit/700.css";
-@import "@fontsource/outfit/800.css";
-@import "@fontsource/outfit/900.css";
+/* Fonts are imported in main.tsx for reliable Vite bundling */
 
 /* Tailwind CSS v4 directive. */
 /* stylelint-disable at-rule-no-unknown */
