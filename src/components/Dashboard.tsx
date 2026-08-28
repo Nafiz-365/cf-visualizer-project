@@ -200,18 +200,15 @@ export function Dashboard() {
         };
 
         try {
-            const [fetchedUser, fetchedRating] = await Promise.all([
+            // Fetch all 3 critical endpoints in parallel for maximum speed
+            const [fetchedUser, fetchedRating, fetchedStatus] = await Promise.all([
                 CodeforcesService.getUserInfo(h),
                 CodeforcesService.getUserRating(h),
+                safeFetch(CodeforcesService.getUserStatus(h), [] as Submission[]),
             ]);
 
             setUser(fetchedUser);
             setRatingHistory(fetchedRating);
-
-            const fetchedStatus = await safeFetch(
-                CodeforcesService.getUserStatus(h),
-                [],
-            );
             setSubmissions(fetchedStatus);
             setLoading(false);
 

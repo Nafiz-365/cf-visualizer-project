@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -17,7 +17,8 @@ import {
 import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 import { useAuth } from "../contexts/AuthContext";
-import MagicRings from "./MagicRings";
+// Lazy-load Three.js — saves ~117 kB gzip on non-landing routes
+const MagicRings = lazy(() => import("./MagicRings"));
 
 export function LandingPage() {
     const [handle, setHandle] = useState("");
@@ -99,18 +100,20 @@ export function LandingPage() {
                         height: "100%",
                     }}
                 >
-                    <MagicRings
-                        color="#4F8EF7"
-                        colorTwo="#9D6EF5"
-                        speed={1.5}
-                        ringCount={8}
-                        baseRadius={0.2}
-                        radiusStep={0.08}
-                        opacity={0.8}
-                        mouseInfluence={0.2}
-                        followMouse={true}
-                        clickBurst={true}
-                    />
+                    <Suspense fallback={<div className="w-full h-full" />}>
+                        <MagicRings
+                            color="#4F8EF7"
+                            colorTwo="#9D6EF5"
+                            speed={1.5}
+                            ringCount={8}
+                            baseRadius={0.2}
+                            radiusStep={0.08}
+                            opacity={0.8}
+                            mouseInfluence={0.2}
+                            followMouse={true}
+                            clickBurst={true}
+                        />
+                    </Suspense>
                 </div>
             </div>
 

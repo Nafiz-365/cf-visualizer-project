@@ -10,15 +10,24 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [userHandle, setUserHandle] = useState<string | null>(null);
+    const [userHandle, setUserHandle] = useState<string | null>(() => {
+        // Instant read from localStorage — no flicker on page refresh
+        try { return localStorage.getItem("cf_user_handle"); } catch { return null; }
+    });
     const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
     useEffect(() => {
+        // Silently verify the session in the background
         fetch("/api/auth/me")
             .then((res) => res.json())
             .then((data) => {
                 if (data.success && data.handle) {
                     setUserHandle(data.handle);
+                    try { localStorage.setItem("cf_user_handle", data.handle); } catch {}
+                } else {
+                    // Session expired — clear cached handle
+                    setUserHandle(null);
+                    try { localStorage.removeItem("cf_user_handle"); } catch {}
                 }
             })
             .catch(() => {})
@@ -27,11 +36,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const login = (handle: string) => {
         setUserHandle(handle);
+        try { localStorage.setItem("cf_user_handle", handle); } catch {}
     };
 
     const logout = async () => {
         await fetch("/api/auth/logout", { method: "POST" });
         setUserHandle(null);
+        try { localStorage.removeItem("cf_user_handle"); } catch {}
     };
 
     return (
