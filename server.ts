@@ -3,8 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import axios from "axios";
 import dotenv from "dotenv";
-import sqlite3 from "sqlite3";
-import { open, Database } from "sqlite";
+import { createClient } from "@libsql/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
@@ -43,8 +42,7 @@ function safeParseJSON(text: string) {
     }
 }
 
-async function startServer() {
-    const app = express();
+const app = express();
 
     const configuredPort = Number(process.env.PORT);
 
@@ -59,71 +57,74 @@ async function startServer() {
 
     app.use(cookieParser());
 
-    // Initialize SQLite Database
-    let db: Database | null = null;
+    // Initialize SQLite Database (Turso / libSQL)
+    const dbClient = createClient({
+        url: process.env.TURSO_DATABASE_URL || "file:database.sqlite",
+        authToken: process.env.TURSO_AUTH_TOKEN,
+    });
 
-    try {
-        db = await open({
-            filename: path.join(process.cwd(), "database.sqlite"),
-            driver: sqlite3.Database,
-        });
+    const db = {
+        exec: async (sql: string) => dbClient.executeMultiple(sql),
+        run: async (sql: string, params: any[] = []) => dbClient.execute({ sql, args: params }),
+        get: async (sql: string, params: any[] = []) => (await dbClient.execute({ sql, args: params })).rows[0] || null,
+        all: async (sql: string, params: any[] = []) => (await dbClient.execute({ sql, args: params })).rows
+    };
 
-        // Performance pragmas
-        await db.exec("PRAGMA journal_mode = WAL;");
-        await db.exec("PRAGMA synchronous = NORMAL;");
+    (async () => {
+        try {
+            await db.exec(`
+                CREATE TABLE IF NOT EXISTS users (
+                    handle TEXT PRIMARY KEY,
+                    password_hash TEXT NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
 
-        await db.exec(`
-            CREATE TABLE IF NOT EXISTS users (
-                handle TEXT PRIMARY KEY,
-                password_hash TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
+                CREATE TABLE IF NOT EXISTS friends (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_handle TEXT,
+                    friend_handle TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(user_handle, friend_handle)
+                );
 
-            CREATE TABLE IF NOT EXISTS friends (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_handle TEXT,
-                friend_handle TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(user_handle, friend_handle)
-            );
+                CREATE TABLE IF NOT EXISTS chat_history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    handle TEXT,
+                    role TEXT,
+                    content TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
 
-            CREATE TABLE IF NOT EXISTS chat_history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                handle TEXT,
-                role TEXT,
-                content TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
+                CREATE TABLE IF NOT EXISTS bookmarks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_handle TEXT,
+                    problem_id TEXT,
+                    problem_name TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(user_handle, problem_id)
+                );
 
-            CREATE TABLE IF NOT EXISTS bookmarks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_handle TEXT,
-                problem_id TEXT,
-                problem_name TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(user_handle, problem_id)
-            );
+                CREATE TABLE IF NOT EXISTS notes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_handle TEXT,
+                    problem_id TEXT,
+                    note TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(user_handle, problem_id)
+                );
 
-            CREATE TABLE IF NOT EXISTS notes (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_handle TEXT,
-                problem_id TEXT,
-                note TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(user_handle, problem_id)
-            );
+                -- Query indexes for performance
+                CREATE INDEX IF NOT EXISTS idx_friends_user ON friends(user_handle);
+                CREATE INDEX IF NOT EXISTS idx_chat_handle ON chat_history(handle);
+                CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON bookmarks(user_handle);
+                CREATE INDEX IF NOT EXISTS idx_notes_user ON notes(user_handle);
+            `);
 
-            -- Query indexes for performance
-            CREATE INDEX IF NOT EXISTS idx_friends_user ON friends(user_handle);
-            CREATE INDEX IF NOT EXISTS idx_chat_handle ON chat_history(handle);
-            CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON bookmarks(user_handle);
-            CREATE INDEX IF NOT EXISTS idx_notes_user ON notes(user_handle);
-        `);
-
-        console.log("SQLite Database initialized successfully.");
-    } catch (err) {
-        console.error("Failed to initialize database:", err);
-    }
+            console.log("SQLite Database initialized successfully.");
+        } catch (err) {
+            console.error("Failed to initialize database:", err);
+        }
+    })();
 
     // API Route for Codeforces Proxy
     // Bounded LRU cache — evicts oldest entries when max size is reached
@@ -545,7 +546,7 @@ async function startServer() {
                     error: "Invalid handle or password",
                 });
 
-            const isValid = await bcrypt.compare(password, user.password_hash);
+            const isValid = await bcrypt.compare(password, user.password_hash as string);
             if (!isValid)
                 return res.status(401).json({
                     success: false,
@@ -810,24 +811,36 @@ async function startServer() {
     });
 
     // Vite middleware for development
-    const isApiOnly = process.argv.includes("--api-only");
-    if (process.env.NODE_ENV !== "production" && !isApiOnly) {
-        const vite = await createViteServer({
-            server: { middlewareMode: true },
-            appType: "spa",
-        });
-        app.use(vite.middlewares);
+    if (process.env.NODE_ENV !== "production") {
+        const isApiOnly = process.argv.includes("--api-only");
+        if (!isApiOnly) {
+            (async () => {
+                const vite = await createViteServer({
+                    server: { middlewareMode: true },
+                    appType: "spa",
+                });
+                app.use(vite.middlewares);
+            })();
+        }
+        
+        // Start server locally if not on Vercel
+        if (!process.env.VERCEL) {
+            app.listen(PORT, "0.0.0.0", () => {
+                console.log(`Server running at http://0.0.0.0:${PORT}`);
+            });
+        }
     } else {
-        const distPath = path.join(process.cwd(), "dist");
-        app.use(express.static(distPath));
-        app.get("*", (req, res) => {
-            res.sendFile(path.join(distPath, "index.html"));
-        });
+        // Vercel will handle static files in production, but if running locally via `npm run start`
+        if (!process.env.VERCEL) {
+            const distPath = path.join(process.cwd(), "dist");
+            app.use(express.static(distPath));
+            app.get("*", (req, res) => {
+                res.sendFile(path.join(distPath, "index.html"));
+            });
+            app.listen(PORT, "0.0.0.0", () => {
+                console.log(`Server running at http://0.0.0.0:${PORT}`);
+            });
+        }
     }
 
-    app.listen(PORT, "0.0.0.0", () => {
-        console.log(`Server running at http://0.0.0.0:${PORT}`);
-    });
-}
-
-startServer();
+export default app;
