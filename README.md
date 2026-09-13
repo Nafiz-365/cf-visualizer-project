@@ -124,7 +124,6 @@ Unlike standard visualizers that simply display raw data, this platform acts as 
     _\*Note: You must provide either a Gemini or OpenRouter API key for AI features to function._
 
 ---
-
 ## 🛠️ Development Workflow
 
 We have tailored development scripts depending on your role to optimize startup times.
@@ -173,6 +172,7 @@ cf-visualizer/
 ```
 
 ---
+
 
 <div align="center">
   <p>Designed and built for the Competitive Programming community 💡</p>
